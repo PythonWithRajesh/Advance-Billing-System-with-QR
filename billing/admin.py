@@ -5,6 +5,8 @@ from .models import (
     DistributorProfile,
     Customer,
     Product,
+    Invoice,
+    InvoiceItem,
 )
 
 
@@ -122,4 +124,62 @@ class ProductAdmin(admin.ModelAdmin):
 
     ordering = (
         "-created_at",
+    )
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "invoice_number",
+        "customer",
+        "invoice_date",
+        "subtotal",
+        "gst_amount",
+        "grand_total",
+        "payment_status",
+    )
+
+    search_fields = (
+        "invoice_number",
+        "customer__name",
+        "customer__email",
+        "customer__phone",
+    )
+
+    list_filter = (
+        "payment_status",
+        "invoice_date",
+    )
+
+    readonly_fields = (
+        "invoice_date",
+        "created_at",
+        "updated_at",
+    )
+
+    ordering = (
+        "-invoice_date",
+    )
+
+
+@admin.register(InvoiceItem)
+class InvoiceItemAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "invoice",
+        "product",
+        "quantity",
+        "unit_price",
+        "gst_rate",
+        "gst_amount",
+        "total_price",
+    )
+
+    search_fields = (
+        "invoice__invoice_number",
+        "product__name",
+    )
+
+    list_filter = (
+        "gst_rate",
     )
