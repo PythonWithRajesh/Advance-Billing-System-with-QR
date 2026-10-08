@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Products | Advance Billing</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            min-height: 100vh;
+            background: #f4f7f5;
+            color: #24362f;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            width: 100%;
+            background: #1f332d;
+            color: white;
+
+            padding: 16px 5%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+
+            padding: 9px 14px;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+        }
+
+
+        .dashboard-link {
+            background: #36574b;
+        }
+
+
+        .logout-link {
+            background: #b64040;
+        }
+
+
+        /* ================= PAGE ================= */
+
+        .page {
+            width: 100%;
+            max-width: 1250px;
+
+            margin: 42px auto;
+
+            padding: 0 20px;
+        }
+
+
+        .heading {
+            margin-bottom: 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+
+        .heading h1 {
+            font-size: 30px;
+            color: #203b32;
+
+            margin-bottom: 7px;
+        }
+
+
+        .heading p {
+            color: #68756f;
+            font-size: 14px;
+        }
+
+
+        .add-product-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #2e5849;
+            color: white;
+
+            text-decoration: none;
+
+            padding: 11px 17px;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            white-space: nowrap;
+        }
+
+
+        .add-product-btn:hover {
+            background: #24483c;
+        }
+
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid #e1e8e4;
+
+            border-radius: 12px;
+
+            padding: 18px 20px;
+        }
+
+
+        .stat-label {
+            color: #718079;
+
+            font-size: 12px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .stat-value {
+            color: #29483d;
+
+            font-size: 24px;
+
+            font-weight: bold;
+        }
+
+
+        /* ================= MAIN CARD ================= */
+
+        .card {
+            background: white;
+
+            border: 1px solid #e1e8e4;
+
+            border-radius: 15px;
+
+            padding: 22px;
+
+            box-shadow:
+                0 8px 30px rgba(31, 51, 45, 0.07);
+        }
+
+
+        /* ================= SEARCH ================= */
+
+        .search-area {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .search-form {
+            display: flex;
+
+            width: 100%;
+
+            max-width: 650px;
+
+            gap: 8px;
+        }
+
+
+        .search-input {
+            flex: 1;
+
+            height: 44px;
+
+            border: 1px solid #ccd8d2;
+
+            border-radius: 8px;
+
+            padding: 0 13px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        .search-input:focus {
+            border-color: #315c4d;
+
+            box-shadow:
+                0 0 0 3px rgba(49, 92, 77, 0.10);
+        }
+
+
+        .search-btn {
+            height: 44px;
+
+            border: none;
+
+            background: #2e5849;
+
+            color: white;
+
+            border-radius: 8px;
+
+            padding: 0 18px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+
+        .search-btn:hover {
+            background: #24483c;
+        }
+
+
+        .clear-btn {
+            display: inline-flex;
+
+            height: 44px;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 0 15px;
+
+            background: #edf1ef;
+
+            color: #35443e;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        /* ================= TABLE ================= */
+
+        .table-wrapper {
+            width: 100%;
+
+            overflow-x: auto;
+
+            border: 1px solid #e4ebe7;
+
+            border-radius: 10px;
+        }
+
+
+        table {
+            width: 100%;
+
+            min-width: 950px;
+
+            border-collapse: collapse;
+        }
+
+
+        thead {
+            background: #edf4f0;
+        }
+
+
+        th {
+            text-align: left;
+
+            padding: 14px 13px;
+
+            color: #315345;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            border-bottom: 1px solid #dce6e1;
+        }
+
+
+        td {
+            padding: 14px 13px;
+
+            color: #4b5b54;
+
+            font-size: 13px;
+
+            border-bottom: 1px solid #edf1ef;
+
+            vertical-align: middle;
+        }
+
+
+        tbody tr:hover {
+            background: #fafcfb;
+        }
+
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        .product-name {
+            color: #263f35;
+
+            font-weight: 700;
+        }
+
+
+        .category {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            background: #edf4f0;
+
+            color: #315345;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        .price {
+            color: #29483d;
+
+            font-weight: 700;
+        }
+
+
+        .stock {
+            font-weight: 600;
+        }
+
+
+        .stock.available {
+            color: #27704a;
+        }
+
+
+        .stock.low {
+            color: #b46b00;
+        }
+
+
+        .stock.out {
+            color: #b83232;
+        }
+
+
+        .gst {
+            color: #586860;
+        }
+
+
+        .description {
+            max-width: 220px;
+
+            color: #6d7974;
+        }
+
+
+        /* ================= EMPTY STATE ================= */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: #6d7974;
+        }
+
+
+        .empty-state h3 {
+            color: #35483f;
+
+            margin-bottom: 8px;
+        }
+
+
+        .empty-state p {
+            font-size: 13px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= PAGINATION ================= */
+
+        .pagination-area {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-top: 22px;
+        }
+
+
+        .page-info {
+            color: #68756f;
+
+            font-size: 13px;
+        }
+
+
+        .pagination {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+        }
+
+
+        .page-link {
+            min-width: 36px;
+
+            height: 36px;
+
+            padding: 0 10px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border: 1px solid #d6e0db;
+
+            border-radius: 7px;
+
+            color: #355348;
+
+            background: white;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+
+        .page-link:hover {
+            background: #edf4f0;
+        }
+
+
+        .page-link.active {
+            background: #2e5849;
+
+            border-color: #2e5849;
+
+            color: white;
+        }
+
+
+        .page-link.disabled {
+            opacity: 0.45;
+
+            pointer-events: none;
+        }
+
+
+        .dots {
+            color: #7b8782;
+
+            padding: 0 3px;
+
+            font-size: 13px;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 800px) {
+
+            .heading {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+
+            .add-product-btn {
+                width: 100%;
+            }
+
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+
+            .search-area {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .search-form {
+                max-width: none;
+            }
+
+
+            .pagination-area {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .pagination {
+                justify-content: center;
+
+                flex-wrap: wrap;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .navbar {
+                padding: 14px 20px;
+            }
+
+
+            .brand {
+                font-size: 18px;
+            }
+
+
+            .nav-links a {
+                padding: 8px 9px;
+
+                font-size: 12px;
+            }
+
+
+            .page {
+                margin: 30px auto;
+            }
+
+
+            .heading h1 {
+                font-size: 25px;
+            }
+
+
+            .card {
+                padding: 15px;
+            }
+
+
+            .search-form {
+                flex-direction: column;
+            }
+
+
+            .search-btn,
+            .clear-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="brand">
+        Advance Billing
+    </div>
+
+
+    <div class="nav-links">
+
+        <a
+            href="{% url 'distributor_dashboard' %}"
+            class="dashboard-link"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'user_logout' %}"
+            class="logout-link"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="page">
+
+
+    <!-- ================= HEADING ================= -->
+
+    <div class="heading">
+
+        <div>
+
+            <h1>
+                Products
+            </h1>
+
+            <p>
+                Manage your products, pricing, GST and inventory.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'add_product' %}"
+            class="add-product-btn"
+        >
+            + Add Product
+        </a>
+
+    </div>
+
+
+
+    <!-- ================= STATS ================= -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Products
+            </div>
+
+            <div class="stat-value">
+                {{ total_products }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Showing Results
+            </div>
+
+            <div class="stat-value">
+                {{ showing_products }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Current Page
+            </div>
+
+            <div class="stat-value">
+                {{ page_obj.number }}
+                /
+                {{ page_obj.paginator.num_pages|default:"0" }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= CARD ================= -->
+
+    <div class="card">
+
+
+        <!-- ================= SEARCH ================= -->
+
+        <div class="search-area">
+
+            <form
+                method="GET"
+                action="{% url 'product_list' %}"
+                class="search-form"
+            >
+
+                <input
+                    type="search"
+                    name="search"
+                    class="search-input"
+                    value="{{ search_query }}"
+                    placeholder="Search by product name, category or description..."
+                >
+
+
+                <button
+                    type="submit"
+                    class="search-btn"
+                >
+                    Search
+                </button>
+
+
+                {% if search_query %}
+
+                    <a
+                        href="{% url 'product_list' %}"
+                        class="clear-btn"
+                    >
+                        Clear
+                    </a>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+
+
+        <!-- ================= TABLE ================= -->
+
+        {% if products %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Price
+                            </th>
+
+                            <th>
+                                Stock
+                            </th>
+
+                            <th>
+                                GST
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Added On
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in products %}
+
+                            <tr>
+
+                                <td>
+                                    {{ page_obj.start_index|add:forloop.counter0 }}
+                                </td>
+
+
+                                <td>
+
+                                    <div class="product-name">
+                                        {{ product.name }}
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="category">
+                                        {{ product.get_category_display }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="price">
+                                        ₹{{ product.price|floatformat:2 }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if product.stock == 0 %}
+
+                                        <span class="stock out">
+                                            Out of Stock
+                                        </span>
+
+                                    {% elif product.stock <= 10 %}
+
+                                        <span class="stock low">
+                                            {{ product.stock }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="stock available">
+                                            {{ product.stock }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="gst">
+                                        {{ product.gst_rate|floatformat:2 }}%
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="description">
+
+                                        {% if product.description %}
+
+                                            {{ product.description|truncatechars:45 }}
+
+                                        {% else %}
+
+                                            —
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    {{ product.created_at|date:"d M Y" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+            <!-- ================= EMPTY STATE ================= -->
+
+            <div class="empty-state">
+
+                <h3>
+                    No Products Found
+                </h3>
+
+
+                {% if search_query %}
+
+                    <p>
+                        No products matched
+                        "<strong>{{ search_query }}</strong>".
+                    </p>
+
+
+                    <a
+                        href="{% url 'product_list' %}"
+                        class="clear-btn"
+                    >
+                        Clear Search
+                    </a>
+
+                {% else %}
+
+                    <p>
+                        You have not added any products yet.
+                    </p>
+
+
+                    <a
+                        href="{% url 'add_product' %}"
+                        class="add-product-btn"
+                    >
+                        + Add Your First Product
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+
+        <!-- ================= PAGINATION ================= -->
+
+        {% if page_obj.paginator.num_pages > 1 %}
+
+            <div class="pagination-area">
+
+
+                <div class="page-info">
+
+                    Showing
+                    <strong>
+                        {{ page_obj.start_index }}
+                    </strong>
+
+                    -
+                    <strong>
+                        {{ page_obj.end_index }}
+                    </strong>
+
+                    of
+                    <strong>
+                        {{ page_obj.paginator.count }}
+                    </strong>
+                    products
+
+                </div>
+
+
+
+                <div class="pagination">
+
+
+                    <!-- PREVIOUS -->
+
+                    {% if page_obj.has_previous %}
+
+                        <a
+                            href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}"
+                            class="page-link"
+                        >
+                            ‹ Prev
+                        </a>
+
+                    {% else %}
+
+                        <span class="page-link disabled">
+                            ‹ Prev
+                        </span>
+
+                    {% endif %}
+
+
+
+                    <!-- PAGE NUMBERS -->
+
+                    {% for num in page_obj.paginator.page_range %}
+
+                        {% if num == page_obj.number %}
+
+                            <span class="page-link active">
+                                {{ num }}
+                            </span>
+
+                        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+
+                            <a
+                                href="?search={{ search_query|urlencode }}&page={{ num }}"
+                                class="page-link"
+                            >
+                                {{ num }}
+                            </a>
+
+                        {% elif num >= page_obj.number|add:"-1" and num <= page_obj.number|add:"1" %}
+
+                            <a
+                                href="?search={{ search_query|urlencode }}&page={{ num }}"
+                                class="page-link"
+                            >
+                                {{ num }}
+                            </a>
+
+                        {% elif num == 2 and page_obj.number > 4 %}
+
+                            <span class="dots">
+                                ...
+                            </span>
+
+                        {% elif num == page_obj.paginator.num_pages|add:"-1" and page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+
+                            <span class="dots">
+                                ...
+                            </span>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+
+                    <!-- NEXT -->
+
+                    {% if page_obj.has_next %}
+
+                        <a
+                            href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}"
+                            class="page-link"
+                        >
+                            Next ›
+                        </a>
+
+                    {% else %}
+
+                        <span class="page-link disabled">
+                            Next ›
+                        </span>
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>

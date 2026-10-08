@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 from .models import PasswordResetOTP, DistributorProfile, Customer, Product
 
@@ -1262,4 +1263,42 @@ def add_product(request):
         {
             "categories": Product.CATEGORY_CHOICES,
         }
+    )
+
+@login_required
+def product_list(request):
+
+    search_query = request.GET.get("search", "").strip()
+
+    products = Product.objects.all()
+
+    # ================= SEARCH =================
+
+    if search_query:
+        products = products.filter(
+            models.Q(name__icontains=search_query)
+            | models.Q(category__icontains=search_query)
+            | models.Q(description__icontains=search_query)
+        )
+
+    # ================= PAGINATION =================
+
+    paginator = Paginator(products, 8)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "products": page_obj,
+        "page_obj": page_obj,
+        "search_query": search_query,
+        "total_products": Product.objects.count(),
+        "showing_products": products.count(),
+    }
+
+    return render(
+        request,
+        "product_list.html",
+        context
     )
