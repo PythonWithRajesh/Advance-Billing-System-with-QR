@@ -173,10 +173,12 @@
             ADMIN PORTAL
         </div>
 
-        {% if error %}
-            <div class="error">
-                {{ error }}
-            </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
 
         <form method="POST">
