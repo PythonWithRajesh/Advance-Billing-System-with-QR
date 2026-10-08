@@ -30,6 +30,12 @@ urlpatterns = [
     ),
 
     path(
+        "distributor-profile/",
+        views.distributor_profile,
+        name="distributor_profile"
+    ),
+
+    path(
         "distributor-dashboard/",
         views.distributor_dashboard,
         name="distributor_dashboard"

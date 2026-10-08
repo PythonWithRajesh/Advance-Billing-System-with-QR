@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from .models import PasswordResetOTP
+from .models import PasswordResetOTP, DistributorProfile
 
 
 def admin_login(request):
@@ -628,24 +628,21 @@ def distributor_register(request):
             first_name=name
         )
 
-
-        # Make sure distributor is NOT admin
-
         user.is_staff = False
         user.is_superuser = False
-
         user.save()
+
+        DistributorProfile.objects.create(
+            user=user,
+            phone=phone
+        )
 
 
         # ==========================================
         # SUCCESS MESSAGE
         # ==========================================
 
-        messages.success(
-            request,
-            "Distributor account created successfully! "
-            "You can now login with your registered email."
-        )
+        messages.success(request,"Distributor account created successfully! " "You can now login with your registered email.")
 
 
         # ==========================================
@@ -662,4 +659,26 @@ def distributor_register(request):
     return render(
         request,
         "distributor_register.html"
+    )
+
+
+@login_required
+def distributor_profile(request):
+
+    user = request.user
+
+    try:
+        profile = user.distributor_profile
+    except DistributorProfile.DoesNotExist:
+        profile = None
+
+    context = {
+        "user": user,
+        "profile": profile,
+    }
+
+    return render(
+        request,
+        "distributor_profile.html",
+        context
     )

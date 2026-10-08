@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Distributor Profile | Advance Billing</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f3f7f5;
+            color: #17352d;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 70px;
+            background: #022c22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            color: white;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+
+        .brand span {
+            color: #34d399;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dashboard-link {
+            color: #d1fae5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .dashboard-link:hover {
+            color: white;
+        }
+
+        .logout-btn {
+            background: #059669;
+            color: white;
+            padding: 9px 17px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #047857;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 55px 20px 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 28px;
+        }
+
+        .page-heading h1 {
+            font-size: 30px;
+            color: #022c22;
+            margin-bottom: 8px;
+        }
+
+        .page-heading p {
+            color: #6b7f77;
+            font-size: 14px;
+        }
+
+        /* ================= PROFILE CARD ================= */
+
+        .profile-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(2, 44, 34, 0.08);
+            border: 1px solid #e1ebe7;
+        }
+
+        .profile-header {
+            background: linear-gradient(
+                135deg,
+                #022c22,
+                #047857
+            );
+
+            padding: 35px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            color: white;
+        }
+
+        .avatar {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            background: #d1fae5;
+            color: #047857;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 30px;
+            font-weight: 700;
+
+            border: 4px solid rgba(255,255,255,.25);
+        }
+
+        .profile-header h2 {
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .profile-header p {
+            color: #d1fae5;
+            font-size: 14px;
+        }
+
+        /* ================= DETAILS ================= */
+
+        .profile-body {
+            padding: 35px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #022c22;
+            margin-bottom: 20px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .detail-box {
+            border: 1px solid #e2ebe7;
+            background: #f9fcfb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #71847d;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #183b32;
+            word-break: break-word;
+        }
+
+        /* ================= ACCOUNT STATUS ================= */
+
+        .status-box {
+            margin-top: 25px;
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 16px 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+        }
+
+        .status-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: #047857;
+        }
+
+        .active-badge {
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ================= FOOTER ACTION ================= */
+
+        .profile-actions {
+            margin-top: 28px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 9px;
+            background: #e7efec;
+            color: #245047;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .back-btn:hover {
+            background: #dce8e3;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .dashboard-link {
+                display: none;
+            }
+
+            .main {
+                padding: 35px 15px 50px;
+            }
+
+            .page-heading h1 {
+                font-size: 25px;
+            }
+
+            .profile-header {
+                padding: 25px;
+            }
+
+            .avatar {
+                width: 65px;
+                height: 65px;
+                font-size: 24px;
+            }
+
+            .profile-header h2 {
+                font-size: 19px;
+            }
+
+            .profile-body {
+                padding: 25px 20px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-box {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .profile-actions {
+                justify-content: stretch;
+            }
+
+            .back-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+            Advance <span>Billing</span>
+        </div>
+
+        <div class="nav-right">
+
+            <a
+                href="{% url 'distributor_dashboard' %}"
+                class="dashboard-link"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="{% url 'user_logout' %}"
+                class="logout-btn"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <div class="page-heading">
+            <h1>Distributor Profile</h1>
+
+            <p>
+                View your registered account and distributor information.
+            </p>
+        </div>
+
+
+        <div class="profile-card">
+
+            <!-- PROFILE HEADER -->
+
+            <div class="profile-header">
+
+                <div class="avatar">
+                    {{ user.first_name|first|upper }}
+                </div>
+
+                <div>
+                    <h2>
+                        {{ user.first_name|default:user.username }}
+                    </h2>
+
+                    <p>
+                        Distributor Account
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- PROFILE DETAILS -->
+
+            <div class="profile-body">
+
+                <div class="section-title">
+                    Personal Information
+                </div>
+
+                <div class="details-grid">
+
+                    <!-- NAME -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Full Name
+                        </span>
+
+                        <div class="detail-value">
+                            {{ user.first_name|default:"Not available" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Email Address
+                        </span>
+
+                        <div class="detail-value">
+                            {{ user.email|default:"Not available" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Phone Number
+                        </span>
+
+                        <div class="detail-value">
+
+                            {% if profile %}
+                                {{ profile.phone }}
+                            {% else %}
+                                Not available
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- USERNAME -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Username
+                        </span>
+
+                        <div class="detail-value">
+                            {{ user.username }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- JOINED -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Registered On
+                        </span>
+
+                        <div class="detail-value">
+                            {{ user.date_joined|date:"d M Y" }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- ROLE -->
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Account Type
+                        </span>
+
+                        <div class="detail-value">
+                            Distributor
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCOUNT STATUS -->
+
+                <div class="status-box">
+
+                    <div class="status-left">
+
+                        <span class="status-dot"></span>
+
+                        <div>
+                            <div class="status-title">
+                                Account Status
+                            </div>
+
+                            <div class="status-text">
+                                Your distributor account is active.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <span class="active-badge">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+
+                <!-- ACTION -->
+
+                <div class="profile-actions">
+
+                    <a
+                        href="{% url 'distributor_dashboard' %}"
+                        class="back-btn"
+                    >
+                        ← Back to Dashboard
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
