@@ -127,6 +127,22 @@
             text-align: center;
         }
 
+        .success-message {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+
+            padding: 12px 14px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-size: 13px;
+
+            text-align: center;
+        }
+
         .switch-login {
             text-align: center;
             margin-top: 25px;
@@ -176,6 +192,18 @@
             <div class="error">
                 {{ error }}
             </div>
+        {% endif %}
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="success-message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
         {% endif %}
 
         <form method="POST">

@@ -448,7 +448,7 @@ def distributor_register(request):
     if request.method == "POST":
 
         name = request.POST.get("name", "").strip()
-        email = request.POST.get("email", "").strip()
+        email = request.POST.get("email", "").strip().lower()
         phone = request.POST.get("phone", "").strip()
         password = request.POST.get("password", "")
         confirm_password = request.POST.get("confirm_password", "")
@@ -463,13 +463,17 @@ def distributor_register(request):
             errors["name"] = "Full name is required."
 
         elif len(name) < 2:
-            errors["name"] = "Name must contain at least 2 characters."
+            errors["name"] = (
+                "Name must contain at least 2 characters."
+            )
 
         elif not all(
             character.isalpha() or character.isspace()
             for character in name
         ):
-            errors["name"] = "Name can contain only letters and spaces."
+            errors["name"] = (
+                "Name can contain only letters and spaces."
+            )
 
 
         # ==========================================
@@ -477,10 +481,21 @@ def distributor_register(request):
         # ==========================================
 
         if not email:
-            errors["email"] = "Email address is required."
+            errors["email"] = (
+                "Email address is required."
+            )
 
         elif "@" not in email or "." not in email.split("@")[-1]:
-            errors["email"] = "Please enter a valid email address."
+            errors["email"] = (
+                "Please enter a valid email address."
+            )
+
+        elif User.objects.filter(
+            email__iexact=email
+        ).exists():
+            errors["email"] = (
+                "An account with this email already exists."
+            )
 
 
         # ==========================================
@@ -488,13 +503,19 @@ def distributor_register(request):
         # ==========================================
 
         if not phone:
-            errors["phone"] = "Phone number is required."
+            errors["phone"] = (
+                "Phone number is required."
+            )
 
         elif not phone.isdigit():
-            errors["phone"] = "Phone number must contain only digits."
+            errors["phone"] = (
+                "Phone number must contain only digits."
+            )
 
         elif len(phone) != 10:
-            errors["phone"] = "Phone number must contain exactly 10 digits."
+            errors["phone"] = (
+                "Phone number must contain exactly 10 digits."
+            )
 
 
         # ==========================================
@@ -502,24 +523,35 @@ def distributor_register(request):
         # ==========================================
 
         if not password:
-            errors["password"] = "Password is required."
+            errors["password"] = (
+                "Password is required."
+            )
 
         elif len(password) < 8:
             errors["password"] = (
                 "Password must contain at least 8 characters."
             )
 
-        elif not any(char.isupper() for char in password):
+        elif not any(
+            character.isupper()
+            for character in password
+        ):
             errors["password"] = (
                 "Password must contain at least one uppercase letter."
             )
 
-        elif not any(char.islower() for char in password):
+        elif not any(
+            character.islower()
+            for character in password
+        ):
             errors["password"] = (
                 "Password must contain at least one lowercase letter."
             )
 
-        elif not any(char.isdigit() for char in password):
+        elif not any(
+            character.isdigit()
+            for character in password
+        ):
             errors["password"] = (
                 "Password must contain at least one number."
             )
@@ -530,18 +562,20 @@ def distributor_register(request):
         # ==========================================
 
         if not confirm_password:
+
             errors["confirm_password"] = (
                 "Please confirm your password."
             )
 
         elif password != confirm_password:
+
             errors["confirm_password"] = (
                 "Passwords do not match."
             )
 
 
         # ==========================================
-        # IF ERRORS
+        # IF VALIDATION ERRORS
         # ==========================================
 
         if errors:
@@ -559,11 +593,71 @@ def distributor_register(request):
 
 
         # ==========================================
-        # SUCCESS FOR TASK 7
+        # CREATE DISTRIBUTOR USER
+        # ==========================================
+
+        username = email
+
+
+        # Extra safety check for username
+        if User.objects.filter(
+            username=username
+        ).exists():
+
+            return render(
+                request,
+                "distributor_register.html",
+                {
+                    "errors": {
+                        "email":
+                        "An account with this email already exists."
+                    },
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                }
+            )
+
+
+        # Create Django User
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=name
+        )
+
+
+        # Make sure distributor is NOT admin
+
+        user.is_staff = False
+        user.is_superuser = False
+
+        user.save()
+
+
+        # ==========================================
+        # SUCCESS MESSAGE
+        # ==========================================
+
+        messages.success(
+            request,
+            "Distributor account created successfully! "
+            "You can now login with your registered email."
+        )
+
+
+        # ==========================================
+        # REDIRECT TO LOGIN
         # ==========================================
 
         return redirect("distributor_login")
 
+
+    # ==============================================
+    # GET REQUEST
+    # ==============================================
 
     return render(
         request,
