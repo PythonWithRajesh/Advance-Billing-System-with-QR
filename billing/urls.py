@@ -108,4 +108,10 @@ urlpatterns = [
         views.product_list,
         name="product_list"
     ),
+
+    path(
+        "products/edit/<int:product_id>/",
+        views.edit_product,
+        name="edit_product"
+    ),
 ]

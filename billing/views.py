@@ -1302,3 +1302,184 @@ def product_list(request):
         "product_list.html",
         context
     )
+
+@login_required
+def edit_product(request, product_id):
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        messages.error(request, "Product not found.")
+        return redirect("product_list")
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        category = request.POST.get("category", "").strip()
+        price = request.POST.get("price", "").strip()
+        stock = request.POST.get("stock", "").strip()
+        gst_rate = request.POST.get("gst_rate", "").strip()
+        description = request.POST.get("description", "").strip()
+
+        errors = {}
+
+        valid_categories = [
+            value
+            for value, label in Product.CATEGORY_CHOICES
+        ]
+
+        # -----------------------------
+        # PRODUCT NAME VALIDATION
+        # -----------------------------
+
+        if not name:
+            errors["name"] = "Product name is required."
+
+        elif len(name) < 2:
+            errors["name"] = (
+                "Product name must contain at least 2 characters."
+            )
+
+        # -----------------------------
+        # CATEGORY VALIDATION
+        # -----------------------------
+
+        if not category:
+            errors["category"] = "Please select a category."
+
+        elif category not in valid_categories:
+            errors["category"] = "Please select a valid category."
+
+        # -----------------------------
+        # PRICE VALIDATION
+        # -----------------------------
+
+        price_value = None
+
+        if not price:
+            errors["price"] = "Price is required."
+
+        else:
+            try:
+                price_value = float(price)
+
+                if price_value <= 0:
+                    errors["price"] = (
+                        "Price must be greater than 0."
+                    )
+
+            except ValueError:
+                errors["price"] = (
+                    "Please enter a valid price."
+                )
+
+        # -----------------------------
+        # STOCK VALIDATION
+        # -----------------------------
+
+        stock_value = None
+
+        if not stock:
+            errors["stock"] = "Stock quantity is required."
+
+        else:
+            try:
+                stock_value = int(stock)
+
+                if stock_value < 0:
+                    errors["stock"] = (
+                        "Stock cannot be negative."
+                    )
+
+            except ValueError:
+                errors["stock"] = (
+                    "Stock must be a valid whole number."
+                )
+
+        # -----------------------------
+        # GST VALIDATION
+        # -----------------------------
+
+        gst_value = None
+
+        if not gst_rate:
+            errors["gst_rate"] = (
+                "GST rate is required."
+            )
+
+        else:
+            try:
+                gst_value = float(gst_rate)
+
+                if gst_value < 0:
+                    errors["gst_rate"] = (
+                        "GST rate cannot be negative."
+                    )
+
+                elif gst_value > 100:
+                    errors["gst_rate"] = (
+                        "GST rate cannot be greater than 100%."
+                    )
+
+            except ValueError:
+                errors["gst_rate"] = (
+                    "Please enter a valid GST rate."
+                )
+
+        # -----------------------------
+        # SHOW ERRORS
+        # -----------------------------
+
+        if errors:
+
+            return render(
+                request,
+                "edit_product.html",
+                {
+                    "product": product,
+                    "errors": errors,
+
+                    "form_name": name,
+                    "form_category": category,
+                    "form_price": price,
+                    "form_stock": stock,
+                    "form_gst_rate": gst_rate,
+                    "form_description": description,
+
+                    "categories": Product.CATEGORY_CHOICES,
+                }
+            )
+
+        # -----------------------------
+        # UPDATE PRODUCT
+        # -----------------------------
+
+        product.name = name
+        product.category = category
+        product.price = price_value
+        product.stock = stock_value
+        product.gst_rate = gst_value
+        product.description = description
+
+        product.save()
+
+        messages.success(
+            request,
+            f"Product '{name}' updated successfully."
+        )
+
+        return redirect("product_list")
+
+    # -----------------------------
+    # GET REQUEST
+    # PRE-FILLED FORM
+    # -----------------------------
+
+    return render(
+        request,
+        "edit_product.html",
+        {
+            "product": product,
+            "categories": Product.CATEGORY_CHOICES,
+        }
+    )

@@ -641,6 +641,31 @@
                 width: 100%;
             }
 
+
+        }
+
+        .edit-btn {
+            display: inline-block;
+
+            padding: 8px 14px;
+
+            background: #2563eb;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .edit-btn:hover {
+            background: #1d4ed8;
         }
 
     </style>
@@ -955,6 +980,15 @@
 
                                 <td>
                                     {{ product.created_at|date:"d M Y" }}
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{% url 'edit_product' product.id %}"
+                                        class="edit-btn"
+                                    >
+                                        Edit
+                                    </a>
                                 </td>
 
                             </tr>
