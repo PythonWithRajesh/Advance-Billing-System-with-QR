@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Customers | Advance Billing</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            min-height: 100vh;
+            background: #f3f7f5;
+            color: #17352d;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 70px;
+
+            background: #022c22;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            color: white;
+        }
+
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+
+        .brand span {
+            color: #34d399;
+        }
+
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+
+        .dashboard-link {
+            color: #d1fae5;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+
+        .dashboard-link:hover {
+            color: white;
+        }
+
+
+        .logout-btn {
+            background: #059669;
+
+            color: white;
+
+            padding: 9px 17px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        .logout-btn:hover {
+            background: #047857;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            width: 100%;
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 50px 20px 70px;
+        }
+
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+
+        .page-heading h1 {
+            font-size: 30px;
+
+            color: #022c22;
+
+            margin-bottom: 8px;
+        }
+
+
+        .page-heading p {
+            color: #6b7f77;
+
+            font-size: 14px;
+        }
+
+
+        /* ================= TOP STATS ================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid #e1ebe7;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 8px 25px
+                rgba(2, 44, 34, 0.05);
+        }
+
+
+        .stat-label {
+            color: #71847d;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            font-weight: 700;
+
+            letter-spacing: .7px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .stat-value {
+            color: #022c22;
+
+            font-size: 26px;
+
+            font-weight: 700;
+        }
+
+
+        /* ================= TABLE CARD ================= */
+
+        .table-card {
+            background: white;
+
+            border: 1px solid #e1ebe7;
+
+            border-radius: 17px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(2, 44, 34, 0.07);
+
+            overflow: hidden;
+        }
+
+
+        /* ================= TOOLBAR ================= */
+
+        .toolbar {
+            padding: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            border-bottom: 1px solid #e8efec;
+        }
+
+
+        .toolbar-title h2 {
+            color: #022c22;
+
+            font-size: 18px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .toolbar-title p {
+            color: #7a8b85;
+
+            font-size: 12px;
+        }
+
+
+        .search-area {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .search-box {
+            position: relative;
+        }
+
+
+        .search-icon {
+            position: absolute;
+
+            left: 13px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #81928c;
+
+            font-size: 14px;
+        }
+
+
+        .search-input {
+            width: 300px;
+
+            padding: 12px 14px 12px 38px;
+
+            border: 1px solid #d6e3de;
+
+            border-radius: 9px;
+
+            background: #fbfdfc;
+
+            outline: none;
+
+            color: #17352d;
+
+            font-size: 13px;
+        }
+
+
+        .search-input:focus {
+            border-color: #059669;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(5, 150, 105, .10);
+        }
+
+
+        .add-btn {
+            background: #047857;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 12px 17px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        .add-btn:hover {
+            background: #065f46;
+        }
+
+
+        /* ================= TABLE ================= */
+
+        .table-wrapper {
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 950px;
+        }
+
+
+        thead {
+            background: #f6faf8;
+        }
+
+
+        th {
+            padding: 14px 18px;
+
+            text-align: left;
+
+            color: #657a72;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .6px;
+
+            font-weight: 700;
+
+            border-bottom: 1px solid #e2ebe7;
+
+            white-space: nowrap;
+        }
+
+
+        td {
+            padding: 16px 18px;
+
+            border-bottom: 1px solid #edf2ef;
+
+            color: #35544b;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+        }
+
+
+        tbody tr {
+            transition: .15s;
+        }
+
+
+        tbody tr:hover {
+            background: #f8fcfa;
+        }
+
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        .customer-name {
+            color: #022c22;
+
+            font-weight: 700;
+        }
+
+
+        .customer-id {
+            color: #8a9b95;
+
+            font-size: 11px;
+        }
+
+
+        .email {
+            color: #47665d;
+        }
+
+
+        .phone {
+            font-weight: 600;
+
+            color: #245047;
+        }
+
+
+        .location {
+            color: #536d64;
+        }
+
+
+        .pincode {
+            background: #ecfdf5;
+
+            color: #047857;
+
+            padding: 5px 9px;
+
+            border-radius: 6px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        /* ================= EMPTY STATE ================= */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 60px 20px;
+        }
+
+
+        .empty-icon {
+            width: 60px;
+            height: 60px;
+
+            border-radius: 50%;
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+
+        .empty-state h3 {
+            color: #022c22;
+
+            font-size: 17px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .empty-state p {
+            color: #7a8b85;
+
+            font-size: 13px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        .table-footer {
+            padding: 16px 22px;
+
+            background: #fbfdfc;
+
+            border-top: 1px solid #e8efec;
+
+            color: #71847d;
+
+            font-size: 12px;
+        }
+
+
+        .table-footer strong {
+            color: #047857;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+
+            .toolbar {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .search-area {
+                width: 100%;
+            }
+
+
+            .search-box {
+                width: 100%;
+            }
+
+
+            .search-input {
+                width: 100%;
+            }
+
+
+            .add-btn {
+                text-align: center;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+
+            .dashboard-link {
+                display: none;
+            }
+
+
+            .main {
+                padding: 35px 15px 50px;
+            }
+
+
+            .page-heading h1 {
+                font-size: 25px;
+            }
+
+
+            .toolbar {
+                padding: 18px;
+            }
+
+
+            .search-area {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+            Advance <span>Billing</span>
+        </div>
+
+
+        <div class="nav-right">
+
+            <a
+                href="{% url 'distributor_dashboard' %}"
+                class="dashboard-link"
+            >
+                Dashboard
+            </a>
+
+
+            <a
+                href="{% url 'user_logout' %}"
+                class="logout-btn"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- HEADING -->
+
+        <div class="page-heading">
+
+            <h1>
+                Customers
+            </h1>
+
+            <p>
+                Manage and search all your registered customers.
+            </p>
+
+        </div>
+
+
+        <!-- ================= STATS ================= -->
+
+        <div class="stats">
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Total Customers
+                </div>
+
+                <div class="stat-value">
+                    {{ total_customers }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Showing Results
+                </div>
+
+                <div class="stat-value">
+                    {{ showing_customers }}
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Search Status
+                </div>
+
+                <div class="stat-value">
+
+                    {% if search_query %}
+                        Active
+                    {% else %}
+                        All
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================= TABLE ================= -->
+
+        <div class="table-card">
+
+
+            <!-- TOOLBAR -->
+
+            <div class="toolbar">
+
+
+                <div class="toolbar-title">
+
+                    <h2>
+                        Customer Directory
+                    </h2>
+
+                    <p>
+                        View customer contact and address information.
+                    </p>
+
+                </div>
+
+
+                <div class="search-area">
+
+
+                    <form
+                        method="GET"
+                        action="{% url 'customer_list' %}"
+                        class="search-box"
+                    >
+
+                        <span class="search-icon">
+                            🔍
+                        </span>
+
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="search-input"
+                            value="{{ search_query }}"
+                            placeholder="Search name, email, phone..."
+                            autocomplete="off"
+                        >
+
+                    </form>
+
+
+                    <a
+                        href="{% url 'add_customer' %}"
+                        class="add-btn"
+                    >
+                        + Add Customer
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+            {% if customers %}
+
+
+                <!-- ================= CUSTOMER TABLE ================= -->
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Phone
+                                </th>
+
+                                <th>
+                                    Address
+                                </th>
+
+                                <th>
+                                    City
+                                </th>
+
+                                <th>
+                                    State
+                                </th>
+
+                                <th>
+                                    Pincode
+                                </th>
+
+                                <th>
+                                    Added On
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for customer in customers %}
+
+                                <tr>
+
+
+                                    <td>
+
+                                        <span class="customer-id">
+                                            #{{ customer.id }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="customer-name">
+                                            {{ customer.name }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="email">
+                                            {{ customer.email }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="phone">
+                                            {{ customer.phone }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ customer.address|truncatechars:35 }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="location">
+                                            {{ customer.city }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="location">
+                                            {{ customer.state }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="pincode">
+                                            {{ customer.pincode }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ customer.created_at|date:"d M Y" }}
+
+                                    </td>
+
+
+                                </tr>
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="table-footer">
+
+                    Showing
+                    <strong>{{ showing_customers }}</strong>
+                    customer(s)
+
+                    {% if search_query %}
+
+                        matching
+                        <strong>"{{ search_query }}"</strong>
+
+                    {% endif %}
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- ================= EMPTY ================= -->
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        👥
+                    </div>
+
+
+                    {% if search_query %}
+
+                        <h3>
+                            No customers found
+                        </h3>
+
+                        <p>
+                            No customer matches
+                            "{{ search_query }}".
+                        </p>
+
+
+                        <a
+                            href="{% url 'customer_list' %}"
+                            class="add-btn"
+                        >
+                            Clear Search
+                        </a>
+
+                    {% else %}
+
+                        <h3>
+                            No Customers Yet
+                        </h3>
+
+                        <p>
+                            Start by adding your first customer.
+                        </p>
+
+
+                        <a
+                            href="{% url 'add_customer' %}"
+                            class="add-btn"
+                        >
+                            + Add First Customer
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </main>
+
+
+</body>
+
+</html>

@@ -15,6 +15,8 @@ from django.utils import timezone
 
 from .models import PasswordResetOTP, DistributorProfile, Customer
 
+from django.db import models
+
 
 def admin_login(request):
     if request.user.is_authenticated:
@@ -944,4 +946,35 @@ def add_customer(request):
     return render(
         request,
         "add_customer.html"
+    )
+
+
+@login_required
+def customer_list(request):
+
+    search_query = request.GET.get("search", "").strip()
+
+    customers = Customer.objects.all()
+
+    if search_query:
+        customers = customers.filter(
+            models.Q(name__icontains=search_query)
+            | models.Q(email__icontains=search_query)
+            | models.Q(phone__icontains=search_query)
+            | models.Q(city__icontains=search_query)
+            | models.Q(state__icontains=search_query)
+            | models.Q(pincode__icontains=search_query)
+        )
+
+    context = {
+        "customers": customers,
+        "search_query": search_query,
+        "total_customers": Customer.objects.count(),
+        "showing_customers": customers.count(),
+    }
+
+    return render(
+        request,
+        "customer_list.html",
+        context
     )
