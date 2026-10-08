@@ -486,6 +486,45 @@
             margin-bottom: 20px;
         }
 
+        /* ================= ACTION BUTTONS ================= */
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .edit-btn {
+            background: #e8f1ed;
+            color: #285442;
+        }
+
+        .edit-btn:hover {
+            background: #d8e7e0;
+        }
+
+        .delete-btn {
+            background: #fceaea;
+            color: #b83232;
+        }
+
+        .delete-btn:hover {
+            background: #f8d6d6;
+        }
+
 
         /* ================= FOOTER ================= */
 
@@ -580,10 +619,343 @@
 
         }
 
+        /* ================= DELETE MODAL ================= */
+
+        .delete-modal {
+            display: none;
+
+            position: fixed;
+
+            z-index: 9999;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background: rgba(20, 35, 30, 0.60);
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+        .delete-modal.show {
+            display: flex;
+        }
+
+        .delete-modal-content {
+            width: 100%;
+            max-width: 430px;
+
+            background: #ffffff;
+
+            border-radius: 16px;
+
+            padding: 32px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.20);
+
+            animation: deletePopup 0.2s ease;
+        }
+
+        @keyframes deletePopup {
+
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+        }
+
+
+        /* ================= DELETE ICON ================= */
+
+        .delete-icon {
+            width: 58px;
+            height: 58px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #fceaea;
+
+            color: #c0392b;
+
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .delete-modal-content h2 {
+            color: #263831;
+
+            font-size: 22px;
+
+            margin-bottom: 12px;
+        }
+
+        .delete-modal-content p {
+            color: #65736d;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            margin-bottom: 5px;
+        }
+
+        .delete-modal-content p strong {
+            color: #263831;
+        }
+
+        .warning-text {
+            display: block;
+
+            color: #b83232;
+
+            font-size: 12px;
+
+            margin-top: 8px;
+        }
+
+
+        /* ================= MODAL BUTTONS ================= */
+
+        .modal-buttons {
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+        .cancel-delete-btn,
+        .confirm-delete-btn {
+            flex: 1;
+
+            border: none;
+
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .cancel-delete-btn {
+            background: #edf1ef;
+
+            color: #35443e;
+        }
+
+        .cancel-delete-btn:hover {
+            background: #e0e6e3;
+        }
+
+        .confirm-delete-btn {
+            background: #c0392b;
+
+            color: #ffffff;
+        }
+
+        .confirm-delete-btn:hover {
+            background: #a93226;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 500px) {
+
+            .delete-modal-content {
+                padding: 25px 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .cancel-delete-btn,
+            .confirm-delete-btn {
+                width: 100%;
+            }
+
+        }
+
     </style>
 
 </head>
 
+<!-- ================= DELETE CONFIRMATION MODAL ================= -->
+
+<div
+    id="deleteModal"
+    class="delete-modal"
+>
+
+    <div class="delete-modal-content">
+
+        <!-- ICON -->
+
+        <div class="delete-icon">
+            !
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h2>
+            Delete Customer?
+        </h2>
+
+
+        <!-- MESSAGE -->
+
+        <p>
+            Are you sure you want to delete
+            <strong id="deleteCustomerName"></strong>?
+        </p>
+
+        <span class="warning-text">
+            This action cannot be undone.
+        </span>
+
+
+        <!-- BUTTONS -->
+
+        <div class="modal-buttons">
+
+            <button
+                type="button"
+                class="cancel-delete-btn"
+                onclick="closeDeleteModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                class="confirm-delete-btn"
+                id="confirmDeleteButton"
+            >
+                Delete Customer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    let selectedCustomerId = null;
+
+
+    // ================= OPEN DELETE MODAL =================
+
+    function openDeleteModal(customerId, customerName) {
+
+        selectedCustomerId = customerId;
+
+        document.getElementById(
+            "deleteCustomerName"
+        ).textContent = customerName;
+
+        document.getElementById(
+            "deleteModal"
+        ).classList.add("show");
+    }
+
+
+    // ================= CLOSE DELETE MODAL =================
+
+    function closeDeleteModal() {
+
+        selectedCustomerId = null;
+
+        document.getElementById(
+            "deleteModal"
+        ).classList.remove("show");
+    }
+
+
+    // ================= CONFIRM DELETE =================
+
+    document.getElementById(
+        "confirmDeleteButton"
+    ).addEventListener(
+        "click",
+        function () {
+
+            if (!selectedCustomerId) {
+                return;
+            }
+
+            document.getElementById(
+                "deleteForm" + selectedCustomerId
+            ).submit();
+
+        }
+    );
+
+
+    // ================= CLICK OUTSIDE MODAL =================
+
+    document.getElementById(
+        "deleteModal"
+    ).addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === this) {
+
+                closeDeleteModal();
+
+            }
+
+        }
+    );
+
+
+    // ================= ESC KEY =================
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+
+                closeDeleteModal();
+
+            }
+
+        }
+    );
+
+</script>
 
 <body>
 
@@ -908,6 +1280,20 @@
                                         >
                                             Edit
                                         </a>
+
+                                        <!-- DELETE -->
+
+                                        <button
+                                            type="button"
+                                            class="delete-btn"
+                                            onclick="openDeleteModal(
+                                                '{{ customer.id }}',
+                                                '{{ customer.name|escapejs }}'
+                                            )"
+                                        >
+                                            Delete
+                                        </button>
+
                                     </td>
 
 

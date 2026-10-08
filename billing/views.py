@@ -1095,3 +1095,26 @@ def edit_customer(request, customer_id):
             "customer": customer
         }
     )
+
+@login_required
+def delete_customer(request, customer_id):
+
+    if request.method != "POST":
+        return redirect("customer_list")
+
+    try:
+        customer = Customer.objects.get(id=customer_id)
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("customer_list")
+
+    customer_name = customer.name
+
+    customer.delete()
+
+    messages.success(
+        request,
+        f"Customer '{customer_name}' deleted successfully."
+    )
+
+    return redirect("customer_list")
