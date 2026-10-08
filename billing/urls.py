@@ -96,4 +96,10 @@ urlpatterns = [
         views.delete_customer,
         name="delete_customer"
     ),
+
+    path(
+        "add-product/",
+        views.add_product,
+        name="add_product"
+    ),
 ]

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Product | Advance Billing</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            min-height: 100vh;
+            background: #f4f7f5;
+            color: #24362f;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            width: 100%;
+            background: #1f332d;
+            color: white;
+
+            padding: 16px 5%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+
+            padding: 9px 14px;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+        }
+
+
+        .dashboard-link {
+            background: #36574b;
+        }
+
+
+        .logout-link {
+            background: #b64040;
+        }
+
+
+        /* ================= PAGE ================= */
+
+        .page {
+            width: 100%;
+            max-width: 1000px;
+
+            margin: 45px auto;
+
+            padding: 0 20px;
+        }
+
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+
+        .heading h1 {
+            font-size: 30px;
+            color: #203b32;
+
+            margin-bottom: 7px;
+        }
+
+
+        .heading p {
+            color: #68756f;
+            font-size: 14px;
+        }
+
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+
+            border: 1px solid #e1e8e4;
+
+            border-radius: 16px;
+
+            padding: 32px;
+
+            box-shadow:
+                0 10px 35px rgba(31, 51, 45, 0.08);
+        }
+
+
+        .section-title {
+            font-size: 17px;
+            font-weight: bold;
+
+            color: #29463b;
+
+            margin-bottom: 22px;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+
+        label {
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #35483f;
+
+            margin-bottom: 8px;
+        }
+
+
+        .required {
+            color: #c0392b;
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            border: 1px solid #ccd8d2;
+
+            border-radius: 8px;
+
+            padding: 12px 13px;
+
+            font-size: 14px;
+
+            color: #263831;
+
+            background: white;
+
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+
+        input,
+        select {
+            height: 46px;
+        }
+
+
+        textarea {
+            min-height: 115px;
+
+            resize: vertical;
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            border-color: #315c4d;
+
+            box-shadow:
+                0 0 0 3px rgba(49, 92, 77, 0.10);
+        }
+
+
+        .help-text {
+
+            color: #7a8781;
+
+            font-size: 11px;
+
+            margin-top: 6px;
+        }
+
+
+        .error {
+
+            color: #c0392b;
+
+            font-size: 12px;
+
+            margin-top: 6px;
+        }
+
+
+        /* ================= ALERT ================= */
+
+        .alert {
+
+            padding: 13px 15px;
+
+            border-radius: 8px;
+
+            margin-bottom: 22px;
+
+            font-size: 14px;
+        }
+
+
+        .alert-success {
+
+            background: #e8f5ed;
+
+            color: #24613f;
+
+            border: 1px solid #c7e5d2;
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        .buttons {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 12px;
+
+            margin-top: 30px;
+
+            padding-top: 22px;
+
+            border-top: 1px solid #e7ece9;
+        }
+
+
+        .btn {
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 12px 21px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            text-decoration: none;
+        }
+
+
+        .cancel-btn {
+
+            background: #edf1ef;
+
+            color: #35443e;
+        }
+
+
+        .save-btn {
+
+            background: #2e5849;
+
+            color: white;
+        }
+
+
+        .cancel-btn:hover {
+            background: #e1e6e3;
+        }
+
+
+        .save-btn:hover {
+            background: #24483c;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 14px 20px;
+            }
+
+
+            .brand {
+                font-size: 18px;
+            }
+
+
+            .nav-links a {
+                padding: 8px 9px;
+                font-size: 12px;
+            }
+
+
+            .page {
+                margin: 30px auto;
+            }
+
+
+            .heading h1 {
+                font-size: 25px;
+            }
+
+
+            .card {
+                padding: 22px 18px;
+            }
+
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .full-width {
+                grid-column: auto;
+            }
+
+
+            .buttons {
+                flex-direction: column-reverse;
+            }
+
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="brand">
+        Advance Billing
+    </div>
+
+
+    <div class="nav-links">
+
+        <a
+            href="{% url 'distributor_dashboard' %}"
+            class="dashboard-link"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'user_logout' %}"
+            class="logout-link"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="page">
+
+
+    <div class="heading">
+
+        <h1>
+            Add New Product
+        </h1>
+
+        <p>
+            Add product details, pricing, stock and GST information.
+        </p>
+
+    </div>
+
+
+
+    <div class="card">
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+
+        <div class="section-title">
+            Product Information
+        </div>
+
+
+
+        <form
+            method="POST"
+            id="productForm"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+
+            <div class="form-grid">
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Product Name
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="{{ form_name|default:'' }}"
+                        placeholder="Enter product name"
+                        maxlength="150"
+                    >
+
+                    {% if errors.name %}
+
+                        <div class="error">
+                            {{ errors.name }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Category
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                    >
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+
+                        {% for value, label in categories %}
+
+                            <option
+                                value="{{ value }}"
+                                {% if form_category == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    {% if errors.category %}
+
+                        <div class="error">
+                            {{ errors.category }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- PRICE -->
+
+                <div class="form-group">
+
+                    <label for="price">
+                        Price (₹)
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        value="{{ form_price|default:'' }}"
+                        placeholder="0.00"
+                        min="0.01"
+                        step="0.01"
+                    >
+
+                    <div class="help-text">
+                        Price must be greater than ₹0.
+                    </div>
+
+
+                    {% if errors.price %}
+
+                        <div class="error">
+                            {{ errors.price }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- STOCK -->
+
+                <div class="form-group">
+
+                    <label for="stock">
+                        Stock Quantity
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        value="{{ form_stock|default:'' }}"
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                    >
+
+                    <div class="help-text">
+                        Stock cannot be negative.
+                    </div>
+
+
+                    {% if errors.stock %}
+
+                        <div class="error">
+                            {{ errors.stock }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- GST -->
+
+                <div class="form-group">
+
+                    <label for="gst_rate">
+                        GST Rate (%)
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="gst_rate"
+                        name="gst_rate"
+                        value="{{ form_gst_rate|default:'' }}"
+                        placeholder="18"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                    >
+
+                    <div class="help-text">
+                        Enter GST percentage between 0 and 100.
+                    </div>
+
+
+                    {% if errors.gst_rate %}
+
+                        <div class="error">
+                            {{ errors.gst_rate }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group full-width">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Enter product description..."
+                    >{{ form_description|default:'' }}</textarea>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+                <a
+                    href="{% url 'distributor_dashboard' %}"
+                    class="btn cancel-btn"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn save-btn"
+                >
+                    Add Product
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ================= JAVASCRIPT VALIDATION ================= -->
+
+<script>
+
+    document
+        .getElementById("productForm")
+        .addEventListener("submit", function(event) {
+
+            const name =
+                document.getElementById("name").value.trim();
+
+            const category =
+                document.getElementById("category").value;
+
+            const price =
+                document.getElementById("price").value.trim();
+
+            const stock =
+                document.getElementById("stock").value.trim();
+
+            const gst =
+                document.getElementById("gst_rate").value.trim();
+
+
+            // NAME
+
+            if (name.length < 2) {
+
+                alert(
+                    "Product name must contain at least 2 characters."
+                );
+
+                event.preventDefault();
+
+                return;
+            }
+
+
+            // CATEGORY
+
+            if (!category) {
+
+                alert(
+                    "Please select a product category."
+                );
+
+                event.preventDefault();
+
+                return;
+            }
+
+
+            // PRICE
+
+            if (
+                price === "" ||
+                Number(price) <= 0
+            ) {
+
+                alert(
+                    "Price must be greater than 0."
+                );
+
+                event.preventDefault();
+
+                return;
+            }
+
+
+            // STOCK
+
+            if (
+                stock === "" ||
+                !Number.isInteger(Number(stock)) ||
+                Number(stock) < 0
+            ) {
+
+                alert(
+                    "Stock must be a non-negative whole number."
+                );
+
+                event.preventDefault();
+
+                return;
+            }
+
+
+            // GST
+
+            if (
+                gst === "" ||
+                Number(gst) < 0 ||
+                Number(gst) > 100
+            ) {
+
+                alert(
+                    "GST rate must be between 0 and 100."
+                );
+
+                event.preventDefault();
+
+                return;
+            }
+
+        });
+
+</script>
+
+
+</body>
+
+</html>

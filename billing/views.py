@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from .models import PasswordResetOTP, DistributorProfile, Customer
+from .models import PasswordResetOTP, DistributorProfile, Customer, Product
 
 from django.db import models
 
@@ -1118,3 +1118,148 @@ def delete_customer(request, customer_id):
     )
 
     return redirect("customer_list")
+
+
+@login_required
+def add_product(request):
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        category = request.POST.get("category", "").strip()
+        price = request.POST.get("price", "").strip()
+        stock = request.POST.get("stock", "").strip()
+        gst_rate = request.POST.get("gst_rate", "").strip()
+        description = request.POST.get("description", "").strip()
+
+        errors = {}
+
+        # ================= NAME VALIDATION =================
+
+        if not name:
+            errors["name"] = "Product name is required."
+
+        elif len(name) < 2:
+            errors["name"] = (
+                "Product name must contain at least 2 characters."
+            )
+
+        # ================= CATEGORY VALIDATION =================
+
+        valid_categories = [
+            value
+            for value, label in Product.CATEGORY_CHOICES
+        ]
+
+        if not category:
+            errors["category"] = "Please select a category."
+
+        elif category not in valid_categories:
+            errors["category"] = "Please select a valid category."
+
+        # ================= PRICE VALIDATION =================
+
+        price_value = None
+
+        if not price:
+            errors["price"] = "Price is required."
+
+        else:
+            try:
+                price_value = float(price)
+
+                if price_value <= 0:
+                    errors["price"] = "Price must be greater than 0."
+
+            except ValueError:
+                errors["price"] = "Please enter a valid price."
+
+        # ================= STOCK VALIDATION =================
+
+        stock_value = None
+
+        if not stock:
+            errors["stock"] = "Stock quantity is required."
+
+        else:
+            try:
+                stock_value = int(stock)
+
+                if stock_value < 0:
+                    errors["stock"] = (
+                        "Stock cannot be negative."
+                    )
+
+            except ValueError:
+                errors["stock"] = (
+                    "Stock must be a valid whole number."
+                )
+
+        # ================= GST VALIDATION =================
+
+        gst_value = None
+
+        if not gst_rate:
+            errors["gst_rate"] = "GST rate is required."
+
+        else:
+            try:
+                gst_value = float(gst_rate)
+
+                if gst_value < 0:
+                    errors["gst_rate"] = (
+                        "GST rate cannot be negative."
+                    )
+
+                elif gst_value > 100:
+                    errors["gst_rate"] = (
+                        "GST rate cannot be greater than 100%."
+                    )
+
+            except ValueError:
+                errors["gst_rate"] = (
+                    "Please enter a valid GST rate."
+                )
+
+        # ================= SAVE =================
+
+        if errors:
+
+            return render(
+                request,
+                "add_product.html",
+                {
+                    "errors": errors,
+                    "form_name": name,
+                    "form_category": category,
+                    "form_price": price,
+                    "form_stock": stock,
+                    "form_gst_rate": gst_rate,
+                    "form_description": description,
+                    "categories": Product.CATEGORY_CHOICES,
+                }
+            )
+
+        Product.objects.create(
+            name=name,
+            category=category,
+            price=price_value,
+            stock=stock_value,
+            gst_rate=gst_value,
+            description=description,
+        )
+
+        messages.success(
+            request,
+            f"Product '{name}' added successfully."
+        )
+
+        return redirect("add_product")
+
+    return render(
+        request,
+        "add_product.html",
+        {
+            "categories": Product.CATEGORY_CHOICES,
+        }
+    )
