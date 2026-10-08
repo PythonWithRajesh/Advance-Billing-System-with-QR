@@ -892,6 +892,24 @@
 
                                     </td>
 
+                                    <td>
+                                        <a
+                                            href="{% url 'edit_customer' customer.id %}"
+                                            style="
+                                                display: inline-block;
+                                                padding: 8px 12px;
+                                                background: #2e5849;
+                                                color: white;
+                                                text-decoration: none;
+                                                border-radius: 6px;
+                                                font-size: 13px;
+                                                font-weight: 600;
+                                            "
+                                        >
+                                            Edit
+                                        </a>
+                                    </td>
+
 
                                 </tr>
 
@@ -929,10 +947,6 @@
                 <!-- ================= EMPTY ================= -->
 
                 <div class="empty-state">
-
-                    <div class="empty-icon">
-                        👥
-                    </div>
 
 
                     {% if search_query %}

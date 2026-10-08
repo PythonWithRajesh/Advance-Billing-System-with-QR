@@ -978,3 +978,120 @@ def customer_list(request):
         "customer_list.html",
         context
     )
+
+@login_required
+def edit_customer(request, customer_id):
+
+    try:
+        customer = Customer.objects.get(id=customer_id)
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("customer_list")
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        phone = request.POST.get("phone", "").strip()
+        address = request.POST.get("address", "").strip()
+        city = request.POST.get("city", "").strip()
+        state = request.POST.get("state", "").strip()
+        pincode = request.POST.get("pincode", "").strip()
+
+        errors = {}
+
+        # Name validation
+        if not name:
+            errors["name"] = "Customer name is required."
+        elif len(name) < 2:
+            errors["name"] = "Name must contain at least 2 characters."
+        elif not all(
+            character.isalpha() or character.isspace()
+            for character in name
+        ):
+            errors["name"] = "Name can contain only letters and spaces."
+
+        # Email validation
+        if not email:
+            errors["email"] = "Email address is required."
+        elif "@" not in email or "." not in email.split("@")[-1]:
+            errors["email"] = "Please enter a valid email address."
+
+        # Phone validation
+        if not phone:
+            errors["phone"] = "Phone number is required."
+        elif not phone.isdigit():
+            errors["phone"] = "Phone number must contain only digits."
+        elif len(phone) != 10:
+            errors["phone"] = "Phone number must contain exactly 10 digits."
+
+        # Address validation
+        if not address:
+            errors["address"] = "Address is required."
+        elif len(address) < 5:
+            errors["address"] = "Please enter a valid address."
+
+        # City validation
+        if not city:
+            errors["city"] = "City is required."
+        elif len(city) < 2:
+            errors["city"] = "Please enter a valid city."
+
+        # State validation
+        if not state:
+            errors["state"] = "State is required."
+        elif len(state) < 2:
+            errors["state"] = "Please enter a valid state."
+
+        # Pincode validation
+        if not pincode:
+            errors["pincode"] = "Pincode is required."
+        elif not pincode.isdigit():
+            errors["pincode"] = "Pincode must contain only digits."
+        elif len(pincode) != 6:
+            errors["pincode"] = "Pincode must contain exactly 6 digits."
+
+        # If validation errors
+        if errors:
+            return render(
+                request,
+                "edit_customer.html",
+                {
+                    "customer": customer,
+                    "errors": errors,
+                    "form_name": name,
+                    "form_email": email,
+                    "form_phone": phone,
+                    "form_address": address,
+                    "form_city": city,
+                    "form_state": state,
+                    "form_pincode": pincode,
+                }
+            )
+
+        # Update customer
+        customer.name = name
+        customer.email = email
+        customer.phone = phone
+        customer.address = address
+        customer.city = city
+        customer.state = state
+        customer.pincode = pincode
+
+        customer.save()
+
+        messages.success(
+            request,
+            f"Customer '{name}' updated successfully."
+        )
+
+        return redirect("customer_list")
+
+    # GET request
+    return render(
+        request,
+        "edit_customer.html",
+        {
+            "customer": customer
+        }
+    )

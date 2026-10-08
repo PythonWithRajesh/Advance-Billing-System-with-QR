@@ -84,5 +84,10 @@ urlpatterns = [
         views.customer_list,
         name="customer_list"
     ),
-    
+
+    path(
+        "customers/edit/<int:customer_id>/",
+        views.edit_customer,
+        name="edit_customer"
+    ),
 ]
