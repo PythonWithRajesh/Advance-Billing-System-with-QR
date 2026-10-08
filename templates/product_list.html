@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
 
@@ -30,7 +30,9 @@
         }
 
 
-        /* ================= NAVBAR ================= */
+        /* =========================
+           NAVBAR
+        ========================= */
 
         .navbar {
             width: 100%;
@@ -42,17 +44,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+
+            gap: 20px;
         }
 
 
         .brand {
             font-size: 22px;
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: .2px;
         }
 
 
         .nav-links {
             display: flex;
+            align-items: center;
             gap: 10px;
         }
 
@@ -66,6 +72,9 @@
             border-radius: 7px;
 
             font-size: 13px;
+            font-weight: 600;
+
+            transition: .2s;
         }
 
 
@@ -74,12 +83,24 @@
         }
 
 
+        .dashboard-link:hover {
+            background: #44685a;
+        }
+
+
         .logout-link {
             background: #b64040;
         }
 
 
-        /* ================= PAGE ================= */
+        .logout-link:hover {
+            background: #963636;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
 
         .page {
             width: 100%;
@@ -97,12 +118,14 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+
             gap: 20px;
         }
 
 
         .heading h1 {
             font-size: 30px;
+
             color: #203b32;
 
             margin-bottom: 7px;
@@ -111,16 +134,19 @@
 
         .heading p {
             color: #68756f;
+
             font-size: 14px;
         }
 
 
         .add-product-btn {
             display: inline-flex;
+
             align-items: center;
             justify-content: center;
 
             background: #2e5849;
+
             color: white;
 
             text-decoration: none;
@@ -133,15 +159,21 @@
             font-weight: 600;
 
             white-space: nowrap;
+
+            transition: .2s;
         }
 
 
         .add-product-btn:hover {
             background: #24483c;
+
+            transform: translateY(-1px);
         }
 
 
-        /* ================= STATS ================= */
+        /* =========================
+           STATS
+        ========================= */
 
         .stats {
             display: grid;
@@ -163,6 +195,9 @@
             border-radius: 12px;
 
             padding: 18px 20px;
+
+            box-shadow:
+                0 4px 15px rgba(31, 51, 45, .04);
         }
 
 
@@ -180,11 +215,13 @@
 
             font-size: 24px;
 
-            font-weight: bold;
+            font-weight: 700;
         }
 
 
-        /* ================= MAIN CARD ================= */
+        /* =========================
+           MAIN CARD
+        ========================= */
 
         .card {
             background: white;
@@ -196,11 +233,13 @@
             padding: 22px;
 
             box-shadow:
-                0 8px 30px rgba(31, 51, 45, 0.07);
+                0 8px 30px rgba(31, 51, 45, .07);
         }
 
 
-        /* ================= SEARCH ================= */
+        /* =========================
+           SEARCH
+        ========================= */
 
         .search-area {
             display: flex;
@@ -240,6 +279,12 @@
             outline: none;
 
             font-size: 14px;
+
+            color: #24362f;
+
+            background: white;
+
+            transition: .2s;
         }
 
 
@@ -247,7 +292,7 @@
             border-color: #315c4d;
 
             box-shadow:
-                0 0 0 3px rgba(49, 92, 77, 0.10);
+                0 0 0 3px rgba(49, 92, 77, .10);
         }
 
 
@@ -269,6 +314,8 @@
             font-weight: 600;
 
             cursor: pointer;
+
+            transition: .2s;
         }
 
 
@@ -283,7 +330,6 @@
             height: 44px;
 
             align-items: center;
-
             justify-content: center;
 
             padding: 0 15px;
@@ -299,10 +345,19 @@
             font-size: 13px;
 
             font-weight: 600;
+
+            transition: .2s;
         }
 
 
-        /* ================= TABLE ================= */
+        .clear-btn:hover {
+            background: #dfe7e3;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
 
         .table-wrapper {
             width: 100%;
@@ -318,7 +373,7 @@
         table {
             width: 100%;
 
-            min-width: 950px;
+            min-width: 1080px;
 
             border-collapse: collapse;
         }
@@ -359,6 +414,11 @@
         }
 
 
+        tbody tr {
+            transition: .15s;
+        }
+
+
         tbody tr:hover {
             background: #fafcfb;
         }
@@ -368,6 +428,10 @@
             border-bottom: none;
         }
 
+
+        /* =========================
+           PRODUCT
+        ========================= */
 
         .product-name {
             color: #263f35;
@@ -397,31 +461,51 @@
             color: #29483d;
 
             font-weight: 700;
+
+            white-space: nowrap;
         }
 
 
         .stock {
+            display: inline-block;
+
             font-weight: 600;
+
+            font-size: 12px;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            white-space: nowrap;
         }
 
 
         .stock.available {
             color: #27704a;
+
+            background: #eaf6ef;
         }
 
 
         .stock.low {
-            color: #b46b00;
+            color: #a25d00;
+
+            background: #fff4df;
         }
 
 
         .stock.out {
             color: #b83232;
+
+            background: #fdecec;
         }
 
 
         .gst {
             color: #586860;
+
+            white-space: nowrap;
         }
 
 
@@ -429,17 +513,118 @@
             max-width: 220px;
 
             color: #6d7974;
+
+            line-height: 1.5;
         }
 
 
-        /* ================= EMPTY STATE ================= */
+        /* =========================
+           ACTIONS
+        ========================= */
+
+        .actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            white-space: nowrap;
+        }
+
+
+        .edit-btn,
+        .delete-btn {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-width: 70px;
+
+            height: 34px;
+
+            padding: 0 11px;
+
+            border-radius: 7px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+
+        .edit-btn {
+            background: #e9f0ff;
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+            border: 1px solid #d7e3ff;
+        }
+
+
+        .edit-btn:hover {
+            background: #dce8ff;
+
+            border-color: #bfd2ff;
+        }
+
+
+        .delete-btn {
+            background: #fff0f0;
+
+            color: #c62828;
+
+            border: 1px solid #ffd7d7;
+        }
+
+
+        .delete-btn:hover {
+            background: #ffe2e2;
+
+            border-color: #ffc3c3;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
 
         .empty-state {
             text-align: center;
 
-            padding: 60px 20px;
+            padding: 65px 20px;
 
             color: #6d7974;
+        }
+
+
+        .empty-icon {
+            width: 60px;
+            height: 60px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #edf4f0;
+
+            color: #315345;
+
+            font-size: 25px;
+
+            font-weight: 700;
         }
 
 
@@ -447,6 +632,8 @@
             color: #35483f;
 
             margin-bottom: 8px;
+
+            font-size: 18px;
         }
 
 
@@ -457,10 +644,11 @@
         }
 
 
-        /* ================= PAGINATION ================= */
+        /* =========================
+           PAGINATION
+        ========================= */
 
         .pagination-area {
-
             display: flex;
 
             justify-content: space-between;
@@ -486,6 +674,8 @@
             align-items: center;
 
             gap: 6px;
+
+            flex-wrap: wrap;
         }
 
 
@@ -499,7 +689,6 @@
             display: inline-flex;
 
             align-items: center;
-
             justify-content: center;
 
             border: 1px solid #d6e0db;
@@ -515,6 +704,8 @@
             font-size: 12px;
 
             font-weight: 600;
+
+            transition: .2s;
         }
 
 
@@ -533,7 +724,7 @@
 
 
         .page-link.disabled {
-            opacity: 0.45;
+            opacity: .45;
 
             pointer-events: none;
         }
@@ -548,9 +739,258 @@
         }
 
 
-        /* ================= RESPONSIVE ================= */
+        /* =========================
+           DELETE MODAL
+        ========================= */
 
-        @media (max-width: 800px) {
+        .delete-modal {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            background:
+                rgba(18, 30, 25, .62);
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            backdrop-filter: blur(3px);
+        }
+
+
+        .delete-modal.show {
+            display: flex;
+        }
+
+
+        .delete-modal-content {
+            width: 100%;
+
+            max-width: 430px;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, .25);
+
+            animation: modalShow .2s ease;
+        }
+
+
+        @keyframes modalShow {
+
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+        }
+
+
+        .delete-icon {
+            width: 62px;
+            height: 62px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #fff0f0;
+
+            color: #dc2626;
+
+            font-size: 28px;
+
+            font-weight: 700;
+        }
+
+
+        .delete-modal-content h2 {
+            font-size: 21px;
+
+            color: #1f332d;
+
+            margin-bottom: 10px;
+        }
+
+
+        .delete-modal-content p {
+            color: #6b7771;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+        }
+
+
+        .delete-modal-content strong {
+            color: #24362f;
+        }
+
+
+        .warning-text {
+            margin-top: 5px;
+
+            color: #c62828 !important;
+
+            font-size: 12px !important;
+        }
+
+
+        .modal-actions {
+            display: flex;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+
+        .cancel-delete,
+        .confirm-delete {
+            min-width: 120px;
+
+            height: 40px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+
+        .cancel-delete {
+            background: #edf1ef;
+
+            color: #35443e;
+        }
+
+
+        .cancel-delete:hover {
+            background: #dfe7e3;
+        }
+
+
+        .confirm-delete {
+            background: #dc2626;
+
+            color: white;
+        }
+
+
+        .confirm-delete:hover {
+            background: #b91c1c;
+        }
+
+
+        /* =========================
+           SUCCESS MESSAGE
+        ========================= */
+
+        .messages {
+            position: fixed;
+
+            top: 85px;
+
+            right: 25px;
+
+            z-index: 10000;
+
+            width: 350px;
+
+            max-width: calc(100% - 30px);
+        }
+
+
+        .message {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 10px;
+
+            background: white;
+
+            border: 1px solid #cde8d8;
+
+            border-left: 4px solid #2e8b57;
+
+            color: #28543d;
+
+            padding: 14px 16px;
+
+            border-radius: 9px;
+
+            box-shadow:
+                0 10px 30px rgba(31, 51, 45, .12);
+
+            font-size: 13px;
+
+            margin-bottom: 10px;
+
+            animation: messageShow .25s ease;
+        }
+
+
+        @keyframes messageShow {
+
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+        }
+
+
+        .message-icon {
+            font-weight: 700;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
 
             .heading {
                 flex-direction: column;
@@ -580,44 +1020,40 @@
                 max-width: none;
             }
 
-
-            .pagination-area {
-                flex-direction: column;
-
-                align-items: stretch;
-            }
-
-
-            .pagination {
-                justify-content: center;
-
-                flex-wrap: wrap;
-            }
-
         }
 
 
-        @media (max-width: 500px) {
+        @media (max-width: 600px) {
 
             .navbar {
                 padding: 14px 20px;
+
+                flex-direction: column;
+
+                align-items: flex-start;
             }
 
 
-            .brand {
-                font-size: 18px;
+            .nav-links {
+                width: 100%;
             }
 
 
             .nav-links a {
-                padding: 8px 9px;
+                flex: 1;
+
+                text-align: center;
+
+                padding: 9px 8px;
 
                 font-size: 12px;
             }
 
 
             .page {
-                margin: 30px auto;
+                margin: 28px auto;
+
+                padding: 0 14px;
             }
 
 
@@ -642,30 +1078,42 @@
             }
 
 
-        }
+            .pagination-area {
+                flex-direction: column;
 
-        .edit-btn {
-            display: inline-block;
+                align-items: stretch;
+            }
 
-            padding: 8px 14px;
 
-            background: #2563eb;
+            .pagination {
+                justify-content: center;
+            }
 
-            color: white;
 
-            text-decoration: none;
+            .messages {
+                top: 75px;
 
-            border-radius: 7px;
+                right: 15px;
 
-            font-size: 13px;
+                width: calc(100% - 30px);
+            }
 
-            font-weight: 600;
 
-            transition: 0.2s;
-        }
+            .delete-modal-content {
+                padding: 25px 20px;
+            }
 
-        .edit-btn:hover {
-            background: #1d4ed8;
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+
+            .cancel-delete,
+            .confirm-delete {
+                width: 100%;
+            }
+
         }
 
     </style>
@@ -676,7 +1124,9 @@
 <body>
 
 
-<!-- ================= NAVBAR ================= -->
+<!-- =========================
+     NAVBAR
+========================= -->
 
 <nav class="navbar">
 
@@ -707,13 +1157,46 @@
 </nav>
 
 
+<!-- =========================
+     SUCCESS / ERROR MESSAGES
+========================= -->
 
-<!-- ================= MAIN ================= -->
+{% if messages %}
+
+<div class="messages">
+
+    {% for message in messages %}
+
+        <div class="message">
+
+            <span class="message-icon">
+                ✓
+            </span>
+
+            <span>
+                {{ message }}
+            </span>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
 
 <main class="page">
 
 
-    <!-- ================= HEADING ================= -->
+    <!-- =========================
+         HEADING
+    ========================= -->
 
     <div class="heading">
 
@@ -741,7 +1224,9 @@
 
 
 
-    <!-- ================= STATS ================= -->
+    <!-- =========================
+         STATS
+    ========================= -->
 
     <div class="stats">
 
@@ -778,9 +1263,15 @@
             </div>
 
             <div class="stat-value">
-                {{ page_obj.number }}
-                /
-                {{ page_obj.paginator.num_pages|default:"0" }}
+
+                {% if page_obj.paginator.num_pages %}
+                    {{ page_obj.number }}
+                    /
+                    {{ page_obj.paginator.num_pages }}
+                {% else %}
+                    0 / 0
+                {% endif %}
+
             </div>
 
         </div>
@@ -789,12 +1280,16 @@
 
 
 
-    <!-- ================= CARD ================= -->
+    <!-- =========================
+         MAIN CARD
+    ========================= -->
 
     <div class="card">
 
 
-        <!-- ================= SEARCH ================= -->
+        <!-- =========================
+             SEARCH
+        ========================= -->
 
         <div class="search-area">
 
@@ -810,6 +1305,7 @@
                     class="search-input"
                     value="{{ search_query }}"
                     placeholder="Search by product name, category or description..."
+                    autocomplete="off"
                 >
 
 
@@ -838,7 +1334,9 @@
 
 
 
-        <!-- ================= TABLE ================= -->
+        <!-- =========================
+             PRODUCT TABLE
+        ========================= -->
 
         {% if products %}
 
@@ -882,6 +1380,10 @@
                                 Added On
                             </th>
 
+                            <th>
+                                Actions
+                            </th>
+
                         </tr>
 
                     </thead>
@@ -893,10 +1395,15 @@
 
                             <tr>
 
+
+                                <!-- NUMBER -->
+
                                 <td>
                                     {{ page_obj.start_index|add:forloop.counter0 }}
                                 </td>
 
+
+                                <!-- PRODUCT -->
 
                                 <td>
 
@@ -907,6 +1414,8 @@
                                 </td>
 
 
+                                <!-- CATEGORY -->
+
                                 <td>
 
                                     <span class="category">
@@ -916,6 +1425,8 @@
                                 </td>
 
 
+                                <!-- PRICE -->
+
                                 <td>
 
                                     <span class="price">
@@ -924,6 +1435,8 @@
 
                                 </td>
 
+
+                                <!-- STOCK -->
 
                                 <td>
 
@@ -936,19 +1449,21 @@
                                     {% elif product.stock <= 10 %}
 
                                         <span class="stock low">
-                                            {{ product.stock }}
+                                            {{ product.stock }} Low
                                         </span>
 
                                     {% else %}
 
                                         <span class="stock available">
-                                            {{ product.stock }}
+                                            {{ product.stock }} Available
                                         </span>
 
                                     {% endif %}
 
                                 </td>
 
+
+                                <!-- GST -->
 
                                 <td>
 
@@ -958,6 +1473,8 @@
 
                                 </td>
 
+
+                                <!-- DESCRIPTION -->
 
                                 <td>
 
@@ -978,18 +1495,61 @@
                                 </td>
 
 
+                                <!-- DATE -->
+
                                 <td>
                                     {{ product.created_at|date:"d M Y" }}
                                 </td>
 
+
+                                <!-- ACTIONS -->
+
                                 <td>
-                                    <a
-                                        href="{% url 'edit_product' product.id %}"
-                                        class="edit-btn"
-                                    >
-                                        Edit
-                                    </a>
+
+                                    <div class="actions">
+
+
+                                        <!-- EDIT -->
+
+                                        <a
+                                            href="{% url 'edit_product' product.id %}"
+                                            class="edit-btn"
+                                        >
+                                            Edit
+                                        </a>
+
+
+                                        <!-- DELETE -->
+
+                                        <button
+                                            type="button"
+                                            class="delete-btn"
+                                            onclick="openDeleteModal(
+                                                '{{ product.id }}',
+                                                '{{ product.name|escapejs }}'
+                                            )"
+                                        >
+                                            Delete
+                                        </button>
+
+
+                                        <!-- HIDDEN DELETE FORM -->
+
+                                        <form
+                                            method="POST"
+                                            action="{% url 'delete_product' product.id %}"
+                                            id="delete-form-{{ product.id }}"
+                                            style="display: none;"
+                                        >
+
+                                            {% csrf_token %}
+
+                                        </form>
+
+                                    </div>
+
                                 </td>
+
 
                             </tr>
 
@@ -1004,9 +1564,17 @@
 
         {% else %}
 
-            <!-- ================= EMPTY STATE ================= -->
+
+            <!-- =========================
+                 EMPTY STATE
+            ========================= -->
 
             <div class="empty-state">
+
+                <div class="empty-icon">
+                    +
+                </div>
+
 
                 <h3>
                     No Products Found
@@ -1050,7 +1618,9 @@
 
 
 
-        <!-- ================= PAGINATION ================= -->
+        <!-- =========================
+             PAGINATION
+        ========================= -->
 
         {% if page_obj.paginator.num_pages > 1 %}
 
@@ -1060,19 +1630,23 @@
                 <div class="page-info">
 
                     Showing
+
                     <strong>
                         {{ page_obj.start_index }}
                     </strong>
 
                     -
+
                     <strong>
                         {{ page_obj.end_index }}
                     </strong>
 
                     of
+
                     <strong>
                         {{ page_obj.paginator.count }}
                     </strong>
+
                     products
 
                 </div>
@@ -1113,6 +1687,7 @@
                                 {{ num }}
                             </span>
 
+
                         {% elif num == 1 or num == page_obj.paginator.num_pages %}
 
                             <a
@@ -1121,6 +1696,7 @@
                             >
                                 {{ num }}
                             </a>
+
 
                         {% elif num >= page_obj.number|add:"-1" and num <= page_obj.number|add:"1" %}
 
@@ -1131,11 +1707,13 @@
                                 {{ num }}
                             </a>
 
+
                         {% elif num == 2 and page_obj.number > 4 %}
 
                             <span class="dots">
                                 ...
                             </span>
+
 
                         {% elif num == page_obj.paginator.num_pages|add:"-1" and page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
 
@@ -1168,18 +1746,233 @@
 
                     {% endif %}
 
-
                 </div>
 
             </div>
 
         {% endif %}
 
+    </div>
+
+</main>
+
+
+
+<!-- =========================
+     DELETE CONFIRMATION MODAL
+========================= -->
+
+<div
+    id="deleteModal"
+    class="delete-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="deleteTitle"
+>
+
+    <div class="delete-modal-content">
+
+
+        <div class="delete-icon">
+            !
+        </div>
+
+
+        <h2 id="deleteTitle">
+            Delete Product?
+        </h2>
+
+
+        <p>
+            Are you sure you want to delete
+            <strong id="deleteProductName"></strong>?
+        </p>
+
+
+        <p class="warning-text">
+            This action cannot be undone.
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="cancel-delete"
+                onclick="closeDeleteModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                class="confirm-delete"
+                onclick="confirmDelete()"
+            >
+                Yes, Delete
+            </button>
+
+        </div>
 
     </div>
 
+</div>
 
-</main>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    let selectedProductId = null;
+
+
+    /* =========================
+       OPEN MODAL
+    ========================= */
+
+    function openDeleteModal(productId, productName) {
+
+        selectedProductId = productId;
+
+
+        document.getElementById(
+            "deleteProductName"
+        ).textContent = productName;
+
+
+        document.getElementById(
+            "deleteModal"
+        ).classList.add("show");
+
+
+        document.body.style.overflow = "hidden";
+
+    }
+
+
+    /* =========================
+       CLOSE MODAL
+    ========================= */
+
+    function closeDeleteModal() {
+
+        selectedProductId = null;
+
+
+        document.getElementById(
+            "deleteModal"
+        ).classList.remove("show");
+
+
+        document.body.style.overflow = "";
+
+    }
+
+
+    /* =========================
+       CONFIRM DELETE
+    ========================= */
+
+    function confirmDelete() {
+
+        if (!selectedProductId) {
+            return;
+        }
+
+
+        const form = document.getElementById(
+            "delete-form-" + selectedProductId
+        );
+
+
+        if (form) {
+
+            form.submit();
+
+        }
+
+    }
+
+
+    /* =========================
+       CLICK OUTSIDE MODAL
+    ========================= */
+
+    document
+        .getElementById("deleteModal")
+        .addEventListener(
+            "click",
+            function(event) {
+
+                if (event.target === this) {
+
+                    closeDeleteModal();
+
+                }
+
+            }
+        );
+
+
+    /* =========================
+       ESC KEY
+    ========================= */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Escape" &&
+                selectedProductId
+            ) {
+
+                closeDeleteModal();
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       AUTO HIDE MESSAGE
+    ========================= */
+
+    setTimeout(
+        function() {
+
+            const messages =
+                document.querySelector(".messages");
+
+            if (messages) {
+
+                messages.style.transition =
+                    "opacity .4s ease";
+
+                messages.style.opacity = "0";
+
+
+                setTimeout(
+                    function() {
+
+                        messages.remove();
+
+                    },
+                    400
+                );
+
+            }
+
+        },
+        4000
+    );
+
+</script>
 
 
 </body>

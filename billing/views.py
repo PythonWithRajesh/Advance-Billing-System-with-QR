@@ -1483,3 +1483,26 @@ def edit_product(request, product_id):
             "categories": Product.CATEGORY_CHOICES,
         }
     )
+
+@login_required
+def delete_product(request, product_id):
+
+    if request.method != "POST":
+        return redirect("product_list")
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        messages.error(request, "Product not found.")
+        return redirect("product_list")
+
+    product_name = product.name
+
+    product.delete()
+
+    messages.success(
+        request,
+        f"Product '{product_name}' deleted successfully."
+    )
+
+    return redirect("product_list")
