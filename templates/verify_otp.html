@@ -1,284 +1,708 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Verify OTP | Advance Billing</title>
 
     <style>
+      /* =====================================================
+           RESET
+        ===================================================== */
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        min-height: 100vh;
+
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Arial,
+          sans-serif;
+
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(16, 185, 129, 0.18),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(6, 78, 59, 0.25),
+            transparent 35%
+          ),
+          linear-gradient(135deg, #022c22, #064e3b, #047857);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 25px;
+
+        color: #111827;
+      }
+
+      /* =====================================================
+           BACKGROUND DECORATION
+        ===================================================== */
+
+      .background-circle {
+        position: fixed;
+
+        border-radius: 50%;
+
+        pointer-events: none;
+
+        filter: blur(1px);
+
+        opacity: 0.5;
+      }
+
+      .circle-one {
+        width: 240px;
+        height: 240px;
+
+        background: rgba(52, 211, 153, 0.12);
+
+        top: -80px;
+        left: -70px;
+      }
+
+      .circle-two {
+        width: 300px;
+        height: 300px;
+
+        background: rgba(16, 185, 129, 0.1);
+
+        bottom: -130px;
+        right: -100px;
+      }
+
+      /* =====================================================
+           MAIN WRAPPER
+        ===================================================== */
+
+      .page-wrapper {
+        width: 100%;
+        max-width: 470px;
+
+        position: relative;
+
+        z-index: 2;
+      }
+
+      /* =====================================================
+           BRAND
+        ===================================================== */
+
+      .brand {
+        text-align: center;
+
+        color: white;
+
+        margin-bottom: 22px;
+      }
+
+      .brand-icon {
+        width: 48px;
+        height: 48px;
+
+        margin: 0 auto 10px;
+
+        border-radius: 13px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(255, 255, 255, 0.12);
+
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        font-size: 22px;
+
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .brand h2 {
+        font-size: 19px;
+
+        font-weight: 700;
+
+        letter-spacing: 0.2px;
+      }
+
+      .brand p {
+        margin-top: 4px;
+
+        font-size: 12px;
+
+        color: rgba(255, 255, 255, 0.7);
+
+        letter-spacing: 0.3px;
+      }
+
+      /* =====================================================
+           CARD
+        ===================================================== */
+
+      .card {
+        background: rgba(255, 255, 255, 0.97);
+
+        border-radius: 24px;
+
+        padding: 38px 38px 32px;
+
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+
+        border: 1px solid rgba(255, 255, 255, 0.5);
+
+        backdrop-filter: blur(10px);
+      }
+
+      /* =====================================================
+           VERIFICATION ICON
+        ===================================================== */
+
+      .verification-icon {
+        width: 72px;
+        height: 72px;
+
+        margin: 0 auto 20px;
+
+        border-radius: 20px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+
+        color: #047857;
+
+        font-size: 30px;
+
+        border: 1px solid #a7f3d0;
+
+        box-shadow: 0 10px 25px rgba(4, 120, 87, 0.1);
+      }
+
+      /* =====================================================
+           HEADING
+        ===================================================== */
+
+      .heading {
+        text-align: center;
+      }
+
+      .heading h1 {
+        color: #064e3b;
+
+        font-size: 27px;
+
+        line-height: 1.2;
+
+        font-weight: 750;
+
+        letter-spacing: -0.5px;
+      }
+
+      .heading p {
+        margin-top: 10px;
+
+        color: #6b7280;
+
+        font-size: 14px;
+
+        line-height: 1.6;
+      }
+
+      /* =====================================================
+           SECURITY MESSAGE
+        ===================================================== */
+
+      .security-note {
+        margin-top: 24px;
+
+        display: flex;
+        align-items: flex-start;
+
+        gap: 10px;
+
+        padding: 13px 14px;
+
+        border-radius: 12px;
+
+        background: #f0fdf4;
+
+        border: 1px solid #dcfce7;
+
+        color: #166534;
+
+        font-size: 12px;
+
+        line-height: 1.5;
+      }
+
+      .security-icon {
+        flex-shrink: 0;
+
+        width: 22px;
+        height: 22px;
+
+        border-radius: 7px;
+
+        background: #dcfce7;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+      }
+
+      /* =====================================================
+           ALERTS
+        ===================================================== */
+
+      .alert {
+        margin-top: 18px;
+
+        padding: 12px 14px;
+
+        border-radius: 11px;
+
+        font-size: 13px;
+
+        text-align: center;
+
+        line-height: 1.5;
+      }
+
+      .error {
+        background: #fef2f2;
+
+        color: #b91c1c;
+
+        border: 1px solid #fecaca;
+      }
+
+      .success {
+        background: #ecfdf5;
+
+        color: #047857;
+
+        border: 1px solid #a7f3d0;
+      }
+
+      /* =====================================================
+           FORM
+        ===================================================== */
+
+      .otp-form {
+        margin-top: 25px;
+      }
+
+      .form-label {
+        display: block;
+
+        text-align: center;
+
+        color: #374151;
+
+        font-size: 13px;
+
+        font-weight: 650;
+
+        margin-bottom: 12px;
+      }
+
+      /* =====================================================
+           OTP INPUT
+        ===================================================== */
+
+      .otp-input {
+        width: 100%;
+
+        height: 62px;
+
+        border: 1.5px solid #d1d5db;
+
+        border-radius: 13px;
+
+        outline: none;
+
+        background: #ffffff;
+
+        color: #064e3b;
+
+        text-align: center;
+
+        font-size: 27px;
+
+        font-weight: 700;
+
+        letter-spacing: 11px;
+
+        padding-left: 11px;
+
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .otp-input::placeholder {
+        color: #d1d5db;
+
+        letter-spacing: 10px;
+      }
+
+      .otp-input:focus {
+        border-color: #047857;
+
+        background: #fafffd;
+
+        box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.1);
+      }
+
+      /* =====================================================
+           VERIFY BUTTON
+        ===================================================== */
+
+      .verify-btn {
+        width: 100%;
+
+        height: 50px;
+
+        margin-top: 18px;
+
+        border: none;
+
+        border-radius: 12px;
+
+        background: linear-gradient(135deg, #047857, #059669);
+
+        color: white;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        box-shadow: 0 8px 20px rgba(4, 120, 87, 0.2);
+
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      .verify-btn:hover {
+        transform: translateY(-1px);
+
+        box-shadow: 0 12px 25px rgba(4, 120, 87, 0.28);
+      }
+
+      .verify-btn:active {
+        transform: translateY(0);
+      }
+
+      /* =====================================================
+           RESEND SECTION
+        ===================================================== */
+
+      .resend-section {
+        text-align: center;
+
+        margin-top: 23px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .resend-text {
+        color: #6b7280;
+
+        font-size: 13px;
+
+        margin-bottom: 7px;
+      }
+
+      .resend-link {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        color: #047857;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        text-decoration: none;
+
+        transition: color 0.2s ease;
+      }
+
+      .resend-link:hover {
+        color: #065f46;
+
+        text-decoration: underline;
+      }
+
+      /* =====================================================
+           FOOTER
+        ===================================================== */
+
+      .footer {
+        text-align: center;
+
+        color: rgba(255, 255, 255, 0.58);
+
+        font-size: 11px;
+
+        margin-top: 20px;
+
+        line-height: 1.6;
+      }
+
+      /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+      @media (max-width: 520px) {
         body {
-            min-height: 100vh;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #064e3b,
-                    #047857
-                );
-
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 430px;
+          padding: 16px;
         }
 
         .card {
-            background: white;
+          padding: 30px 22px 25px;
 
-            padding: 40px;
-
-            border-radius: 20px;
-
-            box-shadow:
-                0 25px 60px
-                rgba(0, 0, 0, 0.25);
+          border-radius: 20px;
         }
 
-        .icon {
-            width: 65px;
-            height: 65px;
-
-            margin: 0 auto 20px;
-
-            border-radius: 16px;
-
-            background: #047857;
-
-            color: white;
-
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            font-size: 28px;
+        .heading h1 {
+          font-size: 24px;
         }
 
-        h1 {
-            text-align: center;
+        .verification-icon {
+          width: 65px;
+          height: 65px;
 
-            color: #064e3b;
-
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-
-            color: #6b7280;
-
-            font-size: 14px;
-
-            margin-bottom: 30px;
+          font-size: 27px;
         }
 
         .otp-input {
-            width: 100%;
+          height: 58px;
 
-            padding: 16px;
+          font-size: 24px;
 
-            border:
-                1px solid #d1d5db;
+          letter-spacing: 8px;
 
-            border-radius: 10px;
+          padding-left: 8px;
+        }
+      }
 
-            outline: none;
-
-            text-align: center;
-
-            font-size: 24px;
-
-            letter-spacing: 8px;
-
-            margin-bottom: 20px;
+      @media (max-width: 360px) {
+        .card {
+          padding: 27px 18px 23px;
         }
 
-        .otp-input:focus {
-            border-color: #047857;
+        .otp-input {
+          font-size: 22px;
 
-            box-shadow:
-                0 0 0 3px
-                rgba(4, 120, 87, 0.10);
+          letter-spacing: 6px;
+
+          padding-left: 6px;
         }
-
-        .btn {
-            width: 100%;
-
-            padding: 14px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            background: #047857;
-
-            color: white;
-
-            font-size: 15px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background: #065f46;
-        }
-
-        .resend {
-            text-align: center;
-
-            margin-top: 22px;
-
-            font-size: 14px;
-
-            color: #6b7280;
-        }
-
-        .resend a {
-            color: #047857;
-
-            font-weight: bold;
-
-            text-decoration: none;
-        }
-
-        .resend a:hover {
-            text-decoration: underline;
-        }
-
-        .error {
-            background: #fee2e2;
-
-            color: #b91c1c;
-
-            padding: 12px;
-
-            border-radius: 10px;
-
-            margin-bottom: 20px;
-
-            text-align: center;
-
-            font-size: 14px;
-        }
-
-        .success {
-            background: #d1fae5;
-
-            color: #065f46;
-
-            padding: 12px;
-
-            border-radius: 10px;
-
-            margin-bottom: 20px;
-
-            text-align: center;
-
-            font-size: 14px;
-        }
-
+      }
     </style>
+  </head>
 
-</head>
+  <body>
+    <!-- Background Decoration -->
 
-<body>
+    <div class="background-circle circle-one"></div>
 
-<div class="container">
+    <div class="background-circle circle-two"></div>
 
-    <div class="card">
+    <div class="page-wrapper">
+      <!-- =================================================
+             BRAND
+        ================================================== -->
 
-        <div class="icon">
-            ✓
+      <div class="brand">
+        <div class="brand-icon">✓</div>
+
+        <h2>Advance Billing</h2>
+
+        <p>Secure Billing Management System</p>
+      </div>
+
+      <!-- =================================================
+             MAIN CARD
+        ================================================== -->
+
+      <div class="card">
+        <!-- Verification Icon -->
+
+        <div class="verification-icon">🔐</div>
+
+        <!-- Heading -->
+
+        <div class="heading">
+          <h1>Verify Your Identity</h1>
+
+          <p>
+            Enter the 6-digit verification code generated for your password
+            reset.
+          </p>
         </div>
 
-        <h1>Verify OTP</h1>
+        <!-- Security Information -->
 
-        <p class="subtitle">
-            Enter the 6-digit OTP sent for password reset.
-        </p>
+        <div class="security-note">
+          <div class="security-icon">✓</div>
+
+          <div>
+            For your security, the OTP is valid for
+            <strong>5 minutes</strong>. Do not share this code with anyone.
+          </div>
+        </div>
+
+        <!-- Error Message -->
 
         {% if error %}
 
-            <div class="error">
-                {{ error }}
-            </div>
+        <div class="alert error">{{ error }}</div>
 
         {% endif %}
 
-        {% if messages %}
+        <!-- Success Messages -->
 
-            {% for message in messages %}
+        {% if messages %} {% for message in messages %}
 
-                <div class="success">
-                    {{ message }}
-                </div>
+        <div class="alert success">{{ message }}</div>
 
-            {% endfor %}
+        {% endfor %} {% endif %}
 
-        {% endif %}
+        <!-- =================================================
+                 OTP FORM
+            ================================================== -->
 
-        <form method="POST">
+        <form method="POST" class="otp-form" id="otpForm">
+          {% csrf_token %}
 
-            {% csrf_token %}
+          <label for="otp" class="form-label"> Enter verification code </label>
 
-            <input
-                type="text"
-                name="otp"
-                class="otp-input"
-                placeholder="000000"
-                maxlength="6"
-                minlength="6"
-                pattern="[0-9]{6}"
-                inputmode="numeric"
-                required
-            >
+          <input
+            type="text"
+            id="otp"
+            name="otp"
+            class="otp-input"
+            maxlength="6"
+            minlength="6"
+            pattern="[0-9]{6}"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            placeholder="000000"
+            required
+            autofocus
+          />
 
-            <button
-                type="submit"
-                class="btn"
-            >
-                Verify OTP
-            </button>
-
+          <button type="submit" class="verify-btn">Verify OTP</button>
         </form>
 
-        <div class="resend">
+        <!-- =================================================
+                 RESEND
+            ================================================== -->
 
-            Didn't receive OTP?
+        <div class="resend-section">
+          <p class="resend-text">Didn't receive the verification code?</p>
 
-            <a href="{% url 'resend_otp' %}">
-                Resend OTP
-            </a>
-
+          <a href="{% url 'resend_otp' %}" class="resend-link">
+            ↻ &nbsp; Resend OTP
+          </a>
         </div>
+      </div>
 
+      <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+      <div class="footer">
+        © 2026 Advance Billing System
+        <br />
+        Secure • Reliable • Professional
+      </div>
     </div>
 
-</div>
+    <!-- =====================================================
+         OTP INPUT JAVASCRIPT
+    ===================================================== -->
 
-</body>
+    <script>
+      const otpInput = document.getElementById("otp");
 
+      /*
+       * Allow only numbers
+       */
+
+      otpInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "").slice(0, 6);
+      });
+
+      /*
+       * Prevent spaces and non-numeric
+       * keyboard characters
+       */
+
+      otpInput.addEventListener("keydown", function (event) {
+        const allowedKeys = [
+          "Backspace",
+          "Delete",
+          "ArrowLeft",
+          "ArrowRight",
+          "Tab",
+        ];
+
+        if (allowedKeys.includes(event.key)) {
+          return;
+        }
+
+        if (!/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+        }
+      });
+
+      /*
+       * Auto-submit when 6 digits are entered
+       */
+
+      otpInput.addEventListener("input", function () {
+        if (this.value.length === 6) {
+          /*
+           * Do not automatically submit.
+           * User can verify using button.
+           */
+
+          this.style.borderColor = "#10b981";
+        }
+      });
+    </script>
+  </body>
 </html>
