@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from .models import PasswordResetOTP, DistributorProfile
+from .models import PasswordResetOTP, DistributorProfile, Customer
 
 
 def admin_login(request):
@@ -795,4 +795,153 @@ def distributor_profile(request):
             "profile": profile,
             "edit_mode": request.GET.get("edit") == "1",
         }
+    )
+
+
+@login_required
+def add_customer(request):
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        phone = request.POST.get("phone", "").strip()
+        address = request.POST.get("address", "").strip()
+        city = request.POST.get("city", "").strip()
+        state = request.POST.get("state", "").strip()
+        pincode = request.POST.get("pincode", "").strip()
+
+        errors = {}
+
+        # =========================
+        # NAME VALIDATION
+        # =========================
+
+        if not name:
+            errors["name"] = "Customer name is required."
+
+        elif len(name) < 2:
+            errors["name"] = "Name must contain at least 2 characters."
+
+        elif not all(
+            character.isalpha() or character.isspace()
+            for character in name
+        ):
+            errors["name"] = "Name can contain only letters and spaces."
+
+        # =========================
+        # EMAIL VALIDATION
+        # =========================
+
+        if not email:
+            errors["email"] = "Email address is required."
+
+        elif "@" not in email or "." not in email.split("@")[-1]:
+            errors["email"] = "Please enter a valid email address."
+
+        # =========================
+        # PHONE VALIDATION
+        # =========================
+
+        if not phone:
+            errors["phone"] = "Phone number is required."
+
+        elif not phone.isdigit():
+            errors["phone"] = "Phone number must contain only digits."
+
+        elif len(phone) != 10:
+            errors["phone"] = "Phone number must contain exactly 10 digits."
+
+        # =========================
+        # ADDRESS VALIDATION
+        # =========================
+
+        if not address:
+            errors["address"] = "Address is required."
+
+        elif len(address) < 5:
+            errors["address"] = "Please enter a valid address."
+
+        # =========================
+        # CITY VALIDATION
+        # =========================
+
+        if not city:
+            errors["city"] = "City is required."
+
+        elif len(city) < 2:
+            errors["city"] = "Please enter a valid city."
+
+        # =========================
+        # STATE VALIDATION
+        # =========================
+
+        if not state:
+            errors["state"] = "State is required."
+
+        elif len(state) < 2:
+            errors["state"] = "Please enter a valid state."
+
+        # =========================
+        # PINCODE VALIDATION
+        # =========================
+
+        if not pincode:
+            errors["pincode"] = "Pincode is required."
+
+        elif not pincode.isdigit():
+            errors["pincode"] = "Pincode must contain only digits."
+
+        elif len(pincode) != 6:
+            errors["pincode"] = "Pincode must contain exactly 6 digits."
+
+        # =========================
+        # VALIDATION FAILED
+        # =========================
+
+        if errors:
+
+            return render(
+                request,
+                "add_customer.html",
+                {
+                    "errors": errors,
+                    "form_name": name,
+                    "form_email": email,
+                    "form_phone": phone,
+                    "form_address": address,
+                    "form_city": city,
+                    "form_state": state,
+                    "form_pincode": pincode,
+                }
+            )
+
+        # =========================
+        # SAVE CUSTOMER
+        # =========================
+
+        Customer.objects.create(
+            name=name,
+            email=email,
+            phone=phone,
+            address=address,
+            city=city,
+            state=state,
+            pincode=pincode,
+        )
+
+        # =========================
+        # SUCCESS MESSAGE
+        # =========================
+
+        messages.success(
+            request,
+            f"Customer '{name}' added successfully."
+        )
+
+        return redirect("add_customer")
+
+    return render(
+        request,
+        "add_customer.html"
     )

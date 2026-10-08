@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Customer | Advance Billing</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f3f7f5;
+            color: #17352d;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 70px;
+            background: #022c22;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            color: white;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .brand span {
+            color: #34d399;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dashboard-link {
+            color: #d1fae5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .dashboard-link:hover {
+            color: white;
+        }
+
+        .logout-btn {
+            background: #059669;
+            color: white;
+
+            padding: 9px 17px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #047857;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            width: 100%;
+            max-width: 1000px;
+
+            margin: 0 auto;
+
+            padding: 50px 20px 70px;
+        }
+
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            font-size: 30px;
+            color: #022c22;
+            margin-bottom: 8px;
+        }
+
+        .page-heading p {
+            color: #6b7f77;
+            font-size: 14px;
+        }
+
+
+        /* ================= ALERT ================= */
+
+        .alert {
+            padding: 14px 17px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-size: 13px;
+        }
+
+        .success-alert {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+
+            border-radius: 18px;
+
+            border: 1px solid #e1ebe7;
+
+            box-shadow:
+                0 15px 45px rgba(2, 44, 34, 0.08);
+
+            overflow: hidden;
+        }
+
+
+        .card-header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #022c22,
+                    #047857
+                );
+
+            color: white;
+
+            padding: 28px 32px;
+        }
+
+        .card-header h2 {
+            font-size: 21px;
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            color: #d1fae5;
+            font-size: 13px;
+        }
+
+
+        .card-body {
+            padding: 35px;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 21px;
+        }
+
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+
+        label {
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #536b63;
+
+            margin-bottom: 8px;
+        }
+
+
+        .required {
+            color: #dc2626;
+        }
+
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #d6e3de;
+
+            border-radius: 9px;
+
+            background: #fbfdfc;
+
+            color: #17352d;
+
+            font-size: 14px;
+
+            outline: none;
+
+            transition: .2s;
+        }
+
+
+        textarea {
+            min-height: 110px;
+
+            resize: vertical;
+        }
+
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #059669;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px rgba(
+                    5,
+                    150,
+                    105,
+                    .10
+                );
+        }
+
+
+        input.invalid,
+        textarea.invalid {
+            border-color: #dc2626;
+
+            background: #fffafa;
+        }
+
+
+        input.valid,
+        textarea.valid {
+            border-color: #10b981;
+        }
+
+
+        .field-error {
+            color: #dc2626;
+
+            font-size: 11px;
+
+            margin-top: 6px;
+
+            min-height: 15px;
+        }
+
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            margin-top: 28px;
+
+            padding-top: 25px;
+
+            border-top: 1px solid #e8efec;
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 12px;
+        }
+
+
+        .btn {
+            border: none;
+
+            padding: 12px 22px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            text-decoration: none;
+        }
+
+
+        .cancel-btn {
+            background: #e8efec;
+
+            color: #245047;
+        }
+
+
+        .cancel-btn:hover {
+            background: #dce8e3;
+        }
+
+
+        .save-btn {
+            background: #047857;
+
+            color: white;
+        }
+
+
+        .save-btn:hover {
+            background: #065f46;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .dashboard-link {
+                display: none;
+            }
+
+            .main {
+                padding: 35px 15px 50px;
+            }
+
+            .page-heading h1 {
+                font-size: 25px;
+            }
+
+            .card-header {
+                padding: 24px;
+            }
+
+            .card-body {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+            Advance <span>Billing</span>
+        </div>
+
+
+        <div class="nav-right">
+
+            <a
+                href="{% url 'distributor_dashboard' %}"
+                class="dashboard-link"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="{% url 'user_logout' %}"
+                class="logout-btn"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <div class="page-heading">
+
+            <h1>
+                Add New Customer
+            </h1>
+
+            <p>
+                Enter customer details to create a new customer record.
+            </p>
+
+        </div>
+
+
+        <!-- ================= SUCCESS MESSAGE ================= -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert success-alert">
+                    ✓ {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- ================= CARD ================= -->
+
+        <div class="card">
+
+
+            <div class="card-header">
+
+                <h2>
+                    Customer Information
+                </h2>
+
+                <p>
+                    All fields marked with * are required.
+                </p>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                <form
+                    method="POST"
+                    id="customerForm"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+
+                    <div class="form-grid">
+
+
+                        <!-- NAME -->
+
+                        <div class="form-group">
+
+                            <label for="name">
+                                Customer Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value="{{ form_name|default:'' }}"
+                                placeholder="Enter customer name"
+                                maxlength="100"
+                                autocomplete="name"
+                                class="{% if errors.name %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.name %}
+                                    {{ errors.name }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="email">
+                                Email Address
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="{{ form_email|default:'' }}"
+                                placeholder="customer@example.com"
+                                maxlength="150"
+                                autocomplete="email"
+                                class="{% if errors.email %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.email %}
+                                    {{ errors.email }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="form-group">
+
+                            <label for="phone">
+                                Phone Number
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="phone"
+                                name="phone"
+                                value="{{ form_phone|default:'' }}"
+                                placeholder="10 digit phone number"
+                                maxlength="10"
+                                inputmode="numeric"
+                                autocomplete="tel"
+                                class="{% if errors.phone %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.phone %}
+                                    {{ errors.phone }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- CITY -->
+
+                        <div class="form-group">
+
+                            <label for="city">
+                                City
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="city"
+                                name="city"
+                                value="{{ form_city|default:'' }}"
+                                placeholder="Enter city"
+                                maxlength="100"
+                                class="{% if errors.city %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.city %}
+                                    {{ errors.city }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- STATE -->
+
+                        <div class="form-group">
+
+                            <label for="state">
+                                State
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="state"
+                                name="state"
+                                value="{{ form_state|default:'' }}"
+                                placeholder="Enter state"
+                                maxlength="100"
+                                class="{% if errors.state %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.state %}
+                                    {{ errors.state }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- PINCODE -->
+
+                        <div class="form-group">
+
+                            <label for="pincode">
+                                Pincode
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="pincode"
+                                name="pincode"
+                                value="{{ form_pincode|default:'' }}"
+                                placeholder="6 digit pincode"
+                                maxlength="6"
+                                inputmode="numeric"
+                                class="{% if errors.pincode %}invalid{% endif %}"
+                            >
+
+                            <div class="field-error">
+                                {% if errors.pincode %}
+                                    {{ errors.pincode }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                        <!-- ADDRESS -->
+
+                        <div class="form-group full">
+
+                            <label for="address">
+                                Address
+                                <span class="required">*</span>
+                            </label>
+
+                            <textarea
+                                id="address"
+                                name="address"
+                                placeholder="Enter complete customer address"
+                                class="{% if errors.address %}invalid{% endif %}"
+                            >{{ form_address|default:'' }}</textarea>
+
+                            <div class="field-error">
+                                {% if errors.address %}
+                                    {{ errors.address }}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ================= ACTIONS ================= -->
+
+                    <div class="actions">
+
+                        <a
+                            href="{% url 'distributor_dashboard' %}"
+                            class="btn cancel-btn"
+                        >
+                            ← Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn save-btn"
+                        >
+                            Add Customer
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        const form =
+            document.getElementById("customerForm");
+
+        const nameInput =
+            document.getElementById("name");
+
+        const emailInput =
+            document.getElementById("email");
+
+        const phoneInput =
+            document.getElementById("phone");
+
+        const addressInput =
+            document.getElementById("address");
+
+        const cityInput =
+            document.getElementById("city");
+
+        const stateInput =
+            document.getElementById("state");
+
+        const pincodeInput =
+            document.getElementById("pincode");
+
+
+        function showError(input, message) {
+
+            input.classList.remove("valid");
+            input.classList.add("invalid");
+
+            const error =
+                input.parentElement.querySelector(
+                    ".field-error"
+                );
+
+            if (error) {
+                error.textContent = message;
+            }
+        }
+
+
+        function clearError(input) {
+
+            input.classList.remove("invalid");
+            input.classList.add("valid");
+
+            const error =
+                input.parentElement.querySelector(
+                    ".field-error"
+                );
+
+            if (error) {
+                error.textContent = "";
+            }
+        }
+
+
+        // =========================
+        // NAME
+        // =========================
+
+        nameInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    nameInput.value.trim();
+
+                if (!value) {
+
+                    showError(
+                        nameInput,
+                        "Customer name is required."
+                    );
+
+                } else if (value.length < 2) {
+
+                    showError(
+                        nameInput,
+                        "Name must contain at least 2 characters."
+                    );
+
+                } else if (
+                    !/^[A-Za-z\s]+$/.test(value)
+                ) {
+
+                    showError(
+                        nameInput,
+                        "Name can contain only letters and spaces."
+                    );
+
+                } else {
+
+                    clearError(nameInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // EMAIL
+        // =========================
+
+        emailInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    emailInput.value.trim();
+
+                const pattern =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!value) {
+
+                    showError(
+                        emailInput,
+                        "Email address is required."
+                    );
+
+                } else if (!pattern.test(value)) {
+
+                    showError(
+                        emailInput,
+                        "Please enter a valid email address."
+                    );
+
+                } else {
+
+                    clearError(emailInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // PHONE
+        // =========================
+
+        phoneInput.addEventListener(
+            "input",
+            function () {
+
+                phoneInput.value =
+                    phoneInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+                const value =
+                    phoneInput.value;
+
+                if (!value) {
+
+                    showError(
+                        phoneInput,
+                        "Phone number is required."
+                    );
+
+                } else if (
+                    value.length !== 10
+                ) {
+
+                    showError(
+                        phoneInput,
+                        "Phone number must contain exactly 10 digits."
+                    );
+
+                } else {
+
+                    clearError(phoneInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // ADDRESS
+        // =========================
+
+        addressInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    addressInput.value.trim();
+
+                if (!value) {
+
+                    showError(
+                        addressInput,
+                        "Address is required."
+                    );
+
+                } else if (value.length < 5) {
+
+                    showError(
+                        addressInput,
+                        "Please enter a valid address."
+                    );
+
+                } else {
+
+                    clearError(addressInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // CITY
+        // =========================
+
+        cityInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    cityInput.value.trim();
+
+                if (!value) {
+
+                    showError(
+                        cityInput,
+                        "City is required."
+                    );
+
+                } else if (value.length < 2) {
+
+                    showError(
+                        cityInput,
+                        "Please enter a valid city."
+                    );
+
+                } else {
+
+                    clearError(cityInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // STATE
+        // =========================
+
+        stateInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    stateInput.value.trim();
+
+                if (!value) {
+
+                    showError(
+                        stateInput,
+                        "State is required."
+                    );
+
+                } else if (value.length < 2) {
+
+                    showError(
+                        stateInput,
+                        "Please enter a valid state."
+                    );
+
+                } else {
+
+                    clearError(stateInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // PINCODE
+        // =========================
+
+        pincodeInput.addEventListener(
+            "input",
+            function () {
+
+                pincodeInput.value =
+                    pincodeInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 6);
+
+                const value =
+                    pincodeInput.value;
+
+                if (!value) {
+
+                    showError(
+                        pincodeInput,
+                        "Pincode is required."
+                    );
+
+                } else if (
+                    value.length !== 6
+                ) {
+
+                    showError(
+                        pincodeInput,
+                        "Pincode must contain exactly 6 digits."
+                    );
+
+                } else {
+
+                    clearError(pincodeInput);
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // FORM SUBMIT
+        // =========================
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                let valid = true;
+
+
+                const name =
+                    nameInput.value.trim();
+
+                const email =
+                    emailInput.value.trim();
+
+                const phone =
+                    phoneInput.value.trim();
+
+                const address =
+                    addressInput.value.trim();
+
+                const city =
+                    cityInput.value.trim();
+
+                const state =
+                    stateInput.value.trim();
+
+                const pincode =
+                    pincodeInput.value.trim();
+
+
+                // NAME
+
+                if (
+                    !name ||
+                    name.length < 2 ||
+                    !/^[A-Za-z\s]+$/.test(name)
+                ) {
+
+                    showError(
+                        nameInput,
+                        "Please enter a valid customer name."
+                    );
+
+                    valid = false;
+                }
+
+
+                // EMAIL
+
+                if (
+                    !email ||
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+                ) {
+
+                    showError(
+                        emailInput,
+                        "Please enter a valid email address."
+                    );
+
+                    valid = false;
+                }
+
+
+                // PHONE
+
+                if (
+                    !/^\d{10}$/.test(phone)
+                ) {
+
+                    showError(
+                        phoneInput,
+                        "Phone number must contain exactly 10 digits."
+                    );
+
+                    valid = false;
+                }
+
+
+                // ADDRESS
+
+                if (
+                    !address ||
+                    address.length < 5
+                ) {
+
+                    showError(
+                        addressInput,
+                        "Please enter a valid address."
+                    );
+
+                    valid = false;
+                }
+
+
+                // CITY
+
+                if (
+                    !city ||
+                    city.length < 2
+                ) {
+
+                    showError(
+                        cityInput,
+                        "Please enter a valid city."
+                    );
+
+                    valid = false;
+                }
+
+
+                // STATE
+
+                if (
+                    !state ||
+                    state.length < 2
+                ) {
+
+                    showError(
+                        stateInput,
+                        "Please enter a valid state."
+                    );
+
+                    valid = false;
+                }
+
+
+                // PINCODE
+
+                if (
+                    !/^\d{6}$/.test(pincode)
+                ) {
+
+                    showError(
+                        pincodeInput,
+                        "Pincode must contain exactly 6 digits."
+                    );
+
+                    valid = false;
+                }
+
+
+                if (!valid) {
+                    event.preventDefault();
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

@@ -72,4 +72,10 @@ urlpatterns = [
         views.reset_password,
         name="reset_password"
     ),
+
+    path(
+        "add-customer/",
+        views.add_customer,
+        name="add_customer"
+    ),
 ]
