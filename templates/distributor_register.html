@@ -18,6 +18,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+
             font-family:
                 Arial,
                 Helvetica,
@@ -43,16 +44,18 @@
         }
 
 
-        /* ================================
-           MAIN WRAPPER
-        ================================= */
+        /* =========================================
+           MAIN
+        ========================================= */
 
         .wrapper {
             width: 100%;
             max-width: 950px;
 
             display: grid;
-            grid-template-columns: 0.9fr 1.1fr;
+
+            grid-template-columns:
+                0.9fr 1.1fr;
 
             background: white;
 
@@ -66,9 +69,9 @@
         }
 
 
-        /* ================================
-           LEFT SIDE
-        ================================= */
+        /* =========================================
+           LEFT
+        ========================================= */
 
         .left {
             padding: 55px 45px;
@@ -83,7 +86,9 @@
                 );
 
             display: flex;
+
             flex-direction: column;
+
             justify-content: center;
         }
 
@@ -94,15 +99,12 @@
             border-radius: 16px;
 
             display: flex;
+
             align-items: center;
             justify-content: center;
 
             background:
                 rgba(255,255,255,0.15);
-
-            border:
-                1px solid
-                rgba(255,255,255,0.25);
 
             font-size: 25px;
 
@@ -129,9 +131,9 @@
         }
 
 
-        /* ================================
+        /* =========================================
            FEATURES
-        ================================= */
+        ========================================= */
 
         .feature {
             display: flex;
@@ -152,28 +154,27 @@
             border-radius: 9px;
 
             display: flex;
+
             align-items: center;
             justify-content: center;
 
             background:
                 rgba(255,255,255,0.13);
-
-            flex-shrink: 0;
         }
 
 
-        /* ================================
-           RIGHT SIDE
-        ================================= */
+        /* =========================================
+           RIGHT
+        ========================================= */
 
         .right {
             padding: 45px 50px;
 
-            background: #ffffff;
+            background: white;
         }
 
         .form-header {
-            margin-bottom: 28px;
+            margin-bottom: 25px;
         }
 
         .form-header h2 {
@@ -191,9 +192,9 @@
         }
 
 
-        /* ================================
+        /* =========================================
            FORM
-        ================================= */
+        ========================================= */
 
         .form-group {
             margin-bottom: 17px;
@@ -213,19 +214,6 @@
 
         .input-wrapper {
             position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-
-            left: 14px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            color: #6b7280;
-
-            font-size: 15px;
         }
 
         .form-control {
@@ -258,21 +246,52 @@
                 rgba(4,120,87,0.10);
         }
 
+        .form-control.valid {
+            border-color: #10b981;
+        }
+
+        .form-control.invalid {
+            border-color: #ef4444;
+
+            background: #fffafa;
+        }
+
         .form-control::placeholder {
             color: #9ca3af;
         }
 
 
-        /* ================================
-           PASSWORD
-        ================================= */
+        /* =========================================
+           ERROR
+        ========================================= */
 
-        .password-wrapper {
-            position: relative;
+        .field-error {
+            display: none;
+
+            margin-top: 5px;
+
+            color: #dc2626;
+
+            font-size: 11px;
+
+            line-height: 1.4;
         }
 
+        .field-error.show {
+            display: block;
+        }
+
+        .server-error {
+            display: block;
+        }
+
+
+        /* =========================================
+           PASSWORD
+        ========================================= */
+
         .password-wrapper .form-control {
-            padding-right: 45px;
+            padding-right: 55px;
         }
 
         .show-password {
@@ -289,15 +308,42 @@
 
             cursor: pointer;
 
-            color: #6b7280;
+            color: #047857;
 
-            font-size: 14px;
+            font-size: 12px;
+
+            font-weight: 700;
         }
 
 
-        /* ================================
+        /* =========================================
+           PASSWORD STRENGTH
+        ========================================= */
+
+        .password-strength {
+            margin-top: 7px;
+
+            font-size: 11px;
+
+            color: #9ca3af;
+        }
+
+        .password-strength.weak {
+            color: #dc2626;
+        }
+
+        .password-strength.medium {
+            color: #d97706;
+        }
+
+        .password-strength.strong {
+            color: #059669;
+        }
+
+
+        /* =========================================
            TERMS
-        ================================= */
+        ========================================= */
 
         .terms {
             display: flex;
@@ -307,7 +353,7 @@
             gap: 9px;
 
             margin:
-                5px 0 20px;
+                8px 0 20px;
 
             color: #6b7280;
 
@@ -322,10 +368,14 @@
             accent-color: #047857;
         }
 
+        .terms.invalid {
+            color: #dc2626;
+        }
 
-        /* ================================
+
+        /* =========================================
            BUTTON
-        ================================= */
+        ========================================= */
 
         .register-btn {
             width: 100%;
@@ -360,16 +410,12 @@
 
         .register-btn:hover {
             transform: translateY(-1px);
-
-            box-shadow:
-                0 12px 25px
-                rgba(4,120,87,0.28);
         }
 
 
-        /* ================================
-           LOGIN LINK
-        ================================= */
+        /* =========================================
+           LOGIN
+        ========================================= */
 
         .login-link {
             text-align: center;
@@ -393,11 +439,6 @@
             text-decoration: underline;
         }
 
-
-        /* ================================
-           FOOTER
-        ================================= */
-
         .footer {
             text-align: center;
 
@@ -409,9 +450,9 @@
         }
 
 
-        /* ================================
+        /* =========================================
            RESPONSIVE
-        ================================= */
+        ========================================= */
 
         @media (max-width: 760px) {
 
@@ -425,10 +466,6 @@
 
             .left {
                 padding: 35px 30px;
-            }
-
-            .left h1 {
-                font-size: 26px;
             }
 
             .right {
@@ -466,7 +503,7 @@
 
 
     <!-- =========================================
-         LEFT INFORMATION
+         LEFT
     ========================================== -->
 
     <div class="left">
@@ -542,7 +579,7 @@
 
 
     <!-- =========================================
-         REGISTRATION FORM
+         RIGHT
     ========================================== -->
 
     <div class="right">
@@ -560,12 +597,18 @@
         </div>
 
 
-        <form method="POST">
+        <form
+            method="POST"
+            id="registerForm"
+            novalidate
+        >
 
             {% csrf_token %}
 
 
-            <!-- FULL NAME -->
+            <!-- =================================
+                 NAME
+            ================================== -->
 
             <div class="form-group">
 
@@ -575,25 +618,36 @@
 
                 <div class="input-wrapper">
 
-                    <span class="input-icon">
-                        👤
-                    </span>
-
                     <input
                         type="text"
                         id="name"
                         name="name"
                         class="form-control"
                         placeholder="Enter your full name"
+                        value="{{ name|default:'' }}"
+                        minlength="2"
+                        maxlength="100"
                         required
                     >
 
                 </div>
 
+                <div
+                    id="nameError"
+                    class="field-error
+                    {% if errors.name %}show server-error{% endif %}"
+                >
+                    {% if errors.name %}
+                        {{ errors.name }}
+                    {% endif %}
+                </div>
+
             </div>
 
 
-            <!-- EMAIL -->
+            <!-- =================================
+                 EMAIL
+            ================================== -->
 
             <div class="form-group">
 
@@ -603,25 +657,34 @@
 
                 <div class="input-wrapper">
 
-                    <span class="input-icon">
-                        ✉
-                    </span>
-
                     <input
                         type="email"
                         id="email"
                         name="email"
                         class="form-control"
                         placeholder="Enter your email address"
+                        value="{{ email|default:'' }}"
                         required
                     >
 
                 </div>
 
+                <div
+                    id="emailError"
+                    class="field-error
+                    {% if errors.email %}show server-error{% endif %}"
+                >
+                    {% if errors.email %}
+                        {{ errors.email }}
+                    {% endif %}
+                </div>
+
             </div>
 
 
-            <!-- PHONE -->
+            <!-- =================================
+                 PHONE
+            ================================== -->
 
             <div class="form-group">
 
@@ -631,17 +694,15 @@
 
                 <div class="input-wrapper">
 
-                    <span class="input-icon">
-                        ☎
-                    </span>
-
                     <input
                         type="tel"
                         id="phone"
                         name="phone"
                         class="form-control"
                         placeholder="Enter 10-digit phone number"
+                        value="{{ phone|default:'' }}"
                         maxlength="10"
+                        minlength="10"
                         pattern="[0-9]{10}"
                         inputmode="numeric"
                         required
@@ -649,10 +710,22 @@
 
                 </div>
 
+                <div
+                    id="phoneError"
+                    class="field-error
+                    {% if errors.phone %}show server-error{% endif %}"
+                >
+                    {% if errors.phone %}
+                        {{ errors.phone }}
+                    {% endif %}
+                </div>
+
             </div>
 
 
-            <!-- PASSWORD -->
+            <!-- =================================
+                 PASSWORD
+            ================================== -->
 
             <div class="form-group">
 
@@ -662,34 +735,53 @@
 
                 <div class="input-wrapper password-wrapper">
 
-                    <span class="input-icon">
-                        🔒
-                    </span>
-
                     <input
                         type="password"
                         id="password"
                         name="password"
                         class="form-control"
-                        placeholder="Create a password"
-                        minlength="6"
+                        placeholder="Create a strong password"
+                        minlength="8"
                         required
                     >
 
                     <button
                         type="button"
                         class="show-password"
-                        onclick="togglePassword('password', this)"
+                        onclick="togglePassword(
+                            'password',
+                            this
+                        )"
                     >
                         Show
                     </button>
 
                 </div>
 
+                <div
+                    id="passwordError"
+                    class="field-error
+                    {% if errors.password %}show server-error{% endif %}"
+                >
+                    {% if errors.password %}
+                        {{ errors.password }}
+                    {% endif %}
+                </div>
+
+                <div
+                    id="passwordStrength"
+                    class="password-strength"
+                >
+                    Use 8+ characters with uppercase,
+                    lowercase and number.
+                </div>
+
             </div>
 
 
-            <!-- CONFIRM PASSWORD -->
+            <!-- =================================
+                 CONFIRM PASSWORD
+            ================================== -->
 
             <div class="form-group">
 
@@ -698,54 +790,72 @@
                 </label>
 
                 <div class="input-wrapper password-wrapper">
-
-                    <span class="input-icon">
-                        🔐
-                    </span>
-
                     <input
                         type="password"
                         id="confirm_password"
                         name="confirm_password"
                         class="form-control"
                         placeholder="Confirm your password"
-                        minlength="6"
+                        minlength="8"
                         required
                     >
 
                     <button
                         type="button"
                         class="show-password"
-                        onclick="togglePassword('confirm_password', this)"
+                        onclick="togglePassword(
+                            'confirm_password',
+                            this
+                        )"
                     >
                         Show
                     </button>
 
                 </div>
 
+                <div
+                    id="confirmPasswordError"
+                    class="field-error
+                    {% if errors.confirm_password %}show server-error{% endif %}"
+                >
+                    {% if errors.confirm_password %}
+                        {{ errors.confirm_password }}
+                    {% endif %}
+                </div>
+
             </div>
 
 
-            <!-- TERMS -->
+            <!-- =================================
+                 TERMS
+            ================================== -->
 
-            <div class="terms">
+            <div
+                class="terms"
+                id="termsContainer"
+            >
 
                 <input
                     type="checkbox"
                     id="terms"
+                    name="terms"
                     required
                 >
 
                 <label for="terms">
+
                     I agree to the terms and conditions
                     and confirm that the information
                     provided is correct.
+
                 </label>
 
             </div>
 
 
-            <!-- REGISTER -->
+            <!-- =================================
+                 BUTTON
+            ================================== -->
 
             <button
                 type="submit"
@@ -782,16 +892,183 @@
 </div>
 
 
+
 <script>
 
     /* =========================================
-       PHONE NUMBER
+       ELEMENTS
     ========================================== */
 
-    const phone =
+    const form =
+        document.getElementById("registerForm");
+
+    const nameInput =
+        document.getElementById("name");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const phoneInput =
         document.getElementById("phone");
 
-    phone.addEventListener(
+    const passwordInput =
+        document.getElementById("password");
+
+    const confirmPasswordInput =
+        document.getElementById(
+            "confirm_password"
+        );
+
+    const terms =
+        document.getElementById("terms");
+
+
+    /* =========================================
+       ERROR HELPERS
+    ========================================== */
+
+    function showError(
+        input,
+        errorElement,
+        message
+    ) {
+
+        input.classList.add("invalid");
+        input.classList.remove("valid");
+
+        errorElement.textContent = message;
+
+        errorElement.classList.add("show");
+
+    }
+
+
+    function showValid(
+        input,
+        errorElement
+    ) {
+
+        input.classList.remove("invalid");
+
+        input.classList.add("valid");
+
+        errorElement.textContent = "";
+
+        errorElement.classList.remove("show");
+
+    }
+
+
+    /* =========================================
+       NAME VALIDATION
+    ========================================== */
+
+    function validateName() {
+
+        const value =
+            nameInput.value.trim();
+
+        const error =
+            document.getElementById(
+                "nameError"
+            );
+
+        if (!value) {
+
+            showError(
+                nameInput,
+                error,
+                "Full name is required."
+            );
+
+            return false;
+
+        }
+
+        if (value.length < 2) {
+
+            showError(
+                nameInput,
+                error,
+                "Name must contain at least 2 characters."
+            );
+
+            return false;
+
+        }
+
+        if (!/^[A-Za-z ]+$/.test(value)) {
+
+            showError(
+                nameInput,
+                error,
+                "Name can contain only letters and spaces."
+            );
+
+            return false;
+
+        }
+
+        showValid(nameInput, error);
+
+        return true;
+
+    }
+
+
+    /* =========================================
+       EMAIL VALIDATION
+    ========================================== */
+
+    function validateEmail() {
+
+        const value =
+            emailInput.value.trim();
+
+        const error =
+            document.getElementById(
+                "emailError"
+            );
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!value) {
+
+            showError(
+                emailInput,
+                error,
+                "Email address is required."
+            );
+
+            return false;
+
+        }
+
+        if (!emailPattern.test(value)) {
+
+            showError(
+                emailInput,
+                error,
+                "Please enter a valid email address."
+            );
+
+            return false;
+
+        }
+
+        showValid(emailInput, error);
+
+        return true;
+
+    }
+
+
+    /* =========================================
+       PHONE VALIDATION
+    ========================================== */
+
+    phoneInput.addEventListener(
         "input",
         function () {
 
@@ -804,6 +1081,189 @@
     );
 
 
+    function validatePhone() {
+
+        const value =
+            phoneInput.value.trim();
+
+        const error =
+            document.getElementById(
+                "phoneError"
+            );
+
+        if (!value) {
+
+            showError(
+                phoneInput,
+                error,
+                "Phone number is required."
+            );
+
+            return false;
+
+        }
+
+        if (!/^[0-9]{10}$/.test(value)) {
+
+            showError(
+                phoneInput,
+                error,
+                "Phone number must contain exactly 10 digits."
+            );
+
+            return false;
+
+        }
+
+        showValid(phoneInput, error);
+
+        return true;
+
+    }
+
+
+    /* =========================================
+       PASSWORD VALIDATION
+    ========================================== */
+
+    function validatePassword() {
+
+        const value =
+            passwordInput.value;
+
+        const error =
+            document.getElementById(
+                "passwordError"
+            );
+
+        const strength =
+            document.getElementById(
+                "passwordStrength"
+            );
+
+        if (!value) {
+
+            showError(
+                passwordInput,
+                error,
+                "Password is required."
+            );
+
+            return false;
+
+        }
+
+        if (value.length < 8) {
+
+            showError(
+                passwordInput,
+                error,
+                "Password must contain at least 8 characters."
+            );
+
+            return false;
+
+        }
+
+        if (!/[A-Z]/.test(value)) {
+
+            showError(
+                passwordInput,
+                error,
+                "Password needs at least one uppercase letter."
+            );
+
+            return false;
+
+        }
+
+        if (!/[a-z]/.test(value)) {
+
+            showError(
+                passwordInput,
+                error,
+                "Password needs at least one lowercase letter."
+            );
+
+            return false;
+
+        }
+
+        if (!/[0-9]/.test(value)) {
+
+            showError(
+                passwordInput,
+                error,
+                "Password needs at least one number."
+            );
+
+            return false;
+
+        }
+
+        showValid(passwordInput, error);
+
+        strength.textContent =
+            "Strong password ✓";
+
+        strength.className =
+            "password-strength strong";
+
+        return true;
+
+    }
+
+
+    /* =========================================
+       CONFIRM PASSWORD
+    ========================================== */
+
+    function validateConfirmPassword() {
+
+        const value =
+            confirmPasswordInput.value;
+
+        const error =
+            document.getElementById(
+                "confirmPasswordError"
+            );
+
+        if (!value) {
+
+            showError(
+                confirmPasswordInput,
+                error,
+                "Please confirm your password."
+            );
+
+            return false;
+
+        }
+
+        if (
+            value !== passwordInput.value
+        ) {
+
+            showError(
+                confirmPasswordInput,
+                error,
+                "Passwords do not match."
+            );
+
+            return false;
+
+        }
+
+        showValid(
+            confirmPasswordInput,
+            error
+        );
+
+        return true;
+
+    }
+
+
     /* =========================================
        PASSWORD SHOW / HIDE
     ========================================== */
@@ -814,9 +1274,13 @@
     ) {
 
         const input =
-            document.getElementById(inputId);
+            document.getElementById(
+                inputId
+            );
 
-        if (input.type === "password") {
+        if (
+            input.type === "password"
+        ) {
 
             input.type = "text";
 
@@ -834,35 +1298,110 @@
 
 
     /* =========================================
-       PASSWORD MATCH
+       REAL-TIME VALIDATION
     ========================================== */
 
-    const form =
-        document.querySelector("form");
+    nameInput.addEventListener(
+        "blur",
+        validateName
+    );
+
+    emailInput.addEventListener(
+        "blur",
+        validateEmail
+    );
+
+    phoneInput.addEventListener(
+        "blur",
+        validatePhone
+    );
+
+    passwordInput.addEventListener(
+        "blur",
+        validatePassword
+    );
+
+    confirmPasswordInput.addEventListener(
+        "blur",
+        validateConfirmPassword
+    );
+
+
+    passwordInput.addEventListener(
+        "input",
+        function () {
+
+            if (this.value.length >= 8) {
+
+                document.getElementById(
+                    "passwordStrength"
+                ).textContent =
+                    "Password length looks good.";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       FORM SUBMIT
+    ========================================== */
 
     form.addEventListener(
         "submit",
         function (event) {
 
-            const password =
-                document.getElementById(
-                    "password"
-                ).value;
+            const validName =
+                validateName();
 
-            const confirmPassword =
-                document.getElementById(
-                    "confirm_password"
-                ).value;
+            const validEmail =
+                validateEmail();
+
+            const validPhone =
+                validatePhone();
+
+            const validPassword =
+                validatePassword();
+
+            const validConfirmPassword =
+                validateConfirmPassword();
+
+
+            let validTerms = true;
+
+
+            if (!terms.checked) {
+
+                document
+                    .getElementById(
+                        "termsContainer"
+                    )
+                    .classList.add("invalid");
+
+                validTerms = false;
+
+            } else {
+
+                document
+                    .getElementById(
+                        "termsContainer"
+                    )
+                    .classList.remove("invalid");
+
+            }
+
 
             if (
-                password !== confirmPassword
+                !validName ||
+                !validEmail ||
+                !validPhone ||
+                !validPassword ||
+                !validConfirmPassword ||
+                !validTerms
             ) {
 
                 event.preventDefault();
-
-                alert(
-                    "Passwords do not match."
-                );
 
             }
 

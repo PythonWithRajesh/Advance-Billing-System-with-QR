@@ -444,4 +444,128 @@ def reset_password(request):
 
 
 def distributor_register(request):
-    return render(request, "distributor_register.html")
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
+
+        errors = {}
+
+        # ==========================================
+        # NAME VALIDATION
+        # ==========================================
+
+        if not name:
+            errors["name"] = "Full name is required."
+
+        elif len(name) < 2:
+            errors["name"] = "Name must contain at least 2 characters."
+
+        elif not all(
+            character.isalpha() or character.isspace()
+            for character in name
+        ):
+            errors["name"] = "Name can contain only letters and spaces."
+
+
+        # ==========================================
+        # EMAIL VALIDATION
+        # ==========================================
+
+        if not email:
+            errors["email"] = "Email address is required."
+
+        elif "@" not in email or "." not in email.split("@")[-1]:
+            errors["email"] = "Please enter a valid email address."
+
+
+        # ==========================================
+        # PHONE VALIDATION
+        # ==========================================
+
+        if not phone:
+            errors["phone"] = "Phone number is required."
+
+        elif not phone.isdigit():
+            errors["phone"] = "Phone number must contain only digits."
+
+        elif len(phone) != 10:
+            errors["phone"] = "Phone number must contain exactly 10 digits."
+
+
+        # ==========================================
+        # PASSWORD VALIDATION
+        # ==========================================
+
+        if not password:
+            errors["password"] = "Password is required."
+
+        elif len(password) < 8:
+            errors["password"] = (
+                "Password must contain at least 8 characters."
+            )
+
+        elif not any(char.isupper() for char in password):
+            errors["password"] = (
+                "Password must contain at least one uppercase letter."
+            )
+
+        elif not any(char.islower() for char in password):
+            errors["password"] = (
+                "Password must contain at least one lowercase letter."
+            )
+
+        elif not any(char.isdigit() for char in password):
+            errors["password"] = (
+                "Password must contain at least one number."
+            )
+
+
+        # ==========================================
+        # CONFIRM PASSWORD
+        # ==========================================
+
+        if not confirm_password:
+            errors["confirm_password"] = (
+                "Please confirm your password."
+            )
+
+        elif password != confirm_password:
+            errors["confirm_password"] = (
+                "Passwords do not match."
+            )
+
+
+        # ==========================================
+        # IF ERRORS
+        # ==========================================
+
+        if errors:
+
+            return render(
+                request,
+                "distributor_register.html",
+                {
+                    "errors": errors,
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                }
+            )
+
+
+        # ==========================================
+        # SUCCESS FOR TASK 7
+        # ==========================================
+
+        return redirect("distributor_login")
+
+
+    return render(
+        request,
+        "distributor_register.html"
+    )
