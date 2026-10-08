@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Verify OTP | Advance Billing</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #064e3b,
+                    #047857
+                );
+
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .card {
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 25px 60px
+                rgba(0, 0, 0, 0.25);
+        }
+
+        .icon {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 16px;
+
+            background: #047857;
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            font-size: 28px;
+        }
+
+        h1 {
+            text-align: center;
+
+            color: #064e3b;
+
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            margin-bottom: 30px;
+        }
+
+        .otp-input {
+            width: 100%;
+
+            padding: 16px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            text-align: center;
+
+            font-size: 24px;
+
+            letter-spacing: 8px;
+
+            margin-bottom: 20px;
+        }
+
+        .otp-input:focus {
+            border-color: #047857;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(4, 120, 87, 0.10);
+        }
+
+        .btn {
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #047857;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #065f46;
+        }
+
+        .resend {
+            text-align: center;
+
+            margin-top: 22px;
+
+            font-size: 14px;
+
+            color: #6b7280;
+        }
+
+        .resend a {
+            color: #047857;
+
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+        .resend a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+        .success {
+            background: #d1fae5;
+
+            color: #065f46;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="icon">
+            ✓
+        </div>
+
+        <h1>Verify OTP</h1>
+
+        <p class="subtitle">
+            Enter the 6-digit OTP sent for password reset.
+        </p>
+
+        {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="success">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="otp"
+                class="otp-input"
+                placeholder="000000"
+                maxlength="6"
+                minlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric"
+                required
+            >
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Verify OTP
+            </button>
+
+        </form>
+
+        <div class="resend">
+
+            Didn't receive OTP?
+
+            <a href="{% url 'resend_otp' %}">
+                Resend OTP
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
