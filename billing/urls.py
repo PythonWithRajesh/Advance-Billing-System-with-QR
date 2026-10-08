@@ -23,6 +23,11 @@ urlpatterns = [
         views.distributor_login,
         name="distributor_login"
     ),
+    path(
+        "distributor-register/",
+        views.distributor_register,
+        name="distributor_register"
+    ),
 
     path(
         "distributor-dashboard/",

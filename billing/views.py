@@ -441,3 +441,7 @@ def reset_password(request):
         request,
         "reset_password.html"
     )
+
+
+def distributor_register(request):
+    return render(request, "distributor_register.html")

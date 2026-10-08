@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Distributor Registration | Advance Billing</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #022c22,
+                    #064e3b,
+                    #047857
+                );
+        }
+
+
+        /* ================================
+           MAIN WRAPPER
+        ================================= */
+
+        .wrapper {
+            width: 100%;
+            max-width: 950px;
+
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+
+            background: white;
+
+            border-radius: 24px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 30px 80px
+                rgba(0, 0, 0, 0.30);
+        }
+
+
+        /* ================================
+           LEFT SIDE
+        ================================= */
+
+        .left {
+            padding: 55px 45px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #064e3b,
+                    #047857
+                );
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-icon {
+            width: 58px;
+            height: 58px;
+
+            border-radius: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(255,255,255,0.15);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.25);
+
+            font-size: 25px;
+
+            margin-bottom: 25px;
+        }
+
+        .left h1 {
+            font-size: 31px;
+
+            line-height: 1.2;
+
+            margin-bottom: 15px;
+        }
+
+        .left p {
+            color:
+                rgba(255,255,255,0.78);
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* ================================
+           FEATURES
+        ================================= */
+
+        .feature {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 17px;
+
+            font-size: 13px;
+        }
+
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(255,255,255,0.13);
+
+            flex-shrink: 0;
+        }
+
+
+        /* ================================
+           RIGHT SIDE
+        ================================= */
+
+        .right {
+            padding: 45px 50px;
+
+            background: #ffffff;
+        }
+
+        .form-header {
+            margin-bottom: 28px;
+        }
+
+        .form-header h2 {
+            color: #064e3b;
+
+            font-size: 26px;
+
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+
+        /* ================================
+           FORM
+        ================================= */
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 14px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #6b7280;
+
+            font-size: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+
+            height: 47px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            padding:
+                0 14px 0 42px;
+
+            font-size: 14px;
+
+            color: #111827;
+
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #047857;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(4,120,87,0.10);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+
+        /* ================================
+           PASSWORD
+        ================================= */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-control {
+            padding-right: 45px;
+        }
+
+        .show-password {
+            position: absolute;
+
+            right: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+
+        /* ================================
+           TERMS
+        ================================= */
+
+        .terms {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 9px;
+
+            margin:
+                5px 0 20px;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        .terms input {
+            margin-top: 2px;
+
+            accent-color: #047857;
+        }
+
+
+        /* ================================
+           BUTTON
+        ================================= */
+
+        .register-btn {
+            width: 100%;
+
+            height: 49px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #047857,
+                    #059669
+                );
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+            box-shadow:
+                0 8px 18px
+                rgba(4,120,87,0.20);
+        }
+
+        .register-btn:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 12px 25px
+                rgba(4,120,87,0.28);
+        }
+
+
+        /* ================================
+           LOGIN LINK
+        ================================= */
+
+        .login-link {
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .login-link a {
+            color: #047857;
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* ================================
+           FOOTER
+        ================================= */
+
+        .footer {
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #9ca3af;
+
+            font-size: 11px;
+        }
+
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 760px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .left {
+                padding: 35px 30px;
+            }
+
+            .left h1 {
+                font-size: 26px;
+            }
+
+            .right {
+                padding: 35px 28px;
+            }
+
+        }
+
+
+        @media (max-width: 430px) {
+
+            .left {
+                padding: 30px 23px;
+            }
+
+            .right {
+                padding: 30px 20px;
+            }
+
+            .left h1 {
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="wrapper">
+
+
+    <!-- =========================================
+         LEFT INFORMATION
+    ========================================== -->
+
+    <div class="left">
+
+        <div class="brand-icon">
+            ✓
+        </div>
+
+        <h1>
+            Join Advance Billing
+        </h1>
+
+        <p>
+            Create your distributor account and
+            manage billing operations through a
+            secure and professional platform.
+        </p>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <span>
+                Easy billing management
+            </span>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <span>
+                Secure distributor access
+            </span>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <span>
+                QR-based billing support
+            </span>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <span>
+                Professional business dashboard
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================
+         REGISTRATION FORM
+    ========================================== -->
+
+    <div class="right">
+
+        <div class="form-header">
+
+            <h2>
+                Create Distributor Account
+            </h2>
+
+            <p>
+                Enter your details to create your account.
+            </p>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- FULL NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        👤
+                    </span>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="Enter your email address"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ☎
+                    </span>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        placeholder="Enter 10-digit phone number"
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        inputmode="numeric"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrapper password-wrapper">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Create a password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="togglePassword('password', this)"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONFIRM PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="confirm_password">
+                    Confirm Password
+                </label>
+
+                <div class="input-wrapper password-wrapper">
+
+                    <span class="input-icon">
+                        🔐
+                    </span>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        class="form-control"
+                        placeholder="Confirm your password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="togglePassword('confirm_password', this)"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- TERMS -->
+
+            <div class="terms">
+
+                <input
+                    type="checkbox"
+                    id="terms"
+                    required
+                >
+
+                <label for="terms">
+                    I agree to the terms and conditions
+                    and confirm that the information
+                    provided is correct.
+                </label>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <button
+                type="submit"
+                class="register-btn"
+            >
+                Create Distributor Account
+            </button>
+
+
+        </form>
+
+
+        <!-- LOGIN -->
+
+        <div class="login-link">
+
+            Already have an account?
+
+            <a href="{% url 'distributor_login' %}">
+                Login here
+            </a>
+
+        </div>
+
+
+        <div class="footer">
+
+            © 2026 Advance Billing System
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================================
+       PHONE NUMBER
+    ========================================== */
+
+    const phone =
+        document.getElementById("phone");
+
+    phone.addEventListener(
+        "input",
+        function () {
+
+            this.value =
+                this.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+        }
+    );
+
+
+    /* =========================================
+       PASSWORD SHOW / HIDE
+    ========================================== */
+
+    function togglePassword(
+        inputId,
+        button
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            button.textContent = "Hide";
+
+        } else {
+
+            input.type = "password";
+
+            button.textContent = "Show";
+
+        }
+
+    }
+
+
+    /* =========================================
+       PASSWORD MATCH
+    ========================================== */
+
+    const form =
+        document.querySelector("form");
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
+
+            const confirmPassword =
+                document.getElementById(
+                    "confirm_password"
+                ).value;
+
+            if (
+                password !== confirmPassword
+            ) {
+
+                event.preventDefault();
+
+                alert(
+                    "Passwords do not match."
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
