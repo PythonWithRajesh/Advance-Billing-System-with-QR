@@ -672,13 +672,127 @@ def distributor_profile(request):
     except DistributorProfile.DoesNotExist:
         profile = None
 
-    context = {
-        "user": user,
-        "profile": profile,
-    }
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        phone = request.POST.get("phone", "").strip()
+
+        errors = {}
+
+        # =========================
+        # NAME VALIDATION
+        # =========================
+
+        if not name:
+            errors["name"] = "Full name is required."
+
+        elif len(name) < 2:
+            errors["name"] = "Name must contain at least 2 characters."
+
+        elif not all(
+            character.isalpha() or character.isspace()
+            for character in name
+        ):
+            errors["name"] = "Name can contain only letters and spaces."
+
+        # =========================
+        # EMAIL VALIDATION
+        # =========================
+
+        if not email:
+            errors["email"] = "Email address is required."
+
+        elif "@" not in email or "." not in email.split("@")[-1]:
+            errors["email"] = "Please enter a valid email address."
+
+        elif User.objects.filter(
+            email__iexact=email
+        ).exclude(
+            id=user.id
+        ).exists():
+            errors["email"] = "This email is already registered."
+
+        # =========================
+        # PHONE VALIDATION
+        # =========================
+
+        if not phone:
+            errors["phone"] = "Phone number is required."
+
+        elif not phone.isdigit():
+            errors["phone"] = "Phone number must contain only digits."
+
+        elif len(phone) != 10:
+            errors["phone"] = "Phone number must contain exactly 10 digits."
+
+        # =========================
+        # IF VALIDATION FAILS
+        # =========================
+
+        if errors:
+
+            return render(
+                request,
+                "distributor_profile.html",
+                {
+                    "user": user,
+                    "profile": profile,
+                    "errors": errors,
+                    "form_name": name,
+                    "form_email": email,
+                    "form_phone": phone,
+                    "edit_mode": True,
+                }
+            )
+
+        # =========================
+        # UPDATE USER
+        # =========================
+
+        user.first_name = name
+        user.email = email
+
+        # Username is being used as email in Task 8
+        user.username = email
+
+        user.save()
+
+        # =========================
+        # UPDATE PROFILE
+        # =========================
+
+        if profile:
+            profile.phone = phone
+            profile.save()
+
+        else:
+            DistributorProfile.objects.create(
+                user=user,
+                phone=phone
+            )
+
+        # =========================
+        # SUCCESS MESSAGE
+        # =========================
+
+        messages.success(
+            request,
+            "Profile updated successfully."
+        )
+
+        return redirect("distributor_profile")
+
+    # =========================
+    # GET REQUEST
+    # =========================
 
     return render(
         request,
         "distributor_profile.html",
-        context
+        {
+            "user": user,
+            "profile": profile,
+            "edit_mode": request.GET.get("edit") == "1",
+        }
     )
