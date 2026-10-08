@@ -3,7 +3,8 @@ from django.contrib import admin
 from .models import (
     PasswordResetOTP,
     DistributorProfile,
-    Customer
+    Customer,
+    Product,
 )
 
 
@@ -76,6 +77,41 @@ class CustomerAdmin(admin.ModelAdmin):
     list_filter = (
         "state",
         "city",
+        "created_at",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
+
+    ordering = (
+        "-created_at",
+    )
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "name",
+        "category",
+        "price",
+        "stock",
+        "gst_rate",
+        "created_at",
+        "updated_at",
+    )
+
+    search_fields = (
+        "name",
+        "category",
+        "description",
+    )
+
+    list_filter = (
+        "category",
+        "gst_rate",
         "created_at",
     )
 
