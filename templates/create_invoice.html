@@ -548,7 +548,8 @@
 
             {% if products %}
                 <div class="products-toolbar">
-                    <p>Prices and GST rates are loaded from the product database.</p>
+                    <p>Add multiple products to the same invoice.</p>
+
                     <button type="button" class="btn btn-secondary" id="addItemBtn">
                         + Add Product
                     </button>
@@ -561,7 +562,7 @@
                                 <th>Product</th>
                                 <th>Price (₹)</th>
                                 <th>GST %</th>
-                                <th>Qty</th>
+                                <th>Quantity</th>
                                 <th>Discount Type</th>
                                 <th>Discount</th>
                                 <th>Subtotal</th>
@@ -571,9 +572,13 @@
                             </tr>
                         </thead>
 
-                        <tbody id="itemsBody"></tbody>
+                        <tbody id="itemsBody">
+                            <!-- JavaScript dynamically adds product rows here -->
+                        </tbody>
                     </table>
                 </div>
+
+                <input type="hidden" name="items_json" id="itemsJson">
             {% else %}
                 <div class="empty-products">
                     Add a product before creating an invoice.
@@ -704,9 +709,17 @@
 </script>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
     const itemsBody = document.getElementById("itemsBody");
     const addItemBtn = document.getElementById("addItemBtn");
     const invoiceForm = document.getElementById("invoiceForm");
+    const itemsJson = document.getElementById("itemsJson");
+
+    if (!itemsBody || !addItemBtn || !invoiceForm || !itemsJson) {
+        console.error("Invoice form elements are missing.");
+        return;
+    }
 
     function money(value) {
         return "₹" + Number(value || 0).toLocaleString("en-IN", {
@@ -720,19 +733,21 @@
     }
 
     function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, char => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        })[char]);
+        return String(value).replace(/[&<>"']/g, function (char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[char];
+        });
     }
 
-    function createProductOptions() {
+    function getProductOptions() {
         let html = '<option value="">-- Select Product --</option>';
 
-        productOptions.forEach(product => {
+        productOptions.forEach(function (product) {
             html += `
                 <option value="${product.id}">
                     ${escapeHtml(product.name)} — Stock: ${product.stock}
@@ -745,7 +760,7 @@
 
     function addItemRow() {
         if (!productOptions.length) {
-            alert("No products available. Please add a product first.");
+            alert("No products available. Please add products first.");
             return;
         }
 
@@ -754,7 +769,7 @@
         row.innerHTML = `
             <td>
                 <select class="product-select" required>
-                    ${createProductOptions()}
+                    ${getProductOptions()}
                 </select>
             </td>
 
@@ -762,12 +777,14 @@
             <td class="gst-cell">0%</td>
 
             <td>
-                <input type="number"
-                       class="quantity-input"
-                       min="1"
-                       value="1"
-                       step="1"
-                       required>
+                <input
+                    type="number"
+                    class="quantity-input"
+                    min="1"
+                    step="1"
+                    value="1"
+                    required
+                >
             </td>
 
             <td>
@@ -778,17 +795,19 @@
             </td>
 
             <td>
-                <input type="number"
-                       class="discount-input"
-                       min="0"
-                       value="0"
-                       step="0.01"
-                       required>
+                <input
+                    type="number"
+                    class="discount-input"
+                    min="0"
+                    step="0.01"
+                    value="0"
+                    required
+                >
             </td>
 
-            <td class="subtotal-cell amount">₹0.00</td>
-            <td class="gst-amount amount">₹0.00</td>
-            <td class="line-total amount">₹0.00</td>
+            <td class="subtotal-cell">₹0.00</td>
+            <td class="gst-amount-cell">₹0.00</td>
+            <td class="final-total-cell">₹0.00</td>
 
             <td>
                 <button type="button" class="btn btn-danger remove-row">
@@ -801,27 +820,35 @@
 
         row.querySelector(".product-select").addEventListener(
             "change",
-            () => updateRow(row)
+            function () {
+                updateRow(row);
+            }
         );
 
         row.querySelector(".quantity-input").addEventListener(
             "input",
-            () => updateRow(row)
+            function () {
+                updateRow(row);
+            }
         );
 
         row.querySelector(".discount-type").addEventListener(
             "change",
-            () => updateRow(row)
+            function () {
+                updateRow(row);
+            }
         );
 
         row.querySelector(".discount-input").addEventListener(
             "input",
-            () => updateRow(row)
+            function () {
+                updateRow(row);
+            }
         );
 
         row.querySelector(".remove-row").addEventListener(
             "click",
-            () => {
+            function () {
                 row.remove();
                 calculateSummary();
             }
@@ -830,12 +857,12 @@
         updateRow(row);
     }
 
-    function getRowCalculation(row) {
+    function calculateRow(row) {
         const productId = row.querySelector(".product-select").value;
 
-        const product = productOptions.find(
-            item => String(item.id) === String(productId)
-        );
+        const product = productOptions.find(function (item) {
+            return String(item.id) === String(productId);
+        });
 
         if (!product) {
             return null;
@@ -845,44 +872,39 @@
             row.querySelector(".quantity-input").value
         );
 
-        const discountInput = Number(
+        const discountValue = Number(
             row.querySelector(".discount-input").value || 0
         );
 
         const discountType = row.querySelector(".discount-type").value;
 
-        if (
-            !Number.isInteger(quantity) ||
-            quantity <= 0 ||
-            !Number.isFinite(discountInput) ||
-            discountInput < 0
-        ) {
-            return null;
+        if (!Number.isInteger(quantity) || quantity <= 0) {
+            return { error: "Quantity must be a positive whole number." };
         }
 
-        const unitPrice = Number(product.price);
+        if (!Number.isFinite(discountValue) || discountValue < 0) {
+            return { error: "Discount must be zero or greater." };
+        }
+
+        const price = Number(product.price);
         const gstRate = Number(product.gst);
 
-        const subtotal = roundMoney(unitPrice * quantity);
+        const subtotal = roundMoney(price * quantity);
 
         let discount = 0;
 
         if (discountType === "percent") {
-            if (discountInput > 100) {
-                return {
-                    error: "Percentage discount cannot exceed 100%."
-                };
+            if (discountValue > 100) {
+                return { error: "Percentage discount cannot exceed 100%." };
             }
 
-            discount = roundMoney(subtotal * discountInput / 100);
+            discount = roundMoney(subtotal * discountValue / 100);
         } else {
-            discount = roundMoney(discountInput);
+            discount = roundMoney(discountValue);
         }
 
         if (discount > subtotal) {
-            return {
-                error: "Discount cannot exceed the item subtotal."
-            };
+            return { error: "Discount cannot exceed the subtotal." };
         }
 
         const taxableAmount = roundMoney(subtotal - discount);
@@ -896,31 +918,28 @@
         );
 
         return {
-            product,
-            quantity,
-            unitPrice,
-            gstRate,
-            subtotal,
-            discount,
-            taxableAmount,
-            gstAmount,
-            finalTotal
+            product: product,
+            quantity: quantity,
+            subtotal: subtotal,
+            discount: discount,
+            gstAmount: gstAmount,
+            finalTotal: finalTotal
         };
     }
 
     function updateRow(row) {
         const productId = row.querySelector(".product-select").value;
 
-        const product = productOptions.find(
-            item => String(item.id) === String(productId)
-        );
+        const product = productOptions.find(function (item) {
+            return String(item.id) === String(productId);
+        });
 
         if (!product) {
             row.querySelector(".price-cell").textContent = "₹0.00";
             row.querySelector(".gst-cell").textContent = "0%";
             row.querySelector(".subtotal-cell").textContent = "₹0.00";
-            row.querySelector(".gst-amount").textContent = "₹0.00";
-            row.querySelector(".line-total").textContent = "₹0.00";
+            row.querySelector(".gst-amount-cell").textContent = "₹0.00";
+            row.querySelector(".final-total-cell").textContent = "₹0.00";
 
             calculateSummary();
             return;
@@ -929,12 +948,12 @@
         row.querySelector(".price-cell").textContent = money(product.price);
         row.querySelector(".gst-cell").textContent = product.gst + "%";
 
-        const result = getRowCalculation(row);
+        const result = calculateRow(row);
 
         if (!result || result.error) {
             row.querySelector(".subtotal-cell").textContent = "—";
-            row.querySelector(".gst-amount").textContent = "—";
-            row.querySelector(".line-total").textContent = "—";
+            row.querySelector(".gst-amount-cell").textContent = "—";
+            row.querySelector(".final-total-cell").textContent = "—";
 
             calculateSummary();
             return;
@@ -943,10 +962,10 @@
         row.querySelector(".subtotal-cell").textContent =
             money(result.subtotal);
 
-        row.querySelector(".gst-amount").textContent =
+        row.querySelector(".gst-amount-cell").textContent =
             money(result.gstAmount);
 
-        row.querySelector(".line-total").textContent =
+        row.querySelector(".final-total-cell").textContent =
             money(result.finalTotal);
 
         calculateSummary();
@@ -954,54 +973,40 @@
 
     function calculateSummary() {
         let subtotal = 0;
-        let totalDiscount = 0;
-        let totalGst = 0;
-        let grandTotal = 0;
-        let totalItems = 0;
+        let discount = 0;
+        let gst = 0;
+        let total = 0;
+        let quantity = 0;
 
-        const rows = [...itemsBody.querySelectorAll("tr")];
+        const rows = itemsBody.querySelectorAll("tr");
 
-        rows.forEach(row => {
-            const result = getRowCalculation(row);
+        rows.forEach(function (row) {
+            const result = calculateRow(row);
 
             if (!result || result.error) {
                 return;
             }
 
             subtotal += result.subtotal;
-            totalDiscount += result.discount;
-            totalGst += result.gstAmount;
-            grandTotal += result.finalTotal;
-            totalItems += result.quantity;
+            discount += result.discount;
+            gst += result.gstAmount;
+            total += result.finalTotal;
+            quantity += result.quantity;
         });
 
-        document.getElementById("totalItems").textContent = totalItems;
-
-        document.getElementById("subtotal").textContent =
-            money(roundMoney(subtotal));
-
-        document.getElementById("totalDiscount").textContent =
-            money(roundMoney(totalDiscount));
-
-        document.getElementById("totalGst").textContent =
-            money(roundMoney(totalGst));
-
-        document.getElementById("grandTotal").textContent =
-            money(roundMoney(grandTotal));
+        document.getElementById("totalItems").textContent = quantity;
+        document.getElementById("subtotal").textContent = money(subtotal);
+        document.getElementById("totalDiscount").textContent = money(discount);
+        document.getElementById("totalGst").textContent = money(gst);
+        document.getElementById("grandTotal").textContent = money(total);
     }
 
-    if (addItemBtn) {
-        addItemBtn.addEventListener("click", addItemRow);
+    addItemBtn.addEventListener("click", addItemRow);
 
-        if (productOptions.length > 0) {
-            addItemRow();
-        }
-    }
-
-    invoiceForm.addEventListener("submit", function(event) {
+    invoiceForm.addEventListener("submit", function (event) {
         const rows = [...itemsBody.querySelectorAll("tr")];
 
-        if (!rows.length) {
+        if (rows.length === 0) {
             event.preventDefault();
             alert("Please add at least one product.");
             return;
@@ -1011,43 +1016,38 @@
         const seenProducts = new Set();
 
         for (const row of rows) {
-            const productId = row.querySelector(".product-select").value;
-            const result = getRowCalculation(row);
+            const result = calculateRow(row);
 
-            if (!productId || !result) {
+            if (!result || result.error) {
                 event.preventDefault();
-                alert("Please select a product and enter a valid quantity and discount.");
-                return;
-            }
-
-            if (result.error) {
-                event.preventDefault();
-                alert(result.error);
+                alert(result?.error || "Please select a product in every row.");
                 return;
             }
 
             if (result.quantity > result.product.stock) {
                 event.preventDefault();
                 alert(
-                    `Insufficient stock for ${result.product.name}. ` +
-                    `Available stock: ${result.product.stock}.`
+                    "Insufficient stock for " + result.product.name +
+                    ". Available stock: " + result.product.stock
                 );
                 return;
             }
 
-            if (seenProducts.has(String(productId))) {
+            const productId = String(result.product.id);
+
+            if (seenProducts.has(productId)) {
                 event.preventDefault();
                 alert(
-                    "Please select each product only once. " +
+                    "A product can only appear once. " +
                     "Increase its quantity instead."
                 );
                 return;
             }
 
-            seenProducts.add(String(productId));
+            seenProducts.add(productId);
 
             submittedItems.push({
-                product_id: Number(productId),
+                product_id: result.product.id,
                 quantity: result.quantity,
                 discount_type: row.querySelector(".discount-type").value,
                 discount_value: Number(
@@ -1056,9 +1056,15 @@
             });
         }
 
-        document.getElementById("itemsJson").value =
-            JSON.stringify(submittedItems);
+        itemsJson.value = JSON.stringify(submittedItems);
     });
+
+    // Start with one product row.
+    if (productOptions.length > 0) {
+        addItemRow();
+    }
+
+});
 </script>
 
 </body>
