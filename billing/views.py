@@ -14,7 +14,11 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.core.paginator import Paginator
 
-from .models import PasswordResetOTP, DistributorProfile, Customer, Product
+import json
+from decimal import Decimal, InvalidOperation
+from django.db import transaction
+
+from .models import PasswordResetOTP, DistributorProfile, Customer, Product, Invoice, InvoiceItem
 
 from django.db import models
 
@@ -1506,3 +1510,194 @@ def delete_product(request, product_id):
     )
 
     return redirect("product_list")
+
+
+@login_required
+def create_invoice(request):
+    customers = Customer.objects.all().order_by("name")
+    products = Product.objects.all().order_by("name")
+
+    if request.method == "POST":
+        customer_id = request.POST.get("customer")
+        payment_status = request.POST.get("payment_status", "Pending")
+        notes = request.POST.get("notes", "").strip()
+        items_json = request.POST.get("items_json", "")
+
+        errors = []
+
+        # Validate customer
+        try:
+            customer = Customer.objects.get(id=int(customer_id))
+        except (Customer.DoesNotExist, TypeError, ValueError):
+            customer = None
+            errors.append("Please select a valid customer.")
+
+        # Validate payment status
+        valid_statuses = [
+            value for value, label in Invoice.PAYMENT_STATUS_CHOICES
+        ]
+
+        if payment_status not in valid_statuses:
+            errors.append("Please select a valid payment status.")
+
+        # Validate product rows
+        try:
+            submitted_items = json.loads(items_json)
+            if not isinstance(submitted_items, list) or not submitted_items:
+                errors.append("Please add at least one product.")
+        except (json.JSONDecodeError, TypeError):
+            submitted_items = []
+            errors.append("Invalid product data. Please try again.")
+
+        prepared_items = []
+        subtotal = Decimal("0.00")
+        total_gst = Decimal("0.00")
+
+        if not errors:
+            for row in submitted_items:
+                try:
+                    product_id = int(row.get("product_id"))
+                    quantity = int(row.get("quantity"))
+
+                    product = Product.objects.get(id=product_id)
+
+                    if quantity <= 0:
+                        errors.append(
+                            f"Quantity for {product.name} must be greater than zero."
+                        )
+                        continue
+
+                    if quantity > product.stock:
+                        errors.append(
+                            f"Insufficient stock for {product.name}. "
+                            f"Available stock: {product.stock}."
+                        )
+                        continue
+
+                    unit_price = product.price
+                    gst_rate = product.gst_rate
+
+                    line_subtotal = unit_price * quantity
+                    line_gst = (
+                        line_subtotal * gst_rate / Decimal("100")
+                    ).quantize(Decimal("0.01"))
+
+                    line_total = line_subtotal + line_gst
+
+                    prepared_items.append({
+                        "product": product,
+                        "quantity": quantity,
+                        "unit_price": unit_price,
+                        "gst_rate": gst_rate,
+                        "gst_amount": line_gst,
+                        "total_price": line_total,
+                    })
+
+                    subtotal += line_subtotal
+                    total_gst += line_gst
+
+                except (Product.DoesNotExist, TypeError, ValueError):
+                    errors.append(
+                        "One of the selected products is invalid."
+                    )
+                except (InvalidOperation, ArithmeticError):
+                    errors.append(
+                        "Unable to calculate a product total."
+                    )
+
+        if not prepared_items and not errors:
+            errors.append("Please add at least one valid product.")
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+
+            return render(
+                request,
+                "create_invoice.html",
+                {
+                    "customers": customers,
+                    "products": products,
+                    "form_customer": customer_id,
+                    "form_payment_status": payment_status,
+                    "form_notes": notes,
+                },
+            )
+
+        grand_total = subtotal + total_gst
+
+        # Save invoice and items together, so partial invoices are not saved.
+        try:
+            with transaction.atomic():
+                last_invoice = (
+                    Invoice.objects.select_for_update()
+                    .order_by("-id")
+                    .first()
+                )
+
+                next_number = (
+                    last_invoice.id + 1 if last_invoice else 1
+                )
+                invoice_number = f"INV-{next_number:06d}"
+
+                # Avoid collision if invoice numbers have gaps.
+                while Invoice.objects.filter(
+                    invoice_number=invoice_number
+                ).exists():
+                    next_number += 1
+                    invoice_number = f"INV-{next_number:06d}"
+
+                invoice = Invoice.objects.create(
+                    invoice_number=invoice_number,
+                    customer=customer,
+                    subtotal=subtotal,
+                    gst_amount=total_gst,
+                    grand_total=grand_total,
+                    payment_status=payment_status,
+                    notes=notes,
+                )
+
+                for item in prepared_items:
+                    InvoiceItem.objects.create(
+                        invoice=invoice,
+                        product=item["product"],
+                        quantity=item["quantity"],
+                        unit_price=item["unit_price"],
+                        gst_rate=item["gst_rate"],
+                        gst_amount=item["gst_amount"],
+                        total_price=item["total_price"],
+                    )
+
+                    # Reduce stock for the sold quantity.
+                    product = Product.objects.select_for_update().get(
+                        id=item["product"].id
+                    )
+
+                    if product.stock < item["quantity"]:
+                        raise ValueError(
+                            f"Stock changed for {product.name}. "
+                            "Please try again."
+                        )
+
+                    product.stock -= item["quantity"]
+                    product.save(update_fields=["stock", "updated_at"])
+
+        except (ValueError, InvalidOperation) as error:
+            messages.error(request, str(error))
+            return redirect("create_invoice")
+
+        messages.success(
+            request,
+            f"Invoice {invoice.invoice_number} created successfully!"
+        )
+        return redirect("create_invoice")
+
+    return render(
+        request,
+        "create_invoice.html",
+        {
+            "customers": customers,
+            "products": products,
+            "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
+        },
+    )

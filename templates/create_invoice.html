@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Invoice | Advance Billing System</title>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --bg: #f5f7fb;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #15803d;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 17px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: #a5b4fc;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: #a5b4fc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px 40px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            font-size: clamp(25px, 4vw, 34px);
+            margin-bottom: 7px;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 9px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 25px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, .035);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .section-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: #eef2ff;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font: inherit;
+            font-size: 14px;
+            color: var(--text);
+            background: white;
+            outline: none;
+            transition: .2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .11);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .hint {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 820px;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: #64748b;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        td input,
+        td select {
+            min-width: 90px;
+            padding: 9px;
+        }
+
+        td .product-select {
+            min-width: 210px;
+        }
+
+        .amount {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: none;
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e7ff;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .btn-danger:hover {
+            background: #fecaca;
+        }
+
+        .btn-dark {
+            background: #111827;
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: #374151;
+        }
+
+        .products-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .products-toolbar p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .summary-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .summary-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 20px;
+        }
+
+        .summary-box h3 {
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .summary-row span:first-child {
+            color: var(--muted);
+        }
+
+        .summary-row strong {
+            white-space: nowrap;
+        }
+
+        .summary-total {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            border-bottom: none;
+            padding-top: 18px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .empty-products {
+            padding: 25px;
+            text-align: center;
+            color: var(--muted);
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media (max-width: 800px) {
+            .summary-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px 25px;
+                margin-top: 22px;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="brand">Advance<span>Billing</span></div>
+
+    <div class="nav-links">
+        <a href="{% url 'distributor_dashboard' %}">Dashboard</a>
+        <a href="{% url 'customer_list' %}">Customers</a>
+        <a href="{% url 'product_list' %}">Products</a>
+        <a href="{% url 'create_invoice' %}">Create Invoice</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <div class="page-heading">
+        <div>
+            <h1>Create Invoice</h1>
+            <p>Create a customer invoice with products, quantities and GST.</p>
+        </div>
+        <span class="badge">INVOICE MANAGEMENT</span>
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert
+                    {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if not customers %}
+        <div class="alert alert-error">
+            No customers found. Please add a customer before creating an invoice.
+            <a href="{% url 'add_customer' %}">Add Customer</a>
+        </div>
+    {% endif %}
+
+    {% if not products %}
+        <div class="alert alert-error">
+            No products found. Please add a product before creating an invoice.
+            <a href="{% url 'add_product' %}">Add Product</a>
+        </div>
+    {% endif %}
+
+    <form method="POST" id="invoiceForm">
+        {% csrf_token %}
+
+        <input type="hidden" name="items_json" id="itemsJson">
+
+        <!-- CUSTOMER INFORMATION -->
+        <section class="card">
+            <div class="section-heading">
+                <div class="section-number">1</div>
+                <div>
+                    <h2>Customer Information</h2>
+                    <p>Select the customer for this invoice.</p>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="customer">Customer <span class="required">*</span></label>
+
+                    <select name="customer" id="customer" required>
+                        <option value="">-- Select Customer --</option>
+
+                        {% for customer in customers %}
+                            <option
+                                value="{{ customer.id }}"
+                                data-email="{{ customer.email }}"
+                                data-phone="{{ customer.phone }}"
+                                data-address="{{ customer.address|escape }}"
+                                {% if form_customer == customer.id|stringformat:"s" %}selected{% endif %}
+                            >
+                                {{ customer.name }} — {{ customer.phone }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <p class="hint">Customer options are fetched from your database.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerEmail">Email</label>
+                    <input type="text" id="customerEmail" readonly placeholder="Customer email">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerPhone">Phone</label>
+                    <input type="text" id="customerPhone" readonly placeholder="Customer phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerAddress">Address</label>
+                    <input type="text" id="customerAddress" readonly placeholder="Customer address">
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCTS -->
+        <section class="card">
+            <div class="section-heading">
+                <div class="section-number">2</div>
+                <div>
+                    <h2>Products & Items</h2>
+                    <p>Add one or more products to this invoice.</p>
+                </div>
+            </div>
+
+            {% if products %}
+                <div class="products-toolbar">
+                    <p>Prices and GST rates are loaded from the product database.</p>
+                    <button type="button" class="btn btn-secondary" id="addItemBtn">
+                        + Add Product
+                    </button>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price (₹)</th>
+                                <th>GST %</th>
+                                <th>Qty</th>
+                                <th>GST Amount</th>
+                                <th>Line Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="itemsBody"></tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-products">
+                    Add a product before creating an invoice.
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- TOTALS AND PAYMENT -->
+        <section class="card">
+            <div class="section-heading">
+                <div class="section-number">3</div>
+                <div>
+                    <h2>Payment & Summary</h2>
+                    <p>Review the invoice totals before saving.</p>
+                </div>
+            </div>
+
+            <div class="summary-layout">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="payment_status">Payment Status</label>
+                        <select name="payment_status" id="payment_status">
+                            {% for value, label in payment_status_choices %}
+                                <option value="{{ value }}"
+                                    {% if form_payment_status == value or not form_payment_status and value == "Pending" %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="notes">Invoice Notes</label>
+                        <textarea name="notes" id="notes" placeholder="Optional invoice notes...">{{ form_notes|default:"" }}</textarea>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Invoice Summary</h3>
+
+                    <div class="summary-row">
+                        <span>Total Items</span>
+                        <strong id="totalItems">0</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <strong id="subtotal">₹0.00</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Total GST</span>
+                        <strong id="totalGst">₹0.00</strong>
+                    </div>
+
+                    <div class="summary-row summary-total">
+                        <span>Grand Total</span>
+                        <strong id="grandTotal">₹0.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'product_list' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="submitBtn"
+                    {% if not customers or not products %}disabled{% endif %}
+                >
+                    Save Invoice
+                </button>
+            </div>
+        </section>
+
+    </form>
+</main>
+
+<footer class="footer">
+    Advance Billing System with QR &copy; {% now "Y" %}
+</footer>
+
+<script>
+    const productData = JSON.parse(
+        document.getElementById("product-data").textContent
+    );
+
+    /*
+     * The template supplies Product model objects, so build a safe
+     * JavaScript object from the actual Django-rendered product rows.
+     */
+</script>
+
+<script>
+    /*
+     * This script receives product values through data attributes created
+     * by the product option template below. No price/GST is trusted by
+     * the backend: the server recalculates both from the database.
+     */
+</script>
+
+<script>
+    const customerSelect = document.getElementById("customer");
+
+    function updateCustomerDetails() {
+        const option = customerSelect.options[customerSelect.selectedIndex];
+
+        document.getElementById("customerEmail").value =
+            option?.dataset.email || "";
+
+        document.getElementById("customerPhone").value =
+            option?.dataset.phone || "";
+
+        document.getElementById("customerAddress").value =
+            option?.dataset.address || "";
+    }
+
+    customerSelect.addEventListener("change", updateCustomerDetails);
+    updateCustomerDetails();
+</script>
+
+<script>
+    /*
+     * Product records are provided below through Django template JSON.
+     */
+    const productOptions = [
+        {% for product in products %}
+        {
+            id: {{ product.id }},
+            name: "{{ product.name|escapejs }}",
+            category: "{{ product.category|escapejs }}",
+            price: "{{ product.price }}",
+            gst: "{{ product.gst_rate }}",
+            stock: {{ product.stock }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const itemsBody = document.getElementById("itemsBody");
+    const addItemBtn = document.getElementById("addItemBtn");
+    const invoiceForm = document.getElementById("invoiceForm");
+
+    function money(value) {
+        return "₹" + Number(value || 0).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function createProductOptions() {
+        let html = '<option value="">-- Select Product --</option>';
+
+        productOptions.forEach(product => {
+            html += `
+                <option value="${product.id}">
+                    ${escapeHtml(product.name)} — Stock: ${product.stock}
+                </option>
+            `;
+        });
+
+        return html;
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        })[char]);
+    }
+
+    function addItemRow() {
+        if (!productOptions.length) {
+            alert("No products available. Please add a product first.");
+            return;
+        }
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>
+                <select class="product-select" required>
+                    ${createProductOptions()}
+                </select>
+            </td>
+            <td class="price-cell">₹0.00</td>
+            <td class="gst-cell">0%</td>
+            <td>
+                <input type="number" class="quantity-input"
+                       min="1" value="1" step="1" required>
+            </td>
+            <td class="gst-amount amount">₹0.00</td>
+            <td class="line-total amount">₹0.00</td>
+            <td>
+                <button type="button" class="btn btn-danger remove-row">
+                    Remove
+                </button>
+            </td>
+        `;
+
+        itemsBody.appendChild(row);
+
+        row.querySelector(".product-select").addEventListener(
+            "change",
+            () => updateRow(row)
+        );
+
+        row.querySelector(".quantity-input").addEventListener(
+            "input",
+            () => updateRow(row)
+        );
+
+        row.querySelector(".remove-row").addEventListener("click", () => {
+            row.remove();
+            calculateSummary();
+        });
+
+        updateRow(row);
+    }
+
+    function updateRow(row) {
+        const productId = row.querySelector(".product-select").value;
+        const quantityInput = row.querySelector(".quantity-input");
+
+        const product = productOptions.find(
+            item => String(item.id) === String(productId)
+        );
+
+        if (!product) {
+            row.dataset.productId = "";
+            row.querySelector(".price-cell").textContent = "₹0.00";
+            row.querySelector(".gst-cell").textContent = "0%";
+            row.querySelector(".gst-amount").textContent = "₹0.00";
+            row.querySelector(".line-total").textContent = "₹0.00";
+            calculateSummary();
+            return;
+        }
+
+        row.dataset.productId = product.id;
+
+        const quantity = Math.max(1, parseInt(quantityInput.value || "1", 10));
+        const price = Number(product.price);
+        const gstRate = Number(product.gst);
+
+        const lineSubtotal = price * quantity;
+        const lineGst = Math.round(
+            (lineSubtotal * gstRate / 100 + Number.EPSILON) * 100
+        ) / 100;
+        const lineTotal = lineSubtotal + lineGst;
+
+        row.querySelector(".price-cell").textContent = money(price);
+        row.querySelector(".gst-cell").textContent = gstRate + "%";
+        row.querySelector(".gst-amount").textContent = money(lineGst);
+        row.querySelector(".line-total").textContent = money(lineTotal);
+
+        calculateSummary();
+    }
+
+    function calculateSummary() {
+        let subtotal = 0;
+        let totalGst = 0;
+        let totalItems = 0;
+
+        const rows = [...itemsBody.querySelectorAll("tr")];
+
+        rows.forEach(row => {
+            const productId = row.querySelector(".product-select").value;
+            const product = productOptions.find(
+                item => String(item.id) === String(productId)
+            );
+
+            if (!product) return;
+
+            const quantity = Math.max(
+                1,
+                parseInt(row.querySelector(".quantity-input").value || "1", 10)
+            );
+
+            const lineSubtotal = Number(product.price) * quantity;
+            const lineGst = Math.round(
+                (lineSubtotal * Number(product.gst) / 100 + Number.EPSILON) * 100
+            ) / 100;
+
+            subtotal += lineSubtotal;
+            totalGst += lineGst;
+            totalItems += quantity;
+        });
+
+        document.getElementById("totalItems").textContent = totalItems;
+        document.getElementById("subtotal").textContent = money(subtotal);
+        document.getElementById("totalGst").textContent = money(totalGst);
+        document.getElementById("grandTotal").textContent =
+            money(subtotal + totalGst);
+    }
+
+    if (addItemBtn) {
+        addItemBtn.addEventListener("click", addItemRow);
+        addItemRow();
+    }
+
+    invoiceForm.addEventListener("submit", function(event) {
+        const rows = [...itemsBody.querySelectorAll("tr")];
+
+        if (!customerSelect.value) {
+            event.preventDefault();
+            alert("Please select a customer.");
+            customerSelect.focus();
+            return;
+        }
+
+        if (!rows.length) {
+            event.preventDefault();
+            alert("Please add at least one product.");
+            return;
+        }
+
+        const submittedItems = [];
+        const seenProducts = new Set();
+
+        for (const row of rows) {
+            const productId = row.querySelector(".product-select").value;
+            const quantity = parseInt(
+                row.querySelector(".quantity-input").value || "0",
+                10
+            );
+
+            if (!productId) {
+                event.preventDefault();
+                alert("Please select a product for each row.");
+                return;
+            }
+
+            if (!Number.isInteger(quantity) || quantity <= 0) {
+                event.preventDefault();
+                alert("Product quantity must be a positive whole number.");
+                return;
+            }
+
+            const product = productOptions.find(
+                item => String(item.id) === String(productId)
+            );
+
+            if (!product) {
+                event.preventDefault();
+                alert("Invalid product selected.");
+                return;
+            }
+
+            if (quantity > product.stock) {
+                event.preventDefault();
+                alert(
+                    `Insufficient stock for ${product.name}. ` +
+                    `Available stock: ${product.stock}.`
+                );
+                return;
+            }
+
+            if (seenProducts.has(String(productId))) {
+                event.preventDefault();
+                alert("Please select each product only once. Increase its quantity instead.");
+                return;
+            }
+
+            seenProducts.add(String(productId));
+
+            submittedItems.push({
+                product_id: Number(productId),
+                quantity: quantity
+            });
+        }
+
+        document.getElementById("itemsJson").value =
+            JSON.stringify(submittedItems);
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Saving Invoice...";
+    });
+</script>
+
+</body>
+</html>

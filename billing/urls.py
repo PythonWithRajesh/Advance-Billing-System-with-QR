@@ -120,4 +120,10 @@ urlpatterns = [
         views.delete_product,
         name="delete_product"
     ),
+
+    path(
+        "invoices/create/",
+        views.create_invoice,
+        name="create_invoice",
+    ),
 ]
