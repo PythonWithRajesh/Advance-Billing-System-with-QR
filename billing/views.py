@@ -1,3 +1,6 @@
+from email import errors
+from urllib import request
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -1551,6 +1554,7 @@ def create_invoice(request):
 
         prepared_items = []
         subtotal = Decimal("0.00")
+        total_discount = Decimal("0.00")
         total_gst = Decimal("0.00")
 
         if not errors:
@@ -1558,6 +1562,8 @@ def create_invoice(request):
                 try:
                     product_id = int(row.get("product_id"))
                     quantity = int(row.get("quantity"))
+                    discount_type = row.get("discount_type", "amount")
+                    discount_value = Decimal(str(row.get("discount_value", "0")))
 
                     product = Product.objects.get(id=product_id)
 
@@ -1574,57 +1580,87 @@ def create_invoice(request):
                         )
                         continue
 
+                    if discount_value < 0:
+                        errors.append("Discount cannot be negative.")
+                        continue
+
                     unit_price = product.price
                     gst_rate = product.gst_rate
 
-                    line_subtotal = unit_price * quantity
-                    line_gst = (
-                        line_subtotal * gst_rate / Decimal("100")
+                    line_subtotal = (
+                        unit_price * quantity
                     ).quantize(Decimal("0.01"))
 
-                    line_total = line_subtotal + line_gst
+                    if discount_type == "percent":
+                        if discount_value > 100:
+                            errors.append("Percentage discount cannot exceed 100%.")
+                            continue
+
+                        line_discount = (
+                            line_subtotal * discount_value / Decimal("100")
+                        ).quantize(Decimal("0.01"))
+
+                    elif discount_type == "amount":
+                        line_discount = discount_value.quantize(
+                            Decimal("0.01")
+                        )
+
+                    else:
+                        errors.append("Invalid discount type.")
+                        continue
+
+                    if line_discount > line_subtotal:
+                        errors.append(
+                            f"Discount cannot exceed subtotal for {product.name}."
+                        )
+                        continue
+
+                    taxable_amount = line_subtotal - line_discount
+
+                    line_gst = (
+                        taxable_amount * gst_rate / Decimal("100")
+                    ).quantize(Decimal("0.01"))
+
+                    line_total = taxable_amount + line_gst
 
                     prepared_items.append({
                         "product": product,
                         "quantity": quantity,
                         "unit_price": unit_price,
                         "gst_rate": gst_rate,
+                        "subtotal": line_subtotal,
+                        "discount": line_discount,
                         "gst_amount": line_gst,
                         "total_price": line_total,
                     })
 
                     subtotal += line_subtotal
+                    total_discount += line_discount
                     total_gst += line_gst
 
-                except (Product.DoesNotExist, TypeError, ValueError):
-                    errors.append(
-                        "One of the selected products is invalid."
-                    )
-                except (InvalidOperation, ArithmeticError):
-                    errors.append(
-                        "Unable to calculate a product total."
-                    )
+                except (Product.DoesNotExist, TypeError, ValueError, InvalidOperation):
+                    errors.append("Invalid product, quantity, or discount value.")
 
-        if not prepared_items and not errors:
-            errors.append("Please add at least one valid product.")
+                    if not prepared_items and not errors:
+                        errors.append("Please add at least one valid product.")
 
-        if errors:
-            for error in errors:
-                messages.error(request, error)
+                    if errors:
+                        for error in errors:
+                            messages.error(request, error)
 
-            return render(
-                request,
-                "create_invoice.html",
-                {
-                    "customers": customers,
-                    "products": products,
-                    "form_customer": customer_id,
-                    "form_payment_status": payment_status,
-                    "form_notes": notes,
-                },
-            )
+                return render(request,"create_invoice.html",
+                    {
+                        "customers": customers,
+                        "products": products,
+                        "form_customer": customer_id,
+                        "form_payment_status": payment_status,
+                        "form_notes": notes,
+                        "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
+                    },
+                            
+                )
 
-        grand_total = subtotal + total_gst
+        grand_total = subtotal - total_discount + total_gst
 
         # Save invoice and items together, so partial invoices are not saved.
         try:
