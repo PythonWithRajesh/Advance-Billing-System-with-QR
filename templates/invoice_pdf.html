@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Invoice {{ invoice.invoice_number }}</title>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 25px 30px;
+        }
+
+        body {
+            font-family: Helvetica, sans-serif;
+            color: #243247;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .header {
+            background-color: #172554;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .brand-name {
+            font-size: 23px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .brand-tagline {
+            font-size: 10px;
+            color: #dbeafe;
+        }
+
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #172554;
+        }
+
+        .invoice-number {
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #172554;
+            margin-bottom: 8px;
+        }
+
+        .details-table,
+        .items-table,
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table {
+            margin-top: 22px;
+            margin-bottom: 22px;
+        }
+
+        .details-table td {
+            width: 50%;
+            vertical-align: top;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .label {
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .value {
+            font-size: 10px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .items-table th {
+            background-color: #172554;
+            color: #ffffff;
+            padding: 10px 6px;
+            text-align: left;
+            font-size: 9px;
+        }
+
+        .items-table td {
+            padding: 9px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        .items-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .summary-table {
+            margin-top: 18px;
+        }
+
+        .summary-table td {
+            padding: 7px 10px;
+        }
+
+        .summary-label {
+            text-align: right;
+            color: #64748b;
+        }
+
+        .summary-value {
+            text-align: right;
+            width: 130px;
+            font-weight: bold;
+        }
+
+        .grand-total td {
+            background-color: #172554;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 12px 10px;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #047857;
+        }
+
+        .notes {
+            margin-top: 25px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+        }
+
+        .footer {
+            margin-top: 35px;
+            padding-top: 12px;
+            border-top: 1px solid #cbd5e1;
+            text-align: center;
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .logo {
+            width: 60px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BRAND HEADER -->
+    <table class="header" width="100%">
+        <tr>
+            <td width="72%">
+                <div class="brand-name">
+                    ADVANCE BILLING
+                </div>
+
+                <div class="brand-tagline">
+                    Smart Billing. Simple Business.
+                </div>
+            </td>
+
+            <td width="28%" align="right">
+                <div style="font-size: 12px;">
+                    TAX INVOICE
+                </div>
+
+                <div style="font-size: 9px;">
+                    Professional Billing System
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- INVOICE INFORMATION -->
+    <table width="100%" style="margin-top: 22px;">
+        <tr>
+            <td width="55%">
+                <div class="invoice-title">INVOICE</div>
+
+                <div class="invoice-number">
+                    Invoice No:
+                    {{ invoice.invoice_number }}
+                </div>
+
+                <div>
+                    Date:
+                    {{ invoice.invoice_date|date:"d M Y, h:i A" }}
+                </div>
+            </td>
+
+            <td width="45%" align="right">
+                <div class="label">PAYMENT STATUS</div>
+
+                <div class="status">
+                    {{ invoice.payment_status }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- CUSTOMER DETAILS -->
+    <table class="details-table">
+        <tr>
+            <td>
+                <div class="section-title">BILL TO</div>
+
+                <div class="value">
+                    {{ invoice.customer.name }}
+                </div>
+
+                <div>
+                    {{ invoice.customer.email }}
+                </div>
+
+                <div>
+                    {{ invoice.customer.phone }}
+                </div>
+
+                <div>
+                    {{ invoice.customer.address }}
+                </div>
+
+                <div>
+                    {{ invoice.customer.city }},
+                    {{ invoice.customer.state }}
+                    {{ invoice.customer.pincode }}
+                </div>
+            </td>
+
+            <td>
+                <div class="section-title">FROM</div>
+
+                <div class="value">
+                    Advance Billing System
+                </div>
+
+                <div>Billing & Invoice Management</div>
+
+                <div>Customer Support: Contact Administrator</div>
+
+                <div>Thank you for your business!</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- PRODUCT DETAILS -->
+    <div class="section-title">INVOICE ITEMS</div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th width="7%">No.</th>
+                <th width="31%">Product</th>
+                <th width="12%" class="text-right">Price</th>
+                <th width="10%" class="text-center">Qty</th>
+                <th width="12%" class="text-right">GST %</th>
+                <th width="13%" class="text-right">GST Amt.</th>
+                <th width="15%" class="text-right">Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in invoice.items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+
+                <td>
+                    {{ item.product.name }}
+                </td>
+
+                <td class="text-right">
+                    ₹{{ item.unit_price|floatformat:2 }}
+                </td>
+
+                <td class="text-center">
+                    {{ item.quantity }}
+                </td>
+
+                <td class="text-right">
+                    {{ item.gst_rate|floatformat:2 }}%
+                </td>
+
+                <td class="text-right">
+                    ₹{{ item.gst_amount|floatformat:2 }}
+                </td>
+
+                <td class="text-right">
+                    ₹{{ item.total_price|floatformat:2 }}
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">
+                    No invoice items available.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- TOTAL SUMMARY -->
+    <table class="summary-table">
+        <tr>
+            <td class="summary-label">Subtotal</td>
+
+            <td class="summary-value">
+                ₹{{ invoice.subtotal|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="summary-label">Total GST</td>
+
+            <td class="summary-value">
+                ₹{{ invoice.gst_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr class="grand-total">
+            <td class="text-right">GRAND TOTAL</td>
+
+            <td class="text-right">
+                ₹{{ invoice.grand_total|floatformat:2 }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- NOTES -->
+    {% if invoice.notes %}
+    <div class="notes">
+        <strong>Notes:</strong><br>
+        {{ invoice.notes|linebreaksbr }}
+    </div>
+    {% endif %}
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <strong>ADVANCE BILLING SYSTEM</strong>
+        <br>
+
+        This invoice was generated electronically.
+        <br>
+
+        Thank you for choosing our services.
+    </div>
+
+</body>
+</html>
