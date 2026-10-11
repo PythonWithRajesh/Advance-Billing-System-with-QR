@@ -7,6 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+
 import random
 from datetime import timedelta
 from django.contrib import messages
