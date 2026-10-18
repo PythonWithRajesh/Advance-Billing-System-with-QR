@@ -897,12 +897,12 @@
                     <thead>
                         <tr>
                             <th>Invoice #</th>
-                            <th>Customer</th>
-                            <th>Date & Time</th>
-                            <th>Products Count</th>
+                            <th>Customer Name</th>
+                            <th>Date</th>
+                            <th>Product Summary</th>
                             <th>Subtotal</th>
                             <th>GST</th>
-                            <th>Grand Total</th>
+                            <th>Total Bill</th>
                             <th>Status</th>
                             <th>QR Code</th>
                             <th>Actions</th>
@@ -926,26 +926,28 @@
 
                             <td>
                                 <div class="customer-info">
-                                    <strong>{{ invoice.customer.name }}</strong>
+                                    <strong>{{ invoice.customer_name }}</strong>
                                     <span>📞 {{ invoice.customer.phone }}</span>
                                 </div>
                             </td>
 
                             <td>
-                                <div>{{ invoice.invoice_date|date:"d M Y" }}</div>
+                                <div style="font-weight: 600;">{{ invoice.invoice_date|date:"d M Y" }}</div>
                                 <div style="font-size: 11px; color: #71847d;">{{ invoice.invoice_date|date:"h:i A" }}</div>
                             </td>
 
                             <td>
-                                <span class="item-count-badge" title="{% for item in invoice.items.all %}{{ item.product.name }} (x{{ item.quantity }}){% if not forloop.last %}, {% endif %}{% endfor %}">
-                                    📦 {{ invoice.product_count }} {% if invoice.product_count == 1 %}product{% else %}products{% endif %}
-                                    ({{ invoice.total_quantity }} units)
+                                <div style="font-weight: 600; color: #022c22; margin-bottom: 3px;">
+                                    {{ invoice.product_summary }}
+                                </div>
+                                <span class="item-count-badge">
+                                    📦 {{ invoice.product_count }} {% if invoice.product_count == 1 %}item{% else %}items{% endif %} ({{ invoice.total_quantity }} units)
                                 </span>
                             </td>
 
                             <td>₹{{ invoice.subtotal|floatformat:2 }}</td>
                             <td>₹{{ invoice.gst_amount|floatformat:2 }}</td>
-                            <td class="amount-cell">₹{{ invoice.grand_total|floatformat:2 }}</td>
+                            <td class="amount-cell">₹{{ invoice.total_bill|floatformat:2 }}</td>
 
                             <td>
                                 {% if invoice.payment_status == 'Paid' %}
@@ -959,7 +961,7 @@
 
                             <td>
                                 <div class="qr-thumb-box"
-                                     onclick="openQrModal('{{ invoice.invoice_number }}', '{{ invoice.customer.name|escapejs }}', '{{ invoice.product_count }}', '{{ invoice.total_quantity }}', '{{ invoice.grand_total|floatformat:2 }}', '{{ invoice.payment_status }}', '{{ invoice.qr_base64 }}')"
+                                     onclick="openQrModal('{{ invoice.invoice_number }}', '{{ invoice.customer_name|escapejs }}', '{{ invoice.formatted_date|escapejs }}', '{{ invoice.product_summary|escapejs }}', '{{ invoice.product_count }}', '{{ invoice.total_quantity }}', '{{ invoice.total_bill|floatformat:2 }}', '{{ invoice.payment_status }}', '{{ invoice.qr_base64 }}')"
                                      title="Click to view & scan QR code">
                                     <img src="{{ invoice.qr_base64 }}" alt="QR Code" class="qr-thumb-img">
                                     <span class="qr-hint">View QR</span>
@@ -1068,8 +1070,16 @@
                         <strong id="modalInfoInvNo">-</strong>
                     </div>
                     <div class="modal-info-row">
-                        <span>Customer:</span>
+                        <span>Customer Name:</span>
                         <strong id="modalInfoCustomer">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Date:</span>
+                        <strong id="modalInfoDate">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Product Summary:</span>
+                        <strong id="modalInfoProductSummary" style="color: #022c22; text-align: right; max-width: 60%;">-</strong>
                     </div>
                     <div class="modal-info-row">
                         <span>Products Count:</span>
@@ -1080,7 +1090,7 @@
                         <strong id="modalInfoStatus">-</strong>
                     </div>
                     <div class="modal-info-row">
-                        <span>Grand Total:</span>
+                        <span>Total Bill:</span>
                         <strong id="modalInfoTotal" style="color: #047857;">-</strong>
                     </div>
                 </div>
@@ -1099,12 +1109,14 @@
 
     <!-- MODAL SCRIPT -->
     <script>
-        function openQrModal(invNo, customer, productCount, totalQty, total, status, qrSrc) {
+        function openQrModal(invNo, customer, date, productSummary, productCount, totalQty, total, status, qrSrc) {
             document.getElementById('modalInvoiceNo').textContent = 'QR Code: ' + invNo;
             document.getElementById('modalQrImg').src = qrSrc;
             document.getElementById('modalCustomerName').textContent = customer;
             document.getElementById('modalInfoInvNo').textContent = invNo;
             document.getElementById('modalInfoCustomer').textContent = customer;
+            document.getElementById('modalInfoDate').textContent = date;
+            document.getElementById('modalInfoProductSummary').textContent = productSummary;
             document.getElementById('modalInfoProducts').textContent = productCount + ' items (' + totalQty + ' units)';
             document.getElementById('modalInfoStatus').textContent = status;
             document.getElementById('modalInfoTotal').textContent = '₹' + total;

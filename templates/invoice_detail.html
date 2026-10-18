@@ -396,6 +396,13 @@
                         {{ invoice.customer.address }}, {{ invoice.customer.city }}, {{ invoice.customer.state }} - {{ invoice.customer.pincode }}
                     </div>
                 </div>
+
+                <div class="meta-group" style="grid-column: 1 / -1;">
+                    <label>Product Summary</label>
+                    <div style="font-size: 13px; color: #022c22; font-weight: 600;">
+                        {{ invoice.product_summary }}
+                    </div>
+                </div>
             </div>
 
             <!-- Products Table -->
@@ -442,8 +449,8 @@
                         <td class="total-value">₹{{ invoice.gst_amount|floatformat:2 }}</td>
                     </tr>
                     <tr class="grand-row">
-                        <td style="color: white; text-align: right;">Grand Total:</td>
-                        <td style="color: white; text-align: right;">₹{{ invoice.grand_total|floatformat:2 }}</td>
+                        <td style="color: white; text-align: right;">Total Bill:</td>
+                        <td style="color: white; text-align: right;">₹{{ invoice.total_bill|floatformat:2 }}</td>
                     </tr>
                 </table>
             </div>

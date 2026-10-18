@@ -268,7 +268,18 @@
     </table>
 
     <!-- PRODUCT DETAILS -->
-    <div class="section-title">INVOICE ITEMS</div>
+    <table width="100%" style="margin-bottom: 8px;">
+        <tr>
+            <td width="50%">
+                <div class="section-title">INVOICE ITEMS</div>
+            </td>
+            <td width="50%" align="right">
+                <div style="font-size: 9px; color: #64748b;">
+                    <strong>Summary:</strong> {{ invoice.product_summary }}
+                </div>
+            </td>
+        </tr>
+    </table>
 
     <table class="items-table">
         <thead>
@@ -342,10 +353,10 @@
         </tr>
 
         <tr class="grand-total">
-            <td class="text-right">GRAND TOTAL</td>
+            <td class="text-right">TOTAL BILL</td>
 
             <td class="text-right">
-                Rs. {{ invoice.grand_total|floatformat:2 }}
+                Rs. {{ invoice.total_bill|floatformat:2 }}
             </td>
         </tr>
     </table>

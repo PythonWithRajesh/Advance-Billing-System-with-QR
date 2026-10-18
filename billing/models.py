@@ -143,6 +143,32 @@ class Invoice(models.Model):
         return self.invoice_number
 
     @property
+    def customer_name(self):
+        """Customer name dynamically retrieved from the related Customer model."""
+        return self.customer.name if self.customer else "N/A"
+
+    @property
+    def total_bill(self):
+        """Total bill amount dynamically retrieved from the Invoice model."""
+        return self.grand_total
+
+    @property
+    def formatted_date(self):
+        """Invoice date formatted dynamically from the Invoice model."""
+        return self.invoice_date.strftime("%d %b %Y, %I:%M %p")
+
+    @property
+    def product_summary(self):
+        """
+        Product summary dynamically retrieved from related InvoiceItem models.
+        e.g. 'watch (x1), laptop (x2)'
+        """
+        items = list(self.items.select_related("product").all()) if hasattr(self.items, "select_related") else list(self.items.all())
+        if not items:
+            return "No products"
+        return ", ".join([f"{item.product.name} (x{item.quantity})" for item in items])
+
+    @property
     def product_count(self):
         """Number of distinct line items / products in the invoice."""
         return self.items.count()
