@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration | Advance Billing</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #111827, #1f2937);
+            padding: 30px 20px;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .register-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.30);
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            color: #111827;
+            margin-bottom: 6px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .badge {
+            width: fit-content;
+            margin: 0 auto 20px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            background: #e5e7eb;
+            color: #111827;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.10);
+        }
+
+        .field-error {
+            color: #b91c1c;
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #111827;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .register-btn:hover {
+            background: #000000;
+            transform: translateY(-1px);
+        }
+
+        .api-note {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #475569;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .api-note code {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #0f172a;
+        }
+
+        .switch-login {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .switch-login a {
+            color: #111827;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .switch-login a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="logo">AB</div>
+        <h1>Register Admin</h1>
+        <p class="subtitle">Advance Billing System Administrator Registration</p>
+        <div class="badge">ADMIN REGISTRATION</div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username" value="{{ username|default:'' }}" placeholder="e.g. admin_rajesh" required>
+                {% if errors.username %}
+                <div class="field-error">{{ errors.username }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" value="{{ name|default:'' }}" placeholder="e.g. Rajesh Lagdhir">
+                {% if errors.name %}
+                <div class="field-error">{{ errors.name }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" value="{{ email|default:'' }}" placeholder="admin@example.com" required>
+                {% if errors.email %}
+                <div class="field-error">{{ errors.email }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" placeholder="At least 8 chars, 1 uppercase, 1 lowercase, 1 number" required>
+                {% if errors.password %}
+                <div class="field-error">{{ errors.password }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password *</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+                {% if errors.confirm_password %}
+                <div class="field-error">{{ errors.confirm_password }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="register-btn">
+                Register as Admin
+            </button>
+        </form>
+
+        <div class="api-note">
+            💡 API Endpoint available: <code>POST /api/admin/register/</code> with JSON body
+        </div>
+
+        <div class="switch-login">
+            Already have an account?
+            <a href="{% url 'admin_login' %}">Admin Login</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

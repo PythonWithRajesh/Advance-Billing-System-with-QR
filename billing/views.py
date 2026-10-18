@@ -8,7 +8,8 @@ from django.shortcuts import redirect, render
 
 
 from io import BytesIO
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
@@ -63,6 +64,207 @@ def admin_login(request):
             )
 
     return render(request, "admin_login.html")
+
+
+# ==========================================================
+# ADMIN USER REGISTRATION (API & WEB)
+# ==========================================================
+
+@csrf_exempt
+def admin_register_api(request):
+    """
+    API endpoint to register a new Admin user (superuser & staff).
+    Accepts application/json and application/x-www-form-urlencoded POST requests.
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Method not allowed. Use POST to register an admin user.",
+            },
+            status=405,
+        )
+
+    # Parse request payload (supports JSON body and form data)
+    data = {}
+    if request.content_type and "application/json" in request.content_type:
+        try:
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Invalid JSON payload.",
+                },
+                status=400,
+            )
+    else:
+        data = request.POST.dict()
+
+    username = str(data.get("username", "")).strip()
+    email = str(data.get("email", "")).strip().lower()
+    password = str(data.get("password", ""))
+    confirm_password = str(data.get("confirm_password", ""))
+    first_name = str(data.get("first_name", data.get("name", ""))).strip()
+    last_name = str(data.get("last_name", "")).strip()
+
+    errors = {}
+
+    # 1. Username validation
+    if not username:
+        errors["username"] = "Username is required."
+    elif len(username) < 3:
+        errors["username"] = "Username must contain at least 3 characters."
+    elif len(username) > 150:
+        errors["username"] = "Username cannot exceed 150 characters."
+    elif not username.replace("_", "").replace("-", "").replace(".", "").isalnum():
+        errors["username"] = "Username can only contain letters, numbers, and @/./+/-/_ characters."
+    elif User.objects.filter(username__iexact=username).exists():
+        errors["username"] = "An account with this username already exists."
+
+    # 2. Email validation
+    if not email:
+        errors["email"] = "Email address is required."
+    elif "@" not in email or "." not in email.split("@")[-1]:
+        errors["email"] = "Please enter a valid email address."
+    elif User.objects.filter(email__iexact=email).exists():
+        errors["email"] = "An account with this email already exists."
+
+    # 3. Password validation
+    if not password:
+        errors["password"] = "Password is required."
+    elif len(password) < 8:
+        errors["password"] = "Password must contain at least 8 characters."
+    elif not any(c.isupper() for c in password):
+        errors["password"] = "Password must contain at least one uppercase letter."
+    elif not any(c.islower() for c in password):
+        errors["password"] = "Password must contain at least one lowercase letter."
+    elif not any(c.isdigit() for c in password):
+        errors["password"] = "Password must contain at least one digit."
+
+    # 4. Confirm password check (if provided in payload)
+    if confirm_password and password != confirm_password:
+        errors["confirm_password"] = "Passwords do not match."
+
+    if errors:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Validation failed.",
+                "errors": errors,
+            },
+            status=400,
+        )
+
+    # 5. Create the Admin user
+    try:
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "Admin user registered successfully.",
+                "data": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "is_staff": user.is_staff,
+                    "is_superuser": user.is_superuser,
+                    "date_joined": user.date_joined.isoformat(),
+                },
+            },
+            status=201,
+        )
+    except Exception as exc:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": f"Failed to create admin user: {str(exc)}",
+            },
+            status=500,
+        )
+
+
+def admin_register(request):
+    """
+    Web registration view for Admin users.
+    """
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect("admin_dashboard")
+
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        name = request.POST.get("name", "").strip()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
+
+        errors = {}
+        if not username:
+            errors["username"] = "Username is required."
+        elif len(username) < 3:
+            errors["username"] = "Username must be at least 3 characters."
+        elif User.objects.filter(username__iexact=username).exists():
+            errors["username"] = "An account with this username already exists."
+
+        if not email:
+            errors["email"] = "Email address is required."
+        elif "@" not in email or "." not in email.split("@")[-1]:
+            errors["email"] = "Please enter a valid email address."
+        elif User.objects.filter(email__iexact=email).exists():
+            errors["email"] = "An account with this email already exists."
+
+        if not password:
+            errors["password"] = "Password is required."
+        elif len(password) < 8:
+            errors["password"] = "Password must be at least 8 characters."
+        elif not any(c.isupper() for c in password):
+            errors["password"] = "Password must contain at least one uppercase letter."
+        elif not any(c.islower() for c in password):
+            errors["password"] = "Password must contain at least one lowercase letter."
+        elif not any(c.isdigit() for c in password):
+            errors["password"] = "Password must contain at least one number."
+
+        if password != confirm_password:
+            errors["confirm_password"] = "Passwords do not match."
+
+        if errors:
+            return render(
+                request,
+                "admin_register.html",
+                {
+                    "errors": errors,
+                    "username": username,
+                    "email": email,
+                    "name": name,
+                },
+            )
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=name,
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+
+        messages.success(request, f"Admin account '{username}' registered successfully! Please login.")
+        return redirect("admin_login")
+
+    return render(request, "admin_register.html")
 
 
 def distributor_login(request):

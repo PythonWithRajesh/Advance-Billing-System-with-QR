@@ -228,6 +228,13 @@
         </form>
 
         <div class="switch-login">
+            Don't have an admin account?
+            <a href="{% url 'admin_register' %}">
+                Register as Admin
+            </a>
+        </div>
+
+        <div class="switch-login" style="margin-top: 10px;">
             Distributor?
             <a href="{% url 'distributor_login' %}">
                 Distributor Login

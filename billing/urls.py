@@ -12,6 +12,18 @@ urlpatterns = [
     ),
 
     path(
+        "admin-register/",
+        views.admin_register,
+        name="admin_register",
+    ),
+
+    path(
+        "api/admin/register/",
+        views.admin_register_api,
+        name="admin_register_api",
+    ),
+
+    path(
         "admin-dashboard/",
         views.admin_dashboard,
         name="admin_dashboard"
