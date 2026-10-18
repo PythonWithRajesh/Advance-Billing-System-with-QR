@@ -961,7 +961,7 @@
 
                             <td>
                                 <div class="qr-thumb-box"
-                                     onclick="openQrModal('{{ invoice.invoice_number }}', '{{ invoice.customer_name|escapejs }}', '{{ invoice.formatted_date|escapejs }}', '{{ invoice.product_summary|escapejs }}', '{{ invoice.product_count }}', '{{ invoice.total_quantity }}', '{{ invoice.total_bill|floatformat:2 }}', '{{ invoice.payment_status }}', '{{ invoice.qr_base64 }}')"
+                                     onclick="openQrModal('{{ invoice.id }}', '{{ invoice.invoice_number }}', '{{ invoice.customer_name|escapejs }}', '{{ invoice.formatted_date|escapejs }}', '{{ invoice.product_summary|escapejs }}', '{{ invoice.product_count }}', '{{ invoice.total_quantity }}', '{{ invoice.total_bill|floatformat:2 }}', '{{ invoice.payment_status }}', '{{ invoice.qr_base64 }}')"
                                      title="Click to view & scan QR code">
                                     <img src="{{ invoice.qr_base64 }}" alt="QR Code" class="qr-thumb-img">
                                     <span class="qr-hint">View QR</span>
@@ -973,8 +973,8 @@
                                     <a href="{% url 'invoice_detail' invoice.id %}" class="btn-action btn-action-view" title="View Detailed Invoice">
                                         View
                                     </a>
-                                    <a href="{% url 'invoice_pdf' invoice.id %}" target="_blank" class="btn-action btn-action-pdf" title="View or Print PDF">
-                                        PDF
+                                    <a href="{% url 'invoice_pdf' invoice.id %}?download=1" class="btn-action btn-action-pdf" title="Download Invoice as PDF">
+                                        📥 PDF
                                     </a>
                                 </div>
                             </td>
@@ -1096,6 +1096,9 @@
                 </div>
 
                 <div class="modal-actions">
+                    <a id="modalPdfBtn" href="" class="btn-modal-action" style="background: #022c22; color: white;">
+                        📥 Download PDF
+                    </a>
                     <a id="modalDownloadBtn" href="" download="invoice_qr.png" class="btn-modal-action btn-modal-download">
                         Download QR Image
                     </a>
@@ -1109,7 +1112,7 @@
 
     <!-- MODAL SCRIPT -->
     <script>
-        function openQrModal(invNo, customer, date, productSummary, productCount, totalQty, total, status, qrSrc) {
+        function openQrModal(invoiceId, invNo, customer, date, productSummary, productCount, totalQty, total, status, qrSrc) {
             document.getElementById('modalInvoiceNo').textContent = 'QR Code: ' + invNo;
             document.getElementById('modalQrImg').src = qrSrc;
             document.getElementById('modalCustomerName').textContent = customer;
@@ -1124,6 +1127,9 @@
             const downloadBtn = document.getElementById('modalDownloadBtn');
             downloadBtn.href = qrSrc;
             downloadBtn.download = invNo + '_QR.png';
+
+            const pdfBtn = document.getElementById('modalPdfBtn');
+            pdfBtn.href = '/invoices/' + invoiceId + '/pdf/?download=1';
 
             document.getElementById('qrModal').classList.add('active');
         }
