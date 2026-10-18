@@ -209,11 +209,25 @@
             </td>
 
             <td width="45%" align="right" style="vertical-align: top;">
-                {% if qr_code %}
-                <img src="{{ qr_code }}" width="80" height="80" alt="Invoice QR Code" style="border: 1px solid #cbd5e1; padding: 2px; background: #ffffff;" />
-                <div style="font-size: 8px; color: #64748b; margin-top: 2px;">Scan to verify invoice data</div>
-                {% endif %}
-                <div class="label" style="margin-top: 6px;">PAYMENT STATUS</div>
+                <table align="right" style="width: auto; margin-bottom: 8px;">
+                    <tr>
+                        <td align="center" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center;">
+                            {% if qr_code %}
+                            <img src="{{ qr_code }}" width="85" height="85" alt="Invoice QR Code" />
+                            {% elif invoice.qr_code_base64 %}
+                            <img src="{{ invoice.qr_code_base64 }}" width="85" height="85" alt="Invoice QR Code" />
+                            {% endif %}
+                            <div style="font-size: 7px; font-weight: bold; color: #172554; margin-top: 3px;">
+                                VERIFIED INVOICE QR
+                            </div>
+                            <div style="font-size: 6px; color: #64748b;">
+                                Scan to verify all details
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="label" style="margin-top: 4px;">PAYMENT STATUS</div>
 
                 <div class="status">
                     {{ invoice.payment_status }}

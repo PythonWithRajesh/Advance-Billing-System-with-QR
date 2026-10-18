@@ -188,6 +188,11 @@ class Invoice(models.Model):
         from .utils import generate_invoice_qr_base64
         return generate_invoice_qr_base64(self)
 
+    @property
+    def qr_code_base64(self):
+        """Dynamic Base64 data URI of the invoice QR code for templates and PDFs."""
+        return self.generate_qr_base64()
+
     class Meta:
         ordering = ["-invoice_date"]
         verbose_name = "Invoice"
