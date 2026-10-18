@@ -1647,24 +1647,25 @@ def create_invoice(request):
                 except (Product.DoesNotExist, TypeError, ValueError, InvalidOperation):
                     errors.append("Invalid product, quantity, or discount value.")
 
-                    if not prepared_items and not errors:
-                        errors.append("Please add at least one valid product.")
+            if not prepared_items and not errors:
+                errors.append("Please add at least one valid product.")
 
-                    if errors:
-                        for error in errors:
-                            messages.error(request, error)
+        if errors:
+            for error in errors:
+                messages.error(request, error)
 
-                return render(request,"create_invoice.html",
-                    {
-                        "customers": customers,
-                        "products": products,
-                        "form_customer": customer_id,
-                        "form_payment_status": payment_status,
-                        "form_notes": notes,
-                        "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
-                    },
-                            
-                )
+            return render(
+                request,
+                "create_invoice.html",
+                {
+                    "customers": customers,
+                    "products": products,
+                    "form_customer": customer_id,
+                    "form_payment_status": payment_status,
+                    "form_notes": notes,
+                    "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
+                },
+            )
 
         grand_total = subtotal - total_discount + total_gst
 
@@ -1732,7 +1733,7 @@ def create_invoice(request):
             request,
             f"Invoice {invoice.invoice_number} created successfully!"
         )
-        return redirect("create_invoice")
+        return redirect("invoice_list")
 
     return render(
         request,
@@ -1743,3 +1744,169 @@ def create_invoice(request):
             "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
         },
     )
+
+
+# ==========================================================
+# INVOICE LIST VIEW (FETCH ALL EXISTING INVOICES WITH PAGINATION & QR)
+# ==========================================================
+
+@login_required
+def invoice_list(request):
+    """
+    Fetches all existing invoice data from the database,
+    provides search, status filter, summary statistics,
+    QR code generation for each invoice, and pagination.
+    """
+    search_query = request.GET.get("search", "").strip()
+    status_filter = request.GET.get("status", "").strip()
+
+    # Query all invoices with related customer and items
+    invoices = (
+        Invoice.objects.select_related("customer")
+        .prefetch_related("items__product")
+        .all()
+        .order_by("-invoice_date")
+    )
+
+    # Search filter by Invoice Number, Customer Name, Phone, Email
+    if search_query:
+        invoices = invoices.filter(
+            models.Q(invoice_number__icontains=search_query)
+            | models.Q(customer__name__icontains=search_query)
+            | models.Q(customer__phone__icontains=search_query)
+            | models.Q(customer__email__icontains=search_query)
+        )
+
+    # Status filter
+    valid_statuses = [choice[0] for choice in Invoice.PAYMENT_STATUS_CHOICES]
+    if status_filter in valid_statuses:
+        invoices = invoices.filter(payment_status=status_filter)
+
+    # Calculate overall statistics
+    all_invoices = Invoice.objects.all()
+    total_invoices_count = all_invoices.count()
+    total_revenue = all_invoices.aggregate(total=models.Sum("grand_total"))["total"] or Decimal("0.00")
+    paid_count = all_invoices.filter(payment_status="Paid").count()
+    pending_count = all_invoices.filter(payment_status="Pending").count()
+
+    # Pagination: 8 invoices per page
+    paginator = Paginator(invoices, 8)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Attach generated QR code (base64) to each invoice in the current page
+    for inv in page_obj:
+        inv.qr_base64 = inv.generate_qr_base64()
+
+    context = {
+        "page_obj": page_obj,
+        "invoices": page_obj,
+        "search_query": search_query,
+        "status_filter": status_filter,
+        "total_invoices": total_invoices_count,
+        "showing_invoices": invoices.count(),
+        "total_revenue": total_revenue,
+        "paid_count": paid_count,
+        "pending_count": pending_count,
+        "payment_status_choices": Invoice.PAYMENT_STATUS_CHOICES,
+    }
+
+    return render(request, "invoice_list.html", context)
+
+
+# ==========================================================
+# INVOICE DETAIL VIEW
+# ==========================================================
+
+@login_required
+def invoice_detail(request, invoice_id):
+    """
+    View a single invoice with full customer information,
+    product breakdown, summary totals, and large QR code.
+    """
+    try:
+        invoice = (
+            Invoice.objects.select_related("customer")
+            .prefetch_related("items__product")
+            .get(id=invoice_id)
+        )
+    except Invoice.DoesNotExist:
+        messages.error(request, "Invoice not found.")
+        return redirect("invoice_list")
+
+    qr_code = invoice.generate_qr_base64()
+
+    return render(
+        request,
+        "invoice_detail.html",
+        {
+            "invoice": invoice,
+            "qr_code": qr_code,
+        },
+    )
+
+
+# ==========================================================
+# INVOICE PDF DOWNLOAD / VIEW
+# ==========================================================
+
+@login_required
+def invoice_pdf_view(request, invoice_id):
+    """
+    Generate and stream or download a PDF invoice with embedded QR code.
+    """
+    try:
+        invoice = (
+            Invoice.objects.select_related("customer")
+            .prefetch_related("items__product")
+            .get(id=invoice_id)
+        )
+    except Invoice.DoesNotExist:
+        messages.error(request, "Invoice not found.")
+        return redirect("invoice_list")
+
+    from .utils import render_to_pdf
+
+    qr_code = invoice.generate_qr_base64()
+
+    pdf_bytes = render_to_pdf(
+        "invoice_pdf.html",
+        {
+            "invoice": invoice,
+            "qr_code": qr_code,
+        },
+    )
+
+    if not pdf_bytes:
+        messages.error(request, "Unable to generate invoice PDF.")
+        return redirect("invoice_list")
+
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    download = request.GET.get("download")
+    disposition = "attachment" if download == "1" else "inline"
+    response["Content-Disposition"] = f'{disposition}; filename="{invoice.invoice_number}.pdf"'
+    return response
+
+
+# ==========================================================
+# INVOICE RAW QR CODE IMAGE STREAM
+# ==========================================================
+
+@login_required
+def invoice_qr_image(request, invoice_id):
+    """
+    Stream raw PNG image of the invoice QR code.
+    """
+    try:
+        invoice = (
+            Invoice.objects.select_related("customer")
+            .prefetch_related("items__product")
+            .get(id=invoice_id)
+        )
+    except Invoice.DoesNotExist:
+        return HttpResponse("Invoice not found", status=404)
+
+    from .utils import generate_invoice_qr_bytes
+
+    qr_bytes = generate_invoice_qr_bytes(invoice)
+    return HttpResponse(qr_bytes, content_type="image/png")

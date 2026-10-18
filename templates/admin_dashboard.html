@@ -184,6 +184,27 @@
             <h1>Welcome to Admin Dashboard</h1>
             <p>Admin login route and dashboard are working successfully.</p>
         </div>
+
+        <!-- Dashboard Quick Actions -->
+        <h2 class="section-title">Quick Actions</h2>
+        
+        <div class="action-grid">
+            <a href="{% url 'invoice_list' %}" class="action-card primary">
+                <span class="action-title">Invoices (QR)</span>
+            </a>
+
+            <a href="{% url 'create_invoice' %}" class="action-card secondary">
+                <span class="action-title">+ Create Invoice</span>
+            </a>
+
+            <a href="{% url 'customer_list' %}" class="action-card secondary">
+                <span class="action-title">Customers</span>
+            </a>
+
+            <a href="{% url 'product_list' %}" class="action-card secondary">
+                <span class="action-title">Products</span>
+            </a>
+        </div>
     </div>
 
 </body>

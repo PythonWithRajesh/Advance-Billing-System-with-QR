@@ -142,10 +142,31 @@ class Invoice(models.Model):
     def __str__(self):
         return self.invoice_number
 
+    @property
+    def product_count(self):
+        """Number of distinct line items / products in the invoice."""
+        return self.items.count()
+
+    @property
+    def total_quantity(self):
+        """Total unit quantity of products in the invoice."""
+        return sum(item.quantity for item in self.items.all())
+
+    def get_qr_data(self):
+        """Generate structured text for QR code encoding."""
+        from .utils import generate_invoice_qr_data
+        return generate_invoice_qr_data(self)
+
+    def generate_qr_base64(self):
+        """Generate Base64 data URI of the invoice QR code."""
+        from .utils import generate_invoice_qr_base64
+        return generate_invoice_qr_base64(self)
+
     class Meta:
         ordering = ["-invoice_date"]
         verbose_name = "Invoice"
         verbose_name_plural = "Invoices"
+
 
 
 # ==========================================================

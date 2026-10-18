@@ -212,6 +212,10 @@
                 <span class="action-title">+ Add Product</span>
             </a>
 
+            <a href="{% url 'create_invoice' %}" class="action-card primary">
+                <span class="action-title">+ Create Invoice</span>
+            </a>
+
             <!-- View Actions (Secondary) -->
             <a href="{% url 'customer_list' %}" class="action-card secondary">
                 <span class="action-title">View Customers</span>
@@ -219,6 +223,10 @@
 
             <a href="{% url 'product_list' %}" class="action-card secondary">
                 <span class="action-title">View Products</span>
+            </a>
+
+            <a href="{% url 'invoice_list' %}" class="action-card secondary">
+                <span class="action-title">View Invoices (QR)</span>
             </a>
         </div>
 

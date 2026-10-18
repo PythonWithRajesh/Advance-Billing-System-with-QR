@@ -194,7 +194,7 @@
     <!-- INVOICE INFORMATION -->
     <table width="100%" style="margin-top: 22px;">
         <tr>
-            <td width="55%">
+            <td width="55%" style="vertical-align: top;">
                 <div class="invoice-title">INVOICE</div>
 
                 <div class="invoice-number">
@@ -208,8 +208,12 @@
                 </div>
             </td>
 
-            <td width="45%" align="right">
-                <div class="label">PAYMENT STATUS</div>
+            <td width="45%" align="right" style="vertical-align: top;">
+                {% if qr_code %}
+                <img src="{{ qr_code }}" width="80" height="80" alt="Invoice QR Code" style="border: 1px solid #cbd5e1; padding: 2px; background: #ffffff;" />
+                <div style="font-size: 8px; color: #64748b; margin-top: 2px;">Scan to verify invoice data</div>
+                {% endif %}
+                <div class="label" style="margin-top: 6px;">PAYMENT STATUS</div>
 
                 <div class="status">
                     {{ invoice.payment_status }}
@@ -289,7 +293,7 @@
                 </td>
 
                 <td class="text-right">
-                    ₹{{ item.unit_price|floatformat:2 }}
+                    Rs. {{ item.unit_price|floatformat:2 }}
                 </td>
 
                 <td class="text-center">
@@ -301,11 +305,11 @@
                 </td>
 
                 <td class="text-right">
-                    ₹{{ item.gst_amount|floatformat:2 }}
+                    Rs. {{ item.gst_amount|floatformat:2 }}
                 </td>
 
                 <td class="text-right">
-                    ₹{{ item.total_price|floatformat:2 }}
+                    Rs. {{ item.total_price|floatformat:2 }}
                 </td>
             </tr>
 
@@ -325,7 +329,7 @@
             <td class="summary-label">Subtotal</td>
 
             <td class="summary-value">
-                ₹{{ invoice.subtotal|floatformat:2 }}
+                Rs. {{ invoice.subtotal|floatformat:2 }}
             </td>
         </tr>
 
@@ -333,7 +337,7 @@
             <td class="summary-label">Total GST</td>
 
             <td class="summary-value">
-                ₹{{ invoice.gst_amount|floatformat:2 }}
+                Rs. {{ invoice.gst_amount|floatformat:2 }}
             </td>
         </tr>
 
@@ -341,7 +345,7 @@
             <td class="text-right">GRAND TOTAL</td>
 
             <td class="text-right">
-                ₹{{ invoice.grand_total|floatformat:2 }}
+                Rs. {{ invoice.grand_total|floatformat:2 }}
             </td>
         </tr>
     </table>

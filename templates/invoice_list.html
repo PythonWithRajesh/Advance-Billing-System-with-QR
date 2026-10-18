@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices | Advance Billing System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f3f7f5;
+            color: #17352d;
+        }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            height: 70px;
+            background: #022c22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand span {
+            color: #34d399;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #d1fae5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* ================= MAIN CONTAINER ================= */
+        .main {
+            width: 100%;
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 35px 20px 70px;
+        }
+
+        /* ================= ALERTS ================= */
+        .messages {
+            margin-bottom: 22px;
+        }
+
+        .alert {
+            padding: 13px 18px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #022c22;
+            margin-bottom: 6px;
+        }
+
+        .page-title p {
+            color: #6b7f77;
+            font-size: 14px;
+        }
+
+        .btn-create {
+            background: #047857;
+            color: white;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-create:hover {
+            background: #065f46;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(4, 120, 87, 0.35);
+        }
+
+        /* ================= STATS CARDS ================= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e1ebe7;
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: 0 4px 20px rgba(2, 44, 34, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            color: #71847d;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+        }
+
+        .stat-value {
+            color: #022c22;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .stat-badge {
+            font-size: 11px;
+            color: #059669;
+            font-weight: 600;
+        }
+
+        /* ================= TABLE CARD ================= */
+        .table-card {
+            background: white;
+            border: 1px solid #e1ebe7;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(2, 44, 34, 0.06);
+            overflow: hidden;
+        }
+
+        /* ================= TOOLBAR ================= */
+        .toolbar {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid #e8efec;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-title h2 {
+            font-size: 18px;
+            color: #022c22;
+            font-weight: 700;
+        }
+
+        .toolbar-title p {
+            color: #7a8b85;
+            font-size: 12px;
+        }
+
+        .filter-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 260px;
+            padding: 10px 14px 10px 34px;
+            border: 1px solid #d6e3de;
+            border-radius: 8px;
+            background: #fbfdfc;
+            outline: none;
+            color: #17352d;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #059669;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #81928c;
+            font-size: 14px;
+        }
+
+        .select-filter {
+            padding: 10px 14px;
+            border: 1px solid #d6e3de;
+            border-radius: 8px;
+            background: #fbfdfc;
+            color: #17352d;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .select-filter:focus {
+            border-color: #059669;
+        }
+
+        .btn-filter {
+            background: #022c22;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-filter:hover {
+            background: #064e3b;
+        }
+
+        .btn-reset {
+            color: #6b7f77;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: #f3f7f5;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #e1ebe7;
+            color: #022c22;
+        }
+
+        /* ================= TABLE ================= */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        thead {
+            background: #f6faf8;
+        }
+
+        th {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #4b6359;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid #e1ebe7;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #edf3f0;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fbfdfc;
+        }
+
+        .invoice-number-cell {
+            font-weight: 700;
+            color: #022c22;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .customer-info strong {
+            display: block;
+            color: #022c22;
+            font-size: 14px;
+        }
+
+        .customer-info span {
+            color: #71847d;
+            font-size: 12px;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-paid {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .item-count-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .amount-cell {
+            font-weight: 700;
+            color: #022c22;
+            font-size: 14px;
+        }
+
+        /* QR Thumbnail Button */
+        .qr-thumb-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .qr-thumb-box:hover {
+            background: #eef2f6;
+            border-color: #cbd5e1;
+            transform: scale(1.03);
+        }
+
+        .qr-thumb-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 4px;
+            background: white;
+            padding: 2px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .qr-hint {
+            font-size: 11px;
+            color: #047857;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-action-view {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .btn-action-view:hover {
+            background: #c7d2fe;
+        }
+
+        .btn-action-pdf {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .btn-action-pdf:hover {
+            background: #d1fae5;
+        }
+
+        /* ================= EMPTY STATE ================= */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #71847d;
+        }
+
+        .empty-state svg {
+            width: 56px;
+            height: 56px;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #022c22;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* ================= PAGINATION ================= */
+        .table-footer {
+            padding: 18px 24px;
+            background: #fbfdfc;
+            border-top: 1px solid #e8efec;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: #71847d;
+        }
+
+        .table-footer strong {
+            color: #047857;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            border-radius: 7px;
+            background: white;
+            border: 1px solid #d6e3de;
+            color: #17352d;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover:not(.disabled):not(.active) {
+            background: #eef5f2;
+            border-color: #059669;
+            color: #047857;
+        }
+
+        .page-link.active {
+            background: #047857;
+            border-color: #047857;
+            color: white;
+        }
+
+        .page-link.disabled {
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .page-dots {
+            padding: 0 4px;
+            color: #9ca3af;
+        }
+
+        /* ================= QR MODAL ================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 44, 34, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            background: #022c22;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #d1fae5;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 26px;
+            text-align: center;
+        }
+
+        .modal-qr-img {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            display: block;
+        }
+
+        .modal-inv-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #022c22;
+            margin-bottom: 4px;
+        }
+
+        .modal-inv-subtitle {
+            font-size: 13px;
+            color: #71847d;
+            margin-bottom: 16px;
+        }
+
+        .modal-info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .modal-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .modal-info-row:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 6px;
+            margin-top: 6px;
+            color: #022c22;
+            font-size: 13px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-modal-action {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-download {
+            background: #047857;
+            color: white;
+        }
+
+        .btn-modal-download:hover {
+            background: #065f46;
+        }
+
+        .btn-modal-close-btn {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-modal-close-btn:hover {
+            background: #cbd5e1;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                height: auto;
+                padding: 15px 20px;
+                gap: 12px;
+            }
+
+            .main {
+                padding: 20px 15px 50px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-form {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .table-footer {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="navbar">
+        <div class="brand">
+            Advance <span>Billing</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="{% url 'distributor_dashboard' %}" class="nav-link">Dashboard</a>
+            <a href="{% url 'customer_list' %}" class="nav-link">Customers</a>
+            <a href="{% url 'product_list' %}" class="nav-link">Products</a>
+            <a href="{% url 'invoice_list' %}" class="nav-link active">Invoices</a>
+            <a href="{% url 'create_invoice' %}" class="nav-link">+ New Invoice</a>
+            <a href="{% url 'user_logout' %}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- SYSTEM MESSAGES -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Invoice Management</h1>
+                <p>View, search, and manage all customer billing invoices with QR code verification.</p>
+            </div>
+
+            <a href="{% url 'create_invoice' %}" class="btn-create">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Invoice
+            </a>
+        </div>
+
+        <!-- STATS CARDS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Invoices</span>
+                <span class="stat-value">{{ total_invoices }}</span>
+                <span class="stat-badge">{{ showing_invoices }} shown in records</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Total Revenue</span>
+                <span class="stat-value">₹{{ total_revenue|floatformat:2 }}</span>
+                <span class="stat-badge">Overall billings</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Paid Invoices</span>
+                <span class="stat-value" style="color: #15803d;">{{ paid_count }}</span>
+                <span class="stat-badge" style="color: #15803d;">Completed payments</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">Pending Invoices</span>
+                <span class="stat-value" style="color: #b45309;">{{ pending_count }}</span>
+                <span class="stat-badge" style="color: #b45309;">Awaiting clearance</span>
+            </div>
+        </div>
+
+        <!-- INVOICE TABLE CARD -->
+        <div class="table-card">
+
+            <!-- TOOLBAR / SEARCH / FILTER -->
+            <div class="toolbar">
+                <div class="toolbar-title">
+                    <h2>Existing Invoices</h2>
+                    <p>Database records sorted chronologically</p>
+                </div>
+
+                <form method="GET" action="{% url 'invoice_list' %}" class="filter-form">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ search_query }}"
+                            placeholder="Search invoice #, customer..."
+                            class="search-input"
+                        >
+                    </div>
+
+                    <select name="status" class="select-filter">
+                        <option value="">All Payment Statuses</option>
+                        {% for value, label in payment_status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" class="btn-filter">Filter</button>
+
+                    {% if search_query or status_filter %}
+                    <a href="{% url 'invoice_list' %}" class="btn-reset">Reset</a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- TABLE CONTENT -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Customer</th>
+                            <th>Date & Time</th>
+                            <th>Products Count</th>
+                            <th>Subtotal</th>
+                            <th>GST</th>
+                            <th>Grand Total</th>
+                            <th>Status</th>
+                            <th>QR Code</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                        <tr>
+                            <td>
+                                <div class="invoice-number-cell">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                    {{ invoice.invoice_number }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="customer-info">
+                                    <strong>{{ invoice.customer.name }}</strong>
+                                    <span>📞 {{ invoice.customer.phone }}</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div>{{ invoice.invoice_date|date:"d M Y" }}</div>
+                                <div style="font-size: 11px; color: #71847d;">{{ invoice.invoice_date|date:"h:i A" }}</div>
+                            </td>
+
+                            <td>
+                                <span class="item-count-badge" title="{% for item in invoice.items.all %}{{ item.product.name }} (x{{ item.quantity }}){% if not forloop.last %}, {% endif %}{% endfor %}">
+                                    📦 {{ invoice.product_count }} {% if invoice.product_count == 1 %}product{% else %}products{% endif %}
+                                    ({{ invoice.total_quantity }} units)
+                                </span>
+                            </td>
+
+                            <td>₹{{ invoice.subtotal|floatformat:2 }}</td>
+                            <td>₹{{ invoice.gst_amount|floatformat:2 }}</td>
+                            <td class="amount-cell">₹{{ invoice.grand_total|floatformat:2 }}</td>
+
+                            <td>
+                                {% if invoice.payment_status == 'Paid' %}
+                                <span class="badge badge-paid">Paid</span>
+                                {% elif invoice.payment_status == 'Pending' %}
+                                <span class="badge badge-pending">Pending</span>
+                                {% else %}
+                                <span class="badge badge-cancelled">{{ invoice.payment_status }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="qr-thumb-box"
+                                     onclick="openQrModal('{{ invoice.invoice_number }}', '{{ invoice.customer.name|escapejs }}', '{{ invoice.product_count }}', '{{ invoice.total_quantity }}', '{{ invoice.grand_total|floatformat:2 }}', '{{ invoice.payment_status }}', '{{ invoice.qr_base64 }}')"
+                                     title="Click to view & scan QR code">
+                                    <img src="{{ invoice.qr_base64 }}" alt="QR Code" class="qr-thumb-img">
+                                    <span class="qr-hint">View QR</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{% url 'invoice_detail' invoice.id %}" class="btn-action btn-action-view" title="View Detailed Invoice">
+                                        View
+                                    </a>
+                                    <a href="{% url 'invoice_pdf' invoice.id %}" target="_blank" class="btn-action btn-action-pdf" title="View or Print PDF">
+                                        PDF
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10">
+                                <div class="empty-state">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="2" y="3" width="20" height="18" rx="2"></rect>
+                                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                                        <line x1="8" y1="8" x2="16" y2="8"></line>
+                                        <line x1="8" y1="16" x2="12" y2="16"></line>
+                                    </svg>
+                                    <h3>No invoices found</h3>
+                                    <p>There are no invoices matching your criteria. Create your first invoice now!</p>
+                                    <a href="{% url 'create_invoice' %}" class="btn-create">
+                                        Create Invoice
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TABLE FOOTER & PAGINATION -->
+            {% if page_obj.paginator.count > 0 %}
+            <div class="table-footer">
+                <div>
+                    Showing <strong>{{ page_obj.start_index }}</strong> to <strong>{{ page_obj.end_index }}</strong> of <strong>{{ page_obj.paginator.count }}</strong> invoices
+                </div>
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                <div class="pagination">
+                    <!-- PREVIOUS -->
+                    {% if page_obj.has_previous %}
+                    <a href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.previous_page_number }}" class="page-link">
+                        &laquo; Prev
+                    </a>
+                    {% else %}
+                    <span class="page-link disabled">&laquo; Prev</span>
+                    {% endif %}
+
+                    <!-- PAGE NUMBERS -->
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num == page_obj.number %}
+                            <span class="page-link active">{{ num }}</span>
+                        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                            <a href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ num }}" class="page-link">{{ num }}</a>
+                        {% elif num >= page_obj.number|add:"-1" and num <= page_obj.number|add:"1" %}
+                            <a href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ num }}" class="page-link">{{ num }}</a>
+                        {% elif num == 2 and page_obj.number > 4 %}
+                            <span class="page-dots">...</span>
+                        {% elif num == page_obj.paginator.num_pages|add:"-1" and page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+                            <span class="page-dots">...</span>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- NEXT -->
+                    {% if page_obj.has_next %}
+                    <a href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.next_page_number }}" class="page-link">
+                        Next &raquo;
+                    </a>
+                    {% else %}
+                    <span class="page-link disabled">Next &raquo;</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+    <!-- QR CODE PREVIEW MODAL -->
+    <div id="qrModal" class="modal-overlay" onclick="closeQrModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalInvoiceNo">Invoice QR Code</h3>
+                <button type="button" class="modal-close" onclick="closeQrModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalQrImg" src="" alt="Invoice QR Code" class="modal-qr-img">
+                <div id="modalCustomerName" class="modal-inv-title">Customer Name</div>
+                <div class="modal-inv-subtitle">Scan this QR code with any smartphone camera or lens to verify invoice data</div>
+
+                <div class="modal-info-box">
+                    <div class="modal-info-row">
+                        <span>Invoice No:</span>
+                        <strong id="modalInfoInvNo">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Customer:</span>
+                        <strong id="modalInfoCustomer">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Products Count:</span>
+                        <strong id="modalInfoProducts">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Payment Status:</span>
+                        <strong id="modalInfoStatus">-</strong>
+                    </div>
+                    <div class="modal-info-row">
+                        <span>Grand Total:</span>
+                        <strong id="modalInfoTotal" style="color: #047857;">-</strong>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a id="modalDownloadBtn" href="" download="invoice_qr.png" class="btn-modal-action btn-modal-download">
+                        Download QR Image
+                    </a>
+                    <button type="button" class="btn-modal-action btn-modal-close-btn" onclick="closeQrModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SCRIPT -->
+    <script>
+        function openQrModal(invNo, customer, productCount, totalQty, total, status, qrSrc) {
+            document.getElementById('modalInvoiceNo').textContent = 'QR Code: ' + invNo;
+            document.getElementById('modalQrImg').src = qrSrc;
+            document.getElementById('modalCustomerName').textContent = customer;
+            document.getElementById('modalInfoInvNo').textContent = invNo;
+            document.getElementById('modalInfoCustomer').textContent = customer;
+            document.getElementById('modalInfoProducts').textContent = productCount + ' items (' + totalQty + ' units)';
+            document.getElementById('modalInfoStatus').textContent = status;
+            document.getElementById('modalInfoTotal').textContent = '₹' + total;
+
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            downloadBtn.href = qrSrc;
+            downloadBtn.download = invNo + '_QR.png';
+
+            document.getElementById('qrModal').classList.add('active');
+        }
+
+        function closeQrModal(event) {
+            if (!event || event.target.id === 'qrModal' || event.target.classList.contains('modal-close') || event.target.classList.contains('btn-modal-close-btn')) {
+                document.getElementById('qrModal').classList.remove('active');
+            }
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeQrModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
