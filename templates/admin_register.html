@@ -3,14 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Registration | Advance Billing</title>
+    <title>Admin Registration | Advance Billing System</title>
 
     <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --emerald: #059669;
+            --emerald-light: #10b981;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --bg-card: #ffffff;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
@@ -18,221 +33,1225 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #111827, #1f2937);
+            background: radial-gradient(circle at 10% 20%, #1e293b 0%, #0f172a 50%, #020617 100%);
             padding: 30px 20px;
+            color: var(--text-main);
         }
 
-        .register-container {
+        .wrapper {
             width: 100%;
-            max-width: 480px;
+            max-width: 1050px;
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            background: var(--bg-card);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            position: relative;
         }
 
-        .register-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.30);
+        /* =========================================
+           LEFT BRANDING & PRIVILEGES PANEL
+        ========================================= */
+        .left-panel {
+            background: linear-gradient(160deg, #0f172a 0%, #1e293b 60%, #090d16 100%);
+            color: #ffffff;
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
-        .logo {
-            width: 65px;
-            height: 65px;
-            margin: 0 auto 16px;
-            border-radius: 16px;
-            background: #111827;
-            color: white;
+        .left-panel::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .brand-logo-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
         }
 
-        h1 {
-            text-align: center;
-            color: #111827;
-            margin-bottom: 6px;
-            font-size: 24px;
+        .brand-logo-badge svg {
+            width: 28px;
+            height: 28px;
+            fill: #ffffff;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 20px;
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .brand-title span {
+            color: #60a5fa;
+            font-weight: 500;
+            display: block;
             font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .badge {
-            width: fit-content;
-            margin: 0 auto 20px;
-            padding: 6px 14px;
-            border-radius: 50px;
-            background: #e5e7eb;
-            color: #111827;
+        .admin-hero {
+            margin-bottom: 32px;
+        }
+
+        .admin-hero h2 {
+            font-size: 27px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            color: #f8fafc;
+        }
+
+        .admin-hero p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+
+        .privileges-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .privilege-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.25s ease;
+        }
+
+        .privilege-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateX(4px);
+        }
+
+        .privilege-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .privilege-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .privilege-text strong {
+            display: block;
+            font-size: 13px;
+            color: #f1f5f9;
+            margin-bottom: 2px;
+        }
+
+        .privilege-text span {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .security-badge svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* =========================================
+           RIGHT FORM PANEL
+        ========================================= */
+        .right-panel {
+            padding: 44px 48px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 24px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border-radius: 20px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 700;
             letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .badge-pill .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2563eb;
+        }
+
+        .form-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Global Alert */
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
         }
 
         .form-group {
             margin-bottom: 16px;
         }
 
-        label {
-            display: block;
+        .form-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 6px;
-            color: #374151;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
+            color: #334155;
         }
 
-        input {
+        .form-group label .req {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .form-group label .hint {
+            font-size: 11px;
+            font-weight: 400;
+            color: #94a3b8;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            width: 18px;
+            height: 18px;
+            color: #94a3b8;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .input-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .form-control {
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 9px;
-            outline: none;
+            height: 46px;
+            padding: 0 14px 0 42px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
             font-size: 14px;
-            transition: 0.2s;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
         }
 
-        input:focus {
-            border-color: #111827;
-            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.10);
+        .form-control::placeholder {
+            color: #94a3b8;
+            font-size: 13px;
         }
 
-        .field-error {
-            color: #b91c1c;
+        .form-control:focus {
+            background: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--emerald-light);
+            background: #ffffff;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger);
+            background: #fffafa;
+        }
+
+        .toggle-pwd-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px 6px;
+            color: #64748b;
             font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .toggle-pwd-btn:hover {
+            color: #0f172a;
+            background: #e2e8f0;
+        }
+
+        .toggle-pwd-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .field-feedback {
+            font-size: 11px;
             margin-top: 4px;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .field-feedback.show {
+            display: block;
+        }
+
+        .field-feedback.error {
+            color: var(--danger);
             font-weight: 500;
         }
 
-        .register-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            background: #111827;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 10px;
+        .field-feedback.success {
+            color: var(--emerald);
+            font-weight: 500;
         }
 
-        .register-btn:hover {
-            background: #000000;
-            transform: translateY(-1px);
-        }
-
-        .api-note {
+        /* Password Strength Meter */
+        .strength-meter-wrap {
+            margin-top: 8px;
+            padding: 10px 12px;
             background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            padding: 10px 14px;
             border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
+
+        .meter-bars {
+            display: flex;
+            gap: 4px;
+            height: 4px;
+            margin-bottom: 8px;
+        }
+
+        .meter-bar {
+            flex: 1;
+            height: 100%;
+            background: #e2e8f0;
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+        }
+
+        .strength-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 11px;
-            color: #475569;
-            margin-top: 20px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .strength-label span#strengthStatus {
+            font-weight: 700;
+        }
+
+        .rule-checks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 8px;
+        }
+
+        .rule-item {
+            font-size: 11px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .rule-item.valid {
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        .rule-item .icon {
+            font-size: 10px;
+            width: 12px;
             text-align: center;
         }
 
-        .api-note code {
-            font-family: monospace;
+        /* Privilege Acknowledgement Checkbox */
+        .confirm-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 18px 0;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-box:hover {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+
+        .confirm-box input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: #0f172a;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .confirm-box label {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .confirm-box label strong {
+            color: #0f172a;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+            background: #0f172a;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+        }
+
+        .submit-btn:hover {
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* API Note Drawer */
+        .api-drawer {
+            margin-top: 18px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            font-size: 12px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .api-drawer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .api-drawer code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             background: #e2e8f0;
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 11px;
             color: #0f172a;
+            font-weight: 600;
         }
 
-        .switch-login {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .switch-login a {
-            color: #111827;
-            font-weight: bold;
+        .api-toggle-link {
+            color: var(--accent);
             text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 11px;
         }
 
-        .switch-login a:hover {
+        .api-toggle-link:hover {
             text-decoration: underline;
+        }
+
+        .api-curl-preview {
+            display: none;
+            margin-top: 10px;
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 11px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .api-curl-preview.open {
+            display: block;
+        }
+
+        /* Switch Portals */
+        .footer-nav {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .footer-nav a {
+            color: #0f172a;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .footer-nav .distributor-portal {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .footer-nav .distributor-portal a {
+            color: #047857;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+                max-width: 580px;
+            }
+            .left-panel {
+                padding: 36px 30px;
+            }
+            .right-panel {
+                padding: 36px 30px;
+            }
+            .admin-hero {
+                margin-bottom: 20px;
+            }
+            .privileges-list {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+            .left-panel, .right-panel {
+                padding: 28px 20px;
+            }
+            .rule-checks {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-
 <body>
 
-<div class="register-container">
-    <div class="register-card">
-        <div class="logo">AB</div>
-        <h1>Register Admin</h1>
-        <p class="subtitle">Advance Billing System Administrator Registration</p>
-        <div class="badge">ADMIN REGISTRATION</div>
+<div class="wrapper">
 
-        <form method="POST">
+    <!-- =========================================
+         LEFT BRANDING & ENTERPRISE OVERVIEW
+    ========================================== -->
+    <div class="left-panel">
+        <div>
+            <div class="brand-header">
+                <div class="brand-logo-badge">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                </div>
+                <div class="brand-title">
+                    Advance Billing
+                    <span>Admin Portal</span>
+                </div>
+            </div>
+
+            <div class="admin-hero">
+                <h2>System Administrator Registration</h2>
+                <p>Provision root-level superuser credentials with full governance over invoicing, dynamic QR generation, customers, and distributors.</p>
+            </div>
+
+            <div class="privileges-list">
+                <div class="privilege-item">
+                    <div class="privilege-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2l7 4v6c0 5.25-3.5 10-7 11-3.5-1-7-5.75-7-11V6l7-4z"/></svg>
+                    </div>
+                    <div class="privilege-text">
+                        <strong>Full Superuser Authority</strong>
+                        <span>Grants both <code>is_staff</code> and <code>is_superuser</code> rights automatically.</span>
+                    </div>
+                </div>
+
+                <div class="privilege-item">
+                    <div class="privilege-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h3v3H7zM14 7h3v3h-3zM7 14h3v3H7zM14 14h3v3h-3z"/></svg>
+                    </div>
+                    <div class="privilege-text">
+                        <strong>Invoice & QR Engine</strong>
+                        <span>Generate invoices, embed cryptographic QR codes, and export printable PDFs.</span>
+                    </div>
+                </div>
+
+                <div class="privilege-item">
+                    <div class="privilege-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="privilege-text">
+                        <strong>User & Distributor Governance</strong>
+                        <span>Manage distributor credentials, reset keys, audit logs, and customer records.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>High-Security Enterprise Access Control</span>
+        </div>
+    </div>
+
+    <!-- =========================================
+         RIGHT REGISTRATION FORM
+    ========================================== -->
+    <div class="right-panel">
+
+        <div class="form-header">
+            <div class="badge-pill">
+                <span class="dot"></span>
+                ADMIN PRIVILEGE PROVISIONING
+            </div>
+            <h1>Create Admin Account</h1>
+            <p>Enter your administrator credentials to gain executive dashboard access.</p>
+        </div>
+
+        <!-- Server error banner (if general message) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-error">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" id="adminRegisterForm" novalidate autocomplete="off">
             {% csrf_token %}
 
+            <!-- USERNAME -->
             <div class="form-group">
-                <label for="username">Username *</label>
-                <input type="text" id="username" name="username" value="{{ username|default:'' }}" placeholder="e.g. admin_rajesh" required>
-                {% if errors.username %}
-                <div class="field-error">{{ errors.username }}</div>
-                {% endif %}
+                <label for="username">
+                    <span>Admin Username<span class="req">*</span></span>
+                    <span class="hint">Unique handle</span>
+                </label>
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </span>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        class="form-control {% if errors.username %}is-invalid{% endif %}"
+                        placeholder="e.g. admin_rajesh"
+                        value="{{ username|default:'' }}"
+                        required
+                        minlength="3"
+                        maxlength="150"
+                        autocapitalize="none"
+                    >
+                </div>
+                <div id="usernameFeedback" class="field-feedback {% if errors.username %}show error{% endif %}">
+                    {% if errors.username %}{{ errors.username }}{% endif %}
+                </div>
             </div>
 
+            <!-- FULL NAME -->
             <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" value="{{ name|default:'' }}" placeholder="e.g. Rajesh Lagdhir">
-                {% if errors.name %}
-                <div class="field-error">{{ errors.name }}</div>
-                {% endif %}
+                <label for="name">
+                    <span>Full Name</span>
+                    <span class="hint">Display name</span>
+                </label>
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    </span>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control {% if errors.name %}is-invalid{% endif %}"
+                        placeholder="e.g. Rajesh Lagdhir"
+                        value="{{ name|default:'' }}"
+                        maxlength="150"
+                    >
+                </div>
+                <div id="nameFeedback" class="field-feedback {% if errors.name %}show error{% endif %}">
+                    {% if errors.name %}{{ errors.name }}{% endif %}
+                </div>
             </div>
 
+            <!-- EMAIL -->
             <div class="form-group">
-                <label for="email">Email Address *</label>
-                <input type="email" id="email" name="email" value="{{ email|default:'' }}" placeholder="admin@example.com" required>
-                {% if errors.email %}
-                <div class="field-error">{{ errors.email }}</div>
-                {% endif %}
+                <label for="email">
+                    <span>Official Email<span class="req">*</span></span>
+                    <span class="hint">For notifications & recovery</span>
+                </label>
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </span>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control {% if errors.email %}is-invalid{% endif %}"
+                        placeholder="admin@enterprise.com"
+                        value="{{ email|default:'' }}"
+                        required
+                        autocapitalize="none"
+                    >
+                </div>
+                <div id="emailFeedback" class="field-feedback {% if errors.email %}show error{% endif %}">
+                    {% if errors.email %}{{ errors.email }}{% endif %}
+                </div>
             </div>
 
+            <!-- PASSWORD -->
             <div class="form-group">
-                <label for="password">Password *</label>
-                <input type="password" id="password" name="password" placeholder="At least 8 chars, 1 uppercase, 1 lowercase, 1 number" required>
-                {% if errors.password %}
-                <div class="field-error">{{ errors.password }}</div>
-                {% endif %}
+                <label for="password">
+                    <span>Password<span class="req">*</span></span>
+                    <span class="hint">Min 8 chars with complexity</span>
+                </label>
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </span>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control {% if errors.password %}is-invalid{% endif %}"
+                        placeholder="Create strong password"
+                        required
+                        minlength="8"
+                        style="padding-right: 76px;"
+                    >
+                    <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('password', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>Show</span>
+                    </button>
+                </div>
+
+                <!-- Password Strength Meter -->
+                <div class="strength-meter-wrap">
+                    <div class="meter-bars">
+                        <div class="meter-bar" id="bar1"></div>
+                        <div class="meter-bar" id="bar2"></div>
+                        <div class="meter-bar" id="bar3"></div>
+                        <div class="meter-bar" id="bar4"></div>
+                    </div>
+                    <div class="strength-label">
+                        <span>Password Strength:</span>
+                        <span id="strengthStatus">Enter password</span>
+                    </div>
+                    <div class="rule-checks">
+                        <div class="rule-item" id="ruleLen"><span class="icon">○</span> 8+ characters</div>
+                        <div class="rule-item" id="ruleUpper"><span class="icon">○</span> Uppercase letter</div>
+                        <div class="rule-item" id="ruleLower"><span class="icon">○</span> Lowercase letter</div>
+                        <div class="rule-item" id="ruleNum"><span class="icon">○</span> At least 1 number</div>
+                    </div>
+                </div>
+
+                <div id="passwordFeedback" class="field-feedback {% if errors.password %}show error{% endif %}">
+                    {% if errors.password %}{{ errors.password }}{% endif %}
+                </div>
             </div>
 
+            <!-- CONFIRM PASSWORD -->
             <div class="form-group">
-                <label for="confirm_password">Confirm Password *</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
-                {% if errors.confirm_password %}
-                <div class="field-error">{{ errors.confirm_password }}</div>
-                {% endif %}
+                <label for="confirm_password">
+                    <span>Confirm Password<span class="req">*</span></span>
+                    <span class="hint">Must match password</span>
+                </label>
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </span>
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        class="form-control {% if errors.confirm_password %}is-invalid{% endif %}"
+                        placeholder="Re-enter password"
+                        required
+                        minlength="8"
+                        style="padding-right: 76px;"
+                    >
+                    <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('confirm_password', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>Show</span>
+                    </button>
+                </div>
+                <div id="confirmFeedback" class="field-feedback {% if errors.confirm_password %}show error{% endif %}">
+                    {% if errors.confirm_password %}{{ errors.confirm_password }}{% endif %}
+                </div>
             </div>
 
-            <button type="submit" class="register-btn">
-                Register as Admin
+            <!-- ACKNOWLEDGEMENT CHECKBOX -->
+            <div class="confirm-box" id="ackBox" onclick="toggleAckCheckbox(event)">
+                <input type="checkbox" id="ackSuperuser" name="ack_superuser" required>
+                <label for="ackSuperuser">
+                    I acknowledge that this account will be provisioned with <strong>unrestricted superuser and staff administrative privileges</strong>.
+                </label>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="spinner" id="btnSpinner"></span>
+                <svg id="btnIcon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                <span id="btnText">Register Administrator</span>
             </button>
         </form>
 
-        <div class="api-note">
-            💡 API Endpoint available: <code>POST /api/admin/register/</code> with JSON body
+        <!-- API DRAWER NOTE -->
+        <div class="api-drawer">
+            <div class="api-drawer-left">
+                <span>⚡</span>
+                <span>REST API: <code>POST /api/admin/register/</code></span>
+            </div>
+            <a class="api-toggle-link" onclick="toggleCurlPreview()">View Payload</a>
+        </div>
+        <div class="api-curl-preview" id="curlPreview">curl -X POST http://127.0.0.1:8000/api/admin/register/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "super_admin",
+    "email": "admin@enterprise.com",
+    "name": "Admin Name",
+    "password": "SecurePassword123",
+    "confirm_password": "SecurePassword123"
+  }'</div>
+
+        <!-- FOOTER LINKS -->
+        <div class="footer-nav">
+            <div>
+                Already have an admin account?
+                <a href="{% url 'admin_login' %}">Admin Login</a>
+            </div>
+            <div class="distributor-portal">
+                Distributor?
+                <a href="{% url 'distributor_login' %}">Access Distributor Portal →</a>
+            </div>
         </div>
 
-        <div class="switch-login">
-            Already have an account?
-            <a href="{% url 'admin_login' %}">Admin Login</a>
-        </div>
     </div>
+
 </div>
+
+<script>
+    // Elements
+    const form = document.getElementById("adminRegisterForm");
+    const usernameInput = document.getElementById("username");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm_password");
+    const ackCheckbox = document.getElementById("ackSuperuser");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const btnIcon = document.getElementById("btnIcon");
+    const btnText = document.getElementById("btnText");
+
+    // Feedback elements
+    const usernameFb = document.getElementById("usernameFeedback");
+    const emailFb = document.getElementById("emailFeedback");
+    const passwordFb = document.getElementById("passwordFeedback");
+    const confirmFb = document.getElementById("confirmFeedback");
+
+    // Rules elements
+    const ruleLen = document.getElementById("ruleLen");
+    const ruleUpper = document.getElementById("ruleUpper");
+    const ruleLower = document.getElementById("ruleLower");
+    const ruleNum = document.getElementById("ruleNum");
+    const bar1 = document.getElementById("bar1");
+    const bar2 = document.getElementById("bar2");
+    const bar3 = document.getElementById("bar3");
+    const bar4 = document.getElementById("bar4");
+    const strengthStatus = document.getElementById("strengthStatus");
+
+    // Toggle password visibility
+    function togglePasswordVisibility(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const span = btn.querySelector("span");
+        if (input.type === "password") {
+            input.type = "text";
+            span.textContent = "Hide";
+            btn.querySelector("svg").innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        } else {
+            input.type = "password";
+            span.textContent = "Show";
+            btn.querySelector("svg").innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    function toggleAckCheckbox(e) {
+        if (e.target !== ackCheckbox && e.target.tagName !== "LABEL") {
+            ackCheckbox.checked = !ackCheckbox.checked;
+        }
+    }
+
+    function toggleCurlPreview() {
+        const preview = document.getElementById("curlPreview");
+        preview.classList.toggle("open");
+    }
+
+    // Helper: Mark field valid / invalid
+    function setFieldState(input, fb, isValid, msg = "") {
+        if (isValid) {
+            input.classList.remove("is-invalid");
+            input.classList.add("is-valid");
+            fb.textContent = msg;
+            fb.className = "field-feedback success show";
+            if (!msg) fb.classList.remove("show");
+        } else {
+            input.classList.remove("is-valid");
+            input.classList.add("is-invalid");
+            fb.textContent = msg;
+            fb.className = "field-feedback error show";
+        }
+    }
+
+    // Username validation
+    function validateUsername() {
+        const val = usernameInput.value.trim();
+        if (!val) {
+            setFieldState(usernameInput, usernameFb, false, "Admin username is required.");
+            return false;
+        }
+        if (val.length < 3) {
+            setFieldState(usernameInput, usernameFb, false, "Username must contain at least 3 characters.");
+            return false;
+        }
+        if (val.length > 150) {
+            setFieldState(usernameInput, usernameFb, false, "Username cannot exceed 150 characters.");
+            return false;
+        }
+        const validPattern = /^[a-zA-Z0-9_.-]+$/;
+        if (!validPattern.test(val)) {
+            setFieldState(usernameInput, usernameFb, false, "Only letters, numbers, and @/./+/-/_ allowed.");
+            return false;
+        }
+        setFieldState(usernameInput, usernameFb, true, "");
+        return true;
+    }
+
+    // Email validation
+    function validateEmail() {
+        const val = emailInput.value.trim();
+        if (!val) {
+            setFieldState(emailInput, emailFb, false, "Official email address is required.");
+            return false;
+        }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(val)) {
+            setFieldState(emailInput, emailFb, false, "Please enter a valid email format.");
+            return false;
+        }
+        setFieldState(emailInput, emailFb, true, "");
+        return true;
+    }
+
+    // Password validation & strength computation
+    function checkPasswordRules() {
+        const val = passwordInput.value;
+        const hasLen = val.length >= 8;
+        const hasUpper = /[A-Z]/.test(val);
+        const hasLower = /[a-z]/.test(val);
+        const hasNum = /[0-9]/.test(val);
+
+        updateRule(ruleLen, hasLen);
+        updateRule(ruleUpper, hasUpper);
+        updateRule(ruleLower, hasLower);
+        updateRule(ruleNum, hasNum);
+
+        let score = 0;
+        if (hasLen) score++;
+        if (hasUpper) score++;
+        if (hasLower) score++;
+        if (hasNum) score++;
+
+        // Reset bars
+        [bar1, bar2, bar3, bar4].forEach(b => b.style.backgroundColor = "#e2e8f0");
+
+        if (val.length === 0) {
+            strengthStatus.textContent = "Enter password";
+            strengthStatus.style.color = "#64748b";
+            setFieldState(passwordInput, passwordFb, false, "");
+            return false;
+        }
+
+        if (score === 1 || score === 2) {
+            bar1.style.backgroundColor = "#ef4444";
+            if (score === 2) bar2.style.backgroundColor = "#ef4444";
+            strengthStatus.textContent = "Weak";
+            strengthStatus.style.color = "#ef4444";
+        } else if (score === 3) {
+            bar1.style.backgroundColor = "#f59e0b";
+            bar2.style.backgroundColor = "#f59e0b";
+            bar3.style.backgroundColor = "#f59e0b";
+            strengthStatus.textContent = "Fair";
+            strengthStatus.style.color = "#f59e0b";
+        } else if (score === 4) {
+            bar1.style.backgroundColor = "#10b981";
+            bar2.style.backgroundColor = "#10b981";
+            bar3.style.backgroundColor = "#10b981";
+            bar4.style.backgroundColor = "#10b981";
+            strengthStatus.textContent = "Strong";
+            strengthStatus.style.color = "#10b981";
+        }
+
+        const isValid = (score === 4);
+        if (isValid) {
+            setFieldState(passwordInput, passwordFb, true, "");
+        } else {
+            setFieldState(passwordInput, passwordFb, false, "Must meet all 4 password requirements.");
+        }
+        return isValid;
+    }
+
+    function updateRule(element, isValid) {
+        if (isValid) {
+            element.classList.add("valid");
+            element.querySelector(".icon").textContent = "✓";
+        } else {
+            element.classList.remove("valid");
+            element.querySelector(".icon").textContent = "○";
+        }
+    }
+
+    // Confirm password validation
+    function validateConfirm() {
+        const pwd = passwordInput.value;
+        const confirmVal = confirmInput.value;
+
+        if (!confirmVal) {
+            setFieldState(confirmInput, confirmFb, false, "Please confirm your password.");
+            return false;
+        }
+
+        if (pwd !== confirmVal) {
+            setFieldState(confirmInput, confirmFb, false, "Passwords do not match.");
+            return false;
+        }
+
+        setFieldState(confirmInput, confirmFb, true, "Passwords match.");
+        return true;
+    }
+
+    // Real-time Event Listeners
+    usernameInput.addEventListener("input", validateUsername);
+    usernameInput.addEventListener("blur", validateUsername);
+
+    emailInput.addEventListener("input", validateEmail);
+    emailInput.addEventListener("blur", validateEmail);
+
+    passwordInput.addEventListener("input", () => {
+        checkPasswordRules();
+        if (confirmInput.value.length > 0) {
+            validateConfirm();
+        }
+    });
+
+    confirmInput.addEventListener("input", validateConfirm);
+    confirmInput.addEventListener("blur", validateConfirm);
+
+    // Form submit interception
+    form.addEventListener("submit", function (e) {
+        const uValid = validateUsername();
+        const eValid = validateEmail();
+        const pValid = checkPasswordRules();
+        const cValid = validateConfirm();
+
+        if (!ackCheckbox.checked) {
+            alert("Please acknowledge that you are registering for superuser administrative privileges.");
+            ackCheckbox.focus();
+            e.preventDefault();
+            return false;
+        }
+
+        if (!uValid || !eValid || !pValid || !cValid) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Show spinner state
+        submitBtn.disabled = true;
+        btnSpinner.style.display = "inline-block";
+        btnIcon.style.display = "none";
+        btnText.textContent = "Provisioning Admin...";
+        return true;
+    });
+</script>
 
 </body>
 </html>

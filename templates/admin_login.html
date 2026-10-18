@@ -118,14 +118,25 @@
             transform: translateY(-1px);
         }
 
-        .error {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 12px;
+        .alert-msg {
+            padding: 12px 14px;
             border-radius: 10px;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: 13px;
             text-align: center;
+            line-height: 1.4;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
         }
 
         .switch-login {
@@ -175,7 +186,7 @@
 
         {% if messages %}
             {% for message in messages %}
-                <div class="error">
+                <div class="alert-msg {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
                     {{ message }}
                 </div>
             {% endfor %}
