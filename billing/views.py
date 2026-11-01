@@ -37,6 +37,11 @@ from .utils import (
     generate_admin_reset_token,
     verify_admin_reset_token,
 )
+from .email_service import (
+    get_client_ip,
+    send_password_recovery_otp_email,
+    send_password_reset_success_email,
+)
 
 from django.db import models
 
@@ -400,8 +405,9 @@ def forgot_password(request):
         otp = generate_secure_otp(6)
         PasswordResetOTP.objects.create(user=user, otp=otp)
 
-        # Dispatch email and console notification
-        send_admin_password_reset_email(user, otp)
+        # Dispatch email and console notification with client IP
+        client_ip = get_client_ip(request)
+        send_admin_password_reset_email(user, otp, ip_address=client_ip)
 
         # Store session state
         request.session["reset_user_id"] = user.id
@@ -533,8 +539,9 @@ def resend_otp(request):
     otp = generate_secure_otp(6)
     PasswordResetOTP.objects.create(user=user, otp=otp)
 
-    # Send email and log to console
-    send_admin_password_reset_email(user, otp)
+    # Send email and log to console with client IP
+    client_ip = get_client_ip(request)
+    send_admin_password_reset_email(user, otp, ip_address=client_ip)
 
     # Reset attempt count and update timestamp
     request.session["otp_attempts"] = 0
@@ -585,6 +592,10 @@ def reset_password(request):
 
         # Invalidate all remaining OTPs for this user
         PasswordResetOTP.objects.filter(user=user).update(is_used=True)
+
+        # Dispatch security confirmation email
+        client_ip = get_client_ip(request)
+        send_password_reset_success_email(user, ip_address=client_ip)
 
         # Clear password reset session keys
         for key in ["reset_user_id", "otp_verified", "otp_verified_at", "reset_is_admin", "otp_attempts", "last_otp_sent_at"]:
@@ -801,6 +812,10 @@ def admin_password_reset_confirm_api(request):
     # Invalidate all remaining OTPs for this user
     PasswordResetOTP.objects.filter(user=user).update(is_used=True)
 
+    # Dispatch confirmation email
+    client_ip = get_client_ip(request)
+    send_password_reset_success_email(user, ip_address=client_ip)
+
     return JsonResponse(
         {
             "success": True,
@@ -850,8 +865,9 @@ def admin_password_reset_resend_api(request):
     otp = generate_secure_otp(6)
     PasswordResetOTP.objects.create(user=user, otp=otp)
 
-    # Send email and log to console
-    send_admin_password_reset_email(user, otp)
+    # Send email and log to console with client IP
+    client_ip = get_client_ip(request)
+    send_admin_password_reset_email(user, otp, ip_address=client_ip)
 
     return JsonResponse(
         {

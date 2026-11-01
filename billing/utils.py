@@ -164,34 +164,13 @@ def validate_admin_password_complexity(password, confirm_password=None):
     return True, None
 
 
-def send_admin_password_reset_email(user, otp):
+def send_admin_password_reset_email(user, otp, ip_address=None):
     """
-    Send password reset verification email to Admin user.
-    Also logs the code to system console for instant local development reference.
+    Send password reset verification email to Admin user using multi-part HTML & text templates.
     """
-    subject = "Advance Billing - Admin Password Reset Code"
-    message = (
-        f"Hello {user.get_full_name() or user.username},\n\n"
-        f"A password reset was requested for your Administrator account ({user.username}).\n\n"
-        f"Your 6-digit verification code is: {otp}\n\n"
-        f"This code will expire in 10 minutes. For security, please enter this code promptly.\n\n"
-        f"If you did not request this password reset, please ignore this email and verify your account security.\n\n"
-        f"— Advance Billing Security Team"
-    )
-    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@advancebilling.com")
-    recipient_list = [user.email] if user.email else []
-
-    # Console logging for development and debugging
-    print("=" * 60)
-    print(f"[SECURITY] ADMIN PASSWORD RESET OTP for '{user.username}' ({user.email or 'no-email'}): {otp}")
-    print("=" * 60)
-
-    if recipient_list:
-        try:
-            send_mail(subject, message, from_email, recipient_list, fail_silently=True)
-        except Exception as e:
-            print(f"[WARNING] Email dispatch failed: {e}")
-    return True
+    from .email_service import send_password_recovery_otp_email
+    success, _ = send_password_recovery_otp_email(user, otp, expiry_minutes=10, ip_address=ip_address)
+    return success
 
 
 def generate_admin_reset_token(user, otp_id):

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,13 +124,39 @@ STATICFILES_DIRS = [
 ]
 
 
-# Email
+# Email Configuration
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-DEFAULT_FROM_EMAIL = 'no-reply@advancebilling.com'
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL", "Advance Billing <no-reply@advancebilling.com>"
+)
+SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "support@advancebilling.com")
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+_mailer_choice = os.environ.get("EMAIL_BACKEND_CHOICE", "console").lower()
+
+if _mailer_choice in ["smtp", "production"]:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "HOST": os.environ.get("EMAIL_HOST", "smtp.gmail.com"),
+            "PORT": int(os.environ.get("EMAIL_PORT", 587)),
+            "USERNAME": os.environ.get("EMAIL_HOST_USER", ""),
+            "PASSWORD": os.environ.get("EMAIL_HOST_PASSWORD", ""),
+            "USE_TLS": os.environ.get("EMAIL_USE_TLS", "True").lower() == "true",
+            "USE_SSL": os.environ.get("EMAIL_USE_SSL", "False").lower() == "true",
+            "TIMEOUT": int(os.environ.get("EMAIL_TIMEOUT", 15)),
+        },
+    }
+elif _mailer_choice in ["file", "filebased"]:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.filebased.EmailBackend",
+            "FILE_PATH": str(BASE_DIR / "sent_emails"),
+        },
+    }
+else:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        },
+    }
