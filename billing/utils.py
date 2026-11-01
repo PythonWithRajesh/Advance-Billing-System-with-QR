@@ -104,3 +104,127 @@ def render_to_pdf(template_src, context_dict=None):
     if not pdf.err:
         return result.getvalue()
     return None
+
+
+# ==========================================================
+# ADMIN PASSWORD RECOVERY UTILITIES
+# ==========================================================
+
+import secrets
+from django.core.mail import send_mail
+from django.conf import settings
+from django.core import signing
+from django.contrib.auth.models import User
+
+
+def generate_secure_otp(length=6):
+    """
+    Generate a cryptographically secure numeric OTP using Python's secrets module.
+    """
+    return "".join(secrets.choice("0123456789") for _ in range(length))
+
+
+def mask_email(email):
+    """
+    Safely mask an email address for display to prevent exposing sensitive PII.
+    Example: admin.john@example.com -> a***n@example.com
+    """
+    if not email or "@" not in email:
+        return ""
+    local, domain = email.split("@", 1)
+    if len(local) <= 2:
+        masked_local = local[0] + "*"
+    else:
+        masked_local = local[0] + "*" * (len(local) - 2) + local[-1]
+    return f"{masked_local}@{domain}"
+
+
+def validate_admin_password_complexity(password, confirm_password=None):
+    """
+    Validate password complexity requirements for Admin users:
+    - Minimum 8 characters
+    - At least 1 uppercase letter (A-Z)
+    - At least 1 lowercase letter (a-z)
+    - At least 1 numeric digit (0-9)
+    - Matches confirm_password (if provided)
+    Returns: (is_valid: bool, error_message: str | None)
+    """
+    if not password:
+        return False, "Password is required."
+    if len(password) < 8:
+        return False, "Password must contain at least 8 characters."
+    if not any(c.isupper() for c in password):
+        return False, "Password must contain at least one uppercase letter (A-Z)."
+    if not any(c.islower() for c in password):
+        return False, "Password must contain at least one lowercase letter (a-z)."
+    if not any(c.isdigit() for c in password):
+        return False, "Password must contain at least one numeric digit (0-9)."
+    if confirm_password is not None and password != confirm_password:
+        return False, "Passwords do not match."
+    return True, None
+
+
+def send_admin_password_reset_email(user, otp):
+    """
+    Send password reset verification email to Admin user.
+    Also logs the code to system console for instant local development reference.
+    """
+    subject = "Advance Billing - Admin Password Reset Code"
+    message = (
+        f"Hello {user.get_full_name() or user.username},\n\n"
+        f"A password reset was requested for your Administrator account ({user.username}).\n\n"
+        f"Your 6-digit verification code is: {otp}\n\n"
+        f"This code will expire in 10 minutes. For security, please enter this code promptly.\n\n"
+        f"If you did not request this password reset, please ignore this email and verify your account security.\n\n"
+        f"— Advance Billing Security Team"
+    )
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@advancebilling.com")
+    recipient_list = [user.email] if user.email else []
+
+    # Console logging for development and debugging
+    print("=" * 60)
+    print(f"[SECURITY] ADMIN PASSWORD RESET OTP for '{user.username}' ({user.email or 'no-email'}): {otp}")
+    print("=" * 60)
+
+    if recipient_list:
+        try:
+            send_mail(subject, message, from_email, recipient_list, fail_silently=True)
+        except Exception as e:
+            print(f"[WARNING] Email dispatch failed: {e}")
+    return True
+
+
+def generate_admin_reset_token(user, otp_id):
+    """
+    Generate a cryptographically signed token for REST API password reset flow.
+    Encodes user ID, username, and OTP record ID with salt.
+    """
+    payload = {
+        "user_id": user.id,
+        "username": user.username,
+        "otp_id": otp_id,
+    }
+    return signing.dumps(payload, salt="advance-billing-admin-pwd-reset")
+
+
+def verify_admin_reset_token(token, max_age=900):
+    """
+    Verify signed token (valid for up to 15 minutes = 900 seconds).
+    Returns (user: User | None, error_message: str | None)
+    """
+    if not token:
+        return None, "Reset token is required."
+    try:
+        data = signing.loads(token, salt="advance-billing-admin-pwd-reset", max_age=max_age)
+        user_id = data.get("user_id")
+        user = User.objects.filter(id=user_id, is_active=True).first()
+        if not user:
+            return None, "Admin user account not found or disabled."
+        if not (user.is_staff or user.is_superuser):
+            return None, "Unauthorized: User is not an admin."
+        return user, None
+    except signing.SignatureExpired:
+        return None, "Reset token has expired. Please request a new verification code."
+    except signing.BadSignature:
+        return None, "Invalid or tampered reset token."
+

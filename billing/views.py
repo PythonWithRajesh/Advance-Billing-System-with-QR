@@ -29,6 +29,14 @@ from decimal import Decimal, InvalidOperation
 from django.db import transaction
 
 from .models import PasswordResetOTP, DistributorProfile, Customer, Product, Invoice, InvoiceItem
+from .utils import (
+    generate_secure_otp,
+    mask_email,
+    validate_admin_password_complexity,
+    send_admin_password_reset_email,
+    generate_admin_reset_token,
+    verify_admin_reset_token,
+)
 
 from django.db import models
 
@@ -343,322 +351,519 @@ def user_logout(request):
     return redirect("admin_login")
 
 
+# ==========================================================
+# ADMIN PASSWORD RECOVERY - WEB VIEWS
+# ==========================================================
+
 def forgot_password(request):
+    """
+    Web view: Request OTP for Admin password recovery.
+    Accepts admin username or email address.
+    """
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect("admin_dashboard")
 
     if request.method == "POST":
+        identifier = request.POST.get("username", request.POST.get("identifier", "")).strip()
 
-        username = request.POST.get(
-            "username",
-            ""
-        ).strip()
-
-        if not username:
-
+        if not identifier:
             return render(
                 request,
                 "forgot_password.html",
-                {
-                    "error": "Please enter your username."
-                }
+                {"error": "Please enter your admin username or email address."},
             )
 
-        try:
+        # Lookup user by username or email (case-insensitive)
+        user = User.objects.filter(
+            models.Q(username__iexact=identifier) | models.Q(email__iexact=identifier)
+        ).first()
 
-            user = User.objects.get(
-                username=username
-            )
-
-        except User.DoesNotExist:
-
+        if not user:
             return render(
                 request,
                 "forgot_password.html",
-                {
-                    "error": "No account found with this username."
-                }
+                {"error": "No account found matching this username or email."},
+            )
+
+        # Enforce that the account must be an Administrator
+        if not (user.is_staff or user.is_superuser):
+            return render(
+                request,
+                "forgot_password.html",
+                {"error": "Access denied. Only Administrator accounts can recover passwords through this portal."},
             )
 
         # Invalidate previous unused OTPs
-        PasswordResetOTP.objects.filter(
-            user=user,
-            is_used=False
-        ).update(
-            is_used=True
-        )
+        PasswordResetOTP.objects.filter(user=user, is_used=False).update(is_used=True)
 
-        # Generate random 6 digit OTP
-        otp = str(
-            random.randint(
-                100000,
-                999999
-            )
-        )
+        # Generate cryptographically secure 6-digit OTP
+        otp = generate_secure_otp(6)
+        PasswordResetOTP.objects.create(user=user, otp=otp)
 
-        # Save OTP in database
-        PasswordResetOTP.objects.create(
-            user=user,
-            otp=otp
-        )
+        # Dispatch email and console notification
+        send_admin_password_reset_email(user, otp)
 
-        # Store user ID in session
+        # Store session state
         request.session["reset_user_id"] = user.id
+        request.session["reset_is_admin"] = True
+        request.session["otp_attempts"] = 0
+        request.session["last_otp_sent_at"] = timezone.now().isoformat()
 
-        # Development purpose
-        print("=" * 50)
-        print(
-            f"PASSWORD RESET OTP for "
-            f"{user.username}: {otp}"
+        masked = mask_email(user.email) if user.email else user.username
+        messages.success(
+            request,
+            f"A 6-digit verification code has been dispatched to {masked}."
         )
-        print("=" * 50)
-
         return redirect("verify_otp")
 
-    return render(
-        request,
-        "forgot_password.html"
-    )
+    return render(request, "forgot_password.html")
 
 
 def verify_otp(request):
-
-    user_id = request.session.get(
-        "reset_user_id"
-    )
-
+    """
+    Web view: Verify the 6-digit OTP for Admin password recovery.
+    Includes rate-limiting (max 5 failed attempts) and 10-minute expiry check.
+    """
+    user_id = request.session.get("reset_user_id")
     if not user_id:
+        messages.error(request, "Session expired or invalid. Please request a new OTP.")
+        return redirect("forgot_password")
 
-        return redirect(
-            "forgot_password"
-        )
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect("forgot_password")
+
+    if not (user.is_staff or user.is_superuser):
+        messages.error(request, "Access denied. Only Administrator accounts can recover passwords.")
+        return redirect("admin_login")
 
     if request.method == "POST":
-
-        entered_otp = request.POST.get(
-            "otp",
-            ""
-        ).strip()
+        entered_otp = request.POST.get("otp", "").strip()
 
         if not entered_otp:
-
             return render(
                 request,
                 "verify_otp.html",
-                {
-                    "error": "Please enter the OTP."
-                }
+                {"error": "Please enter the 6-digit verification code."},
             )
 
-        try:
-
-            otp_record = PasswordResetOTP.objects.filter(
-                user_id=user_id,
-                otp=entered_otp,
-                is_used=False
-            ).latest(
-                "created_at"
-            )
-
-        except PasswordResetOTP.DoesNotExist:
-
+        # Brute-force protection: track attempts
+        attempts = request.session.get("otp_attempts", 0) + 1
+        request.session["otp_attempts"] = attempts
+        if attempts > 5:
+            PasswordResetOTP.objects.filter(user=user, is_used=False).update(is_used=True)
             return render(
                 request,
                 "verify_otp.html",
-                {
-                    "error": "Invalid or already used OTP."
-                }
+                {"error": "Maximum verification attempts exceeded. For security, please request a new OTP."},
             )
 
-        # OTP expiry = 5 minutes
-        expiry_time = (
-            otp_record.created_at
-            + timedelta(minutes=5)
-        )
+        # Find latest unused OTP
+        otp_record = PasswordResetOTP.objects.filter(
+            user=user,
+            otp=entered_otp,
+            is_used=False,
+        ).order_by("-created_at").first()
 
-        if timezone.now() > expiry_time:
+        if not otp_record:
+            return render(
+                request,
+                "verify_otp.html",
+                {"error": "Invalid verification code. Please check and try again."},
+            )
 
+        # Expiry check (10 minutes)
+        if otp_record.is_expired(expiry_minutes=10):
             otp_record.is_used = True
             otp_record.save()
-
             return render(
                 request,
                 "verify_otp.html",
-                {
-                    "error": "OTP has expired. Please request a new OTP."
-                }
+                {"error": "Verification code has expired. Please request a new OTP."},
             )
 
-        # OTP is valid
+        # Mark OTP as successfully used
         otp_record.is_used = True
         otp_record.save()
 
+        # Mark session as verified
         request.session["otp_verified"] = True
+        request.session["otp_verified_at"] = timezone.now().isoformat()
 
-        return redirect(
-            "reset_password"
-        )
+        return redirect("reset_password")
 
-    return render(
-        request,
-        "verify_otp.html"
-    )
+    return render(request, "verify_otp.html")
+
 
 def resend_otp(request):
-
-    user_id = request.session.get(
-        "reset_user_id"
-    )
-
+    """
+    Web view: Resend fresh OTP to the admin's email.
+    Includes 30-second rate-limiting cooldown.
+    """
+    user_id = request.session.get("reset_user_id")
     if not user_id:
-
-        return redirect(
-            "forgot_password"
-        )
+        return redirect("forgot_password")
 
     try:
-
-        user = User.objects.get(
-            id=user_id
-        )
-
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
+        return redirect("forgot_password")
 
-        return redirect(
-            "forgot_password"
-        )
+    if not (user.is_staff or user.is_superuser):
+        return redirect("admin_login")
 
-    # Disable previous OTPs
-    PasswordResetOTP.objects.filter(
-        user=user,
-        is_used=False
-    ).update(
-        is_used=True
-    )
+    # Rate limiting cooldown (30 seconds)
+    last_sent_str = request.session.get("last_otp_sent_at")
+    if last_sent_str:
+        try:
+            from django.utils.dateparse import parse_datetime
+            last_sent = parse_datetime(last_sent_str)
+            if last_sent and (timezone.now() - last_sent).total_seconds() < 30:
+                messages.warning(request, "Please wait at least 30 seconds before requesting another code.")
+                return redirect("verify_otp")
+        except Exception:
+            pass
 
-    # Generate new OTP
-    otp = str(
-        random.randint(
-            100000,
-            999999
-        )
-    )
+    # Invalidate previous unused OTPs
+    PasswordResetOTP.objects.filter(user=user, is_used=False).update(is_used=True)
 
-    # Save new OTP
-    PasswordResetOTP.objects.create(
-        user=user,
-        otp=otp
-    )
+    # Generate and save new OTP
+    otp = generate_secure_otp(6)
+    PasswordResetOTP.objects.create(user=user, otp=otp)
 
-    print("=" * 50)
-    print(
-        f"NEW PASSWORD RESET OTP for "
-        f"{user.username}: {otp}"
-    )
-    print("=" * 50)
+    # Send email and log to console
+    send_admin_password_reset_email(user, otp)
 
-    messages.success(
-        request,
-        "A new OTP has been generated."
-    )
+    # Reset attempt count and update timestamp
+    request.session["otp_attempts"] = 0
+    request.session["last_otp_sent_at"] = timezone.now().isoformat()
 
-    return redirect(
-        "verify_otp"
-    )
+    messages.success(request, "A new verification code has been dispatched.")
+    return redirect("verify_otp")
+
 
 def reset_password(request):
+    """
+    Web view: Reset password for Admin user.
+    Enforces enterprise complexity: 8+ chars, uppercase, lowercase, digit, and confirmation match.
+    """
+    if not request.session.get("otp_verified"):
+        messages.error(request, "Please complete OTP verification first.")
+        return redirect("forgot_password")
 
-    if not request.session.get(
-        "otp_verified"
-    ):
-        return redirect(
-            "forgot_password"
-        )
-
-    user_id = request.session.get(
-        "reset_user_id"
-    )
+    user_id = request.session.get("reset_user_id")
+    if not user_id:
+        return redirect("forgot_password")
 
     try:
-
-        user = User.objects.get(
-            id=user_id
-        )
-
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
+        return redirect("forgot_password")
 
-        return redirect(
-            "forgot_password"
-        )
+    if not (user.is_staff or user.is_superuser):
+        messages.error(request, "Access denied. Only Administrator accounts can reset password here.")
+        return redirect("admin_login")
 
     if request.method == "POST":
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
 
-        password = request.POST.get(
-            "password"
-        )
-
-        confirm_password = request.POST.get(
-            "confirm_password"
-        )
-
-        if not password or not confirm_password:
-
+        # Validate Admin password complexity
+        is_valid, error_msg = validate_admin_password_complexity(password, confirm_password)
+        if not is_valid:
             return render(
                 request,
                 "reset_password.html",
-                {
-                    "error":
-                    "Please fill both password fields."
-                }
+                {"error": error_msg},
             )
 
-        if password != confirm_password:
-
-            return render(
-                request,
-                "reset_password.html",
-                {
-                    "error":
-                    "Passwords do not match."
-                }
-            )
-
-        if len(password) < 6:
-
-            return render(
-                request,
-                "reset_password.html",
-                {
-                    "error":
-                    "Password must contain at least 6 characters."
-                }
-            )
-
+        # Set new password
         user.set_password(password)
         user.save()
 
-        # Clear password reset session
-        request.session.pop(
-            "reset_user_id",
-            None
-        )
+        # Invalidate all remaining OTPs for this user
+        PasswordResetOTP.objects.filter(user=user).update(is_used=True)
 
-        request.session.pop(
-            "otp_verified",
-            None
-        )
+        # Clear password reset session keys
+        for key in ["reset_user_id", "otp_verified", "otp_verified_at", "reset_is_admin", "otp_attempts", "last_otp_sent_at"]:
+            request.session.pop(key, None)
 
         messages.success(
             request,
-            "Password reset successfully. Please login."
+            "Your Admin password has been reset successfully. Please log in with your new credentials.",
+        )
+        return redirect("admin_login")
+
+    return render(request, "reset_password.html")
+
+
+# Aliases for explicit admin naming
+admin_forgot_password = forgot_password
+admin_verify_otp = verify_otp
+admin_resend_otp = resend_otp
+admin_reset_password = reset_password
+
+
+# ==========================================================
+# ADMIN PASSWORD RECOVERY - REST API ENDPOINTS
+# ==========================================================
+
+@csrf_exempt
+def admin_password_reset_request_api(request):
+    """
+    API Endpoint: Request an OTP for Admin password recovery.
+    POST /api/admin/password-reset/request/
+    Payload: {"identifier": "admin_username_or_email"}
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed. Use POST to request password reset."},
+            status=405,
         )
 
-        return redirect(
-            "admin_login"
+    data = {}
+    if request.content_type and "application/json" in request.content_type:
+        try:
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"success": False, "message": "Invalid JSON payload."}, status=400)
+    else:
+        data = request.POST.dict()
+
+    identifier = str(data.get("identifier", data.get("username", data.get("email", "")))).strip()
+    if not identifier:
+        return JsonResponse(
+            {"success": False, "message": "Admin username or email is required."},
+            status=400,
         )
 
-    return render(
-        request,
-        "reset_password.html"
+    # Find user by username or email (case-insensitive)
+    user = User.objects.filter(
+        models.Q(username__iexact=identifier) | models.Q(email__iexact=identifier)
+    ).first()
+
+    if not user:
+        return JsonResponse(
+            {"success": False, "message": "No account found matching the provided identifier."},
+            status=404,
+        )
+
+    if not (user.is_staff or user.is_superuser):
+        return JsonResponse(
+            {"success": False, "message": "Access denied. Only Administrator accounts can recover passwords."},
+            status=403,
+        )
+
+    # Invalidate previous unused OTPs
+    PasswordResetOTP.objects.filter(user=user, is_used=False).update(is_used=True)
+
+    # Generate cryptographically secure OTP
+    otp = generate_secure_otp(6)
+    PasswordResetOTP.objects.create(user=user, otp=otp)
+
+    # Dispatch email and console notice
+    send_admin_password_reset_email(user, otp)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Verification code dispatched to your registered email.",
+            "data": {
+                "username": user.username,
+                "email_masked": mask_email(user.email) if user.email else "",
+                "expires_in_minutes": 10,
+            },
+        },
+        status=200,
     )
+
+
+@csrf_exempt
+def admin_password_reset_verify_api(request):
+    """
+    API Endpoint: Verify 6-digit OTP for Admin password recovery.
+    POST /api/admin/password-reset/verify-otp/
+    Payload: {"identifier": "admin_username_or_email", "otp": "123456"}
+    Returns a signed reset_token on success.
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed. Use POST to verify OTP."},
+            status=405,
+        )
+
+    data = {}
+    if request.content_type and "application/json" in request.content_type:
+        try:
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"success": False, "message": "Invalid JSON payload."}, status=400)
+    else:
+        data = request.POST.dict()
+
+    identifier = str(data.get("identifier", data.get("username", data.get("email", "")))).strip()
+    entered_otp = str(data.get("otp", "")).strip()
+
+    if not identifier:
+        return JsonResponse({"success": False, "message": "Admin identifier is required."}, status=400)
+    if not entered_otp:
+        return JsonResponse({"success": False, "message": "6-digit OTP is required."}, status=400)
+
+    user = User.objects.filter(
+        models.Q(username__iexact=identifier) | models.Q(email__iexact=identifier)
+    ).first()
+
+    if not user or not (user.is_staff or user.is_superuser):
+        return JsonResponse({"success": False, "message": "Invalid credentials or unauthorized."}, status=403)
+
+    otp_record = PasswordResetOTP.objects.filter(
+        user=user,
+        otp=entered_otp,
+        is_used=False,
+    ).order_by("-created_at").first()
+
+    if not otp_record:
+        return JsonResponse(
+            {"success": False, "message": "Invalid or already used verification code."},
+            status=400,
+        )
+
+    if otp_record.is_expired(expiry_minutes=10):
+        otp_record.is_used = True
+        otp_record.save()
+        return JsonResponse(
+            {"success": False, "message": "Verification code has expired. Please request a new code."},
+            status=400,
+        )
+
+    # Valid OTP -> Mark used and generate signed reset token
+    otp_record.is_used = True
+    otp_record.save()
+
+    reset_token = generate_admin_reset_token(user, otp_record.id)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "OTP verified successfully.",
+            "data": {
+                "reset_token": reset_token,
+                "expires_in_minutes": 15,
+            },
+        },
+        status=200,
+    )
+
+
+@csrf_exempt
+def admin_password_reset_confirm_api(request):
+    """
+    API Endpoint: Reset password using signed reset_token.
+    POST /api/admin/password-reset/confirm/
+    Payload: {"reset_token": "...", "password": "...", "confirm_password": "..."}
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed. Use POST to confirm password reset."},
+            status=405,
+        )
+
+    data = {}
+    if request.content_type and "application/json" in request.content_type:
+        try:
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"success": False, "message": "Invalid JSON payload."}, status=400)
+    else:
+        data = request.POST.dict()
+
+    reset_token = str(data.get("reset_token", "")).strip()
+    password = str(data.get("password", ""))
+    confirm_password = str(data.get("confirm_password", ""))
+
+    if not reset_token:
+        return JsonResponse({"success": False, "message": "Reset token is required."}, status=400)
+
+    user, error_msg = verify_admin_reset_token(reset_token, max_age=900)
+    if not user:
+        return JsonResponse({"success": False, "message": error_msg or "Invalid reset token."}, status=400)
+
+    is_valid, pwd_err = validate_admin_password_complexity(password, confirm_password)
+    if not is_valid:
+        return JsonResponse({"success": False, "message": pwd_err}, status=400)
+
+    # Update password
+    user.set_password(password)
+    user.save()
+
+    # Invalidate all remaining OTPs for this user
+    PasswordResetOTP.objects.filter(user=user).update(is_used=True)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Admin password has been reset successfully. You may now log in with your new credentials.",
+        },
+        status=200,
+    )
+
+
+@csrf_exempt
+def admin_password_reset_resend_api(request):
+    """
+    API Endpoint: Resend fresh OTP for Admin password recovery.
+    POST /api/admin/password-reset/resend-otp/
+    Payload: {"identifier": "admin_username_or_email"}
+    """
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed. Use POST to resend OTP."},
+            status=405,
+        )
+
+    data = {}
+    if request.content_type and "application/json" in request.content_type:
+        try:
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"success": False, "message": "Invalid JSON payload."}, status=400)
+    else:
+        data = request.POST.dict()
+
+    identifier = str(data.get("identifier", data.get("username", data.get("email", "")))).strip()
+    if not identifier:
+        return JsonResponse({"success": False, "message": "Admin identifier is required."}, status=400)
+
+    user = User.objects.filter(
+        models.Q(username__iexact=identifier) | models.Q(email__iexact=identifier)
+    ).first()
+
+    if not user or not (user.is_staff or user.is_superuser):
+        return JsonResponse({"success": False, "message": "Invalid identifier or unauthorized."}, status=403)
+
+    # Invalidate previous unused OTPs
+    PasswordResetOTP.objects.filter(user=user, is_used=False).update(is_used=True)
+
+    # Generate fresh OTP
+    otp = generate_secure_otp(6)
+    PasswordResetOTP.objects.create(user=user, otp=otp)
+
+    # Send email and log to console
+    send_admin_password_reset_email(user, otp)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "A new verification code has been dispatched to your email.",
+            "data": {
+                "email_masked": mask_email(user.email) if user.email else "",
+            },
+        },
+        status=200,
+    )
+
 
 
 def distributor_register(request):

@@ -60,7 +60,7 @@ urlpatterns = [
         name="user_logout"
     ),
 
-    # Forgot Password
+    # Forgot Password (Web Views)
     path(
         "forgot-password/",
         views.forgot_password,
@@ -83,6 +83,62 @@ urlpatterns = [
         "reset-password/",
         views.reset_password,
         name="reset_password"
+    ),
+
+    # Admin Password Recovery (Web Aliases)
+    path(
+        "admin/forgot-password/",
+        views.admin_forgot_password,
+        name="admin_forgot_password",
+    ),
+    path(
+        "admin/verify-otp/",
+        views.admin_verify_otp,
+        name="admin_verify_otp",
+    ),
+    path(
+        "admin/resend-otp/",
+        views.admin_resend_otp,
+        name="admin_resend_otp",
+    ),
+    path(
+        "admin/reset-password/",
+        views.admin_reset_password,
+        name="admin_reset_password",
+    ),
+
+    # Admin Password Recovery - REST API Endpoints
+    path(
+        "api/admin/password-reset/request/",
+        views.admin_password_reset_request_api,
+        name="admin_password_reset_request_api",
+    ),
+    path(
+        "api/admin/password-reset/verify-otp/",
+        views.admin_password_reset_verify_api,
+        name="admin_password_reset_verify_api",
+    ),
+    path(
+        "api/admin/password-reset/confirm/",
+        views.admin_password_reset_confirm_api,
+        name="admin_password_reset_confirm_api",
+    ),
+    path(
+        "api/admin/password-reset/resend-otp/",
+        views.admin_password_reset_resend_api,
+        name="admin_password_reset_resend_api",
+    ),
+    path(
+        "api/admin/forgot-password/",
+        views.admin_password_reset_request_api,
+    ),
+    path(
+        "api/admin/verify-otp/",
+        views.admin_password_reset_verify_api,
+    ),
+    path(
+        "api/admin/reset-password/",
+        views.admin_password_reset_confirm_api,
     ),
 
     path(

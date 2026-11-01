@@ -1,5 +1,7 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class PasswordResetOTP(models.Model):
@@ -7,6 +9,14 @@ class PasswordResetOTP(models.Model):
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+
+    def is_expired(self, expiry_minutes=10):
+        """Check if the OTP has exceeded its validity window."""
+        return timezone.now() > (self.created_at + timedelta(minutes=expiry_minutes))
+
+    def is_valid(self, expiry_minutes=10):
+        """Check if the OTP is unused and not expired."""
+        return not self.is_used and not self.is_expired(expiry_minutes=expiry_minutes)
 
     def __str__(self):
         return f"{self.user.username} - {self.otp}"
